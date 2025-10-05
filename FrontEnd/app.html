@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskTrek — App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section class="app">
+    <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
+    <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </label>
+
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <span class="logo-dot"></span>
+        <span class="brand-text">TaskTrek</span>
+      </div>
+
+      <input type="radio" name="tab" id="tab-dashboard" class="tab-radio" checked />
+      <input type="radio" name="tab" id="tab-tasks" class="tab-radio" />
+      <input type="radio" name="tab" id="tab-shop" class="tab-radio" />
+      <input type="radio" name="tab" id="tab-groups" class="tab-radio" />
+      <input type="radio" name="tab" id="tab-leaderboard" class="tab-radio" />
+      <input type="radio" name="tab" id="tab-activity" class="tab-radio" />
+      <input type="radio" name="tab" id="tab-team" class="tab-radio" />
+      <input type="radio" name="tab" id="tab-profile" class="tab-radio" />
+
+      <nav class="sidebar__nav">
+        <label for="tab-dashboard" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
+          <span>Dashboard</span>
+        </label>
+        <label for="tab-tasks" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+          <span>Tasks</span>
+        </label>
+        <label for="tab-shop" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg>
+          <span>Shop</span>
+        </label>
+        <label for="tab-groups" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Groups</span>
+        </label>
+        <label for="tab-leaderboard" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
+          <span>Leaderboard</span>
+        </label>
+        <label for="tab-activity" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Activity</span>
+        </label>
+        <label for="tab-team" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Team</span>
+        </label>
+        <label for="tab-profile" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Profile</span>
+        </label>
+      </nav>
+
+      <div class="sidebar__footer">
+        <a class="btn btn--ghost" href="index.html">Logout</a>
+      </div>
+    </aside>
+
+    <div class="content">
+      <section class="panel" data-tab="dashboard">
+        <h2>Dashboard</h2>
+        <div class="cards">
+          <div class="stat-card">
+            <span class="stat-label">Total Tasks</span>
+            <span class="stat-value">128</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">In Progress</span>
+            <span class="stat-value">19</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Completed</span>
+            <span class="stat-value">87</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-tab="tasks">
+        <div class="panel__header">
+          <h2>Tasks</h2>
+          <div class="panel__actions">
+            <button class="btn btn--primary">New Task</button>
+          </div>
+        </div>
+        <div class="task-list">
+          <article class="task-card">
+            <div class="task-card__top">
+              <h3>Design Sprint Kickoff</h3>
+              <span class="badge badge--gold">🥇 Gold</span>
+            </div>
+            <p>Prepare sprint goals, agenda, and design artifacts for the kickoff meeting.</p>
+            <div class="task-meta">
+              <span>Created: 2025-10-01</span>
+              <span>Claimed: —</span>
+              <span>Done: —</span>
+              <span>By: —</span>
+            </div>
+            <div class="task-actions">
+              <button class="btn btn--neon">Claim Task</button>
+              <button class="btn btn--secondary" disabled>Mark as Done</button>
+            </div>
+          </article>
+
+          <article class="task-card">
+            <div class="task-card__top">
+              <h3>Implement Auth Flow</h3>
+              <span class="badge badge--silver">🥈 Silver</span>
+            </div>
+            <p>Hook up OAuth, session storage, and route guards.</p>
+            <div class="task-meta">
+              <span>Created: 2025-09-30</span>
+              <span>Claimed: 2025-10-02</span>
+              <span>Done: —</span>
+              <span>By: Alex</span>
+            </div>
+            <div class="task-actions">
+              <button class="btn btn--secondary" disabled>Claimed</button>
+              <button class="btn btn--primary">Mark as Done</button>
+            </div>
+          </article>
+
+          <article class="task-card">
+            <div class="task-card__top">
+              <h3>QA Regression Suite</h3>
+              <span class="badge badge--bronze">🥉 Bronze</span>
+            </div>
+            <p>Run the full regression suite and triage issues.</p>
+            <div class="task-meta">
+              <span>Created: 2025-09-28</span>
+              <span>Claimed: 2025-09-29</span>
+              <span>Done: 2025-10-03</span>
+              <span>By: Morgan</span>
+            </div>
+            <div class="task-actions">
+              <button class="btn btn--secondary" disabled>Claimed</button>
+              <button class="btn btn--success" disabled>Completed</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="panel" data-tab="shop">
+        <h2>Shop</h2>
+        <div class="shop-grid">
+          <div class="shop-item">
+            <div class="shop-thumb"></div>
+            <h3>Lunch Voucher</h3>
+            <div class="price">250 pts</div>
+            <button class="btn btn--primary">Redeem</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-thumb"></div>
+            <h3>Custom Avatar</h3>
+            <div class="price">120 pts</div>
+            <button class="btn btn--primary">Redeem</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-thumb"></div>
+            <h3>Swag Pack</h3>
+            <div class="price">400 pts</div>
+            <button class="btn btn--primary">Redeem</button>
+          </div>
+          <div class="shop-item">
+            <div class="shop-thumb"></div>
+            <h3>Day Off Token</h3>
+            <div class="price">800 pts</div>
+            <button class="btn btn--primary">Redeem</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-tab="groups">
+        <h2>Groups</h2>
+        <div class="groups">
+          <div class="groups__joined">
+            <h3>Joined Groups</h3>
+            <ul class="list list--groups">
+              <li class="list-card">
+                <div>
+                  <strong>Design Guild</strong>
+                  <div class="muted">12 members</div>
+                </div>
+                <button class="btn btn--ghost">Open</button>
+              </li>
+              <li class="list-card">
+                <div>
+                  <strong>QA Avengers</strong>
+                  <div class="muted">8 members</div>
+                </div>
+                <button class="btn btn--ghost">Open</button>
+              </li>
+            </ul>
+          </div>
+          <div class="groups__invite">
+            <h3>Join via Invite Code</h3>
+            <div class="invite-row">
+              <input class="input" type="text" placeholder="Enter invite code" />
+              <button class="btn btn--primary">Join</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" data-tab="leaderboard">
+        <h2>Leaderboard</h2>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Member</th>
+                <th>Total Points</th>
+                <th>Completed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td><td>Alex</td><td>1540</td><td>72</td>
+              </tr>
+              <tr>
+                <td>2</td><td>Morgan</td><td>1430</td><td>69</td>
+              </tr>
+              <tr>
+                <td>3</td><td>Sam</td><td>1200</td><td>55</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel" data-tab="activity">
+        <h2>Activity</h2>
+        <ul class="feed">
+          <li class="feed-item">
+            <span class="dot dot--gold"></span>
+            <div><strong>Alex</strong> completed <em>Implement Auth Flow</em> — +150 pts</div>
+            <time>2h ago</time>
+          </li>
+          <li class="feed-item">
+            <span class="dot dot--silver"></span>
+            <div><strong>Sam</strong> claimed <em>Marketing Brief Draft</em></div>
+            <time>5h ago</time>
+          </li>
+          <li class="feed-item">
+            <span class="dot dot--bronze"></span>
+            <div><strong>Morgan</strong> redeemed <em>Lunch Voucher</em> — -250 pts</div>
+            <time>Yesterday</time>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel" data-tab="team">
+        <h2>Team</h2>
+        <ul class="list list--team">
+          <li class="list-card">
+            <div class="avatar"></div>
+            <div class="who">
+              <strong>Alex</strong>
+              <div class="muted">Admin</div>
+            </div>
+            <button class="btn btn--danger btn--ghostlike">Remove</button>
+          </li>
+          <li class="list-card">
+            <div class="avatar"></div>
+            <div class="who">
+              <strong>Morgan</strong>
+              <div class="muted">Member</div>
+            </div>
+            <button class="btn btn--danger btn--ghostlike">Remove</button>
+          </li>
+          <li class="list-card">
+            <div class="avatar"></div>
+            <div class="who">
+              <strong>Sam</strong>
+              <div class="muted">Member</div>
+            </div>
+            <button class="btn btn--danger btn--ghostlike">Remove</button>
+          </li>
+        </ul>
+      </section>
+
+      <section class="panel" data-tab="profile">
+        <h2>Profile</h2>
+        <div class="profile">
+          <div class="profile__left">
+            <div class="avatar avatar--xl"></div>
+            <h3>Alex Johnson</h3>
+            <div class="muted">@alexj</div>
+            <div class="badges">
+              <span class="pill pill--gold">Gold Hunter</span>
+              <span class="pill pill--silver">Silver Streak</span>
+              <span class="pill pill--bronze">Bronze Beginner</span>
+            </div>
+          </div>
+          <div class="profile__right">
+            <div class="cards">
+              <div class="stat-card">
+                <span class="stat-label">Total Points</span>
+                <span class="stat-value">1540</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Tasks Completed</span>
+                <span class="stat-value">72</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Current Streak</span>
+                <span class="stat-value">9 days</span>
+              </div>
+            </div>
+            <div class="achievements">
+              <h3>Achievements</h3>
+              <ul class="achievements__list">
+                <li class="achievement-card">Quest Starter</li>
+                <li class="achievement-card">Team Player</li>
+                <li class="achievement-card">Night Owl</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+</body>
+</html>
+
