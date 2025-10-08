@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskTrek — Activity</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section class="app">
+    <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
+    <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </label>
+
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <span class="logo-dot"></span>
+        <span class="brand-text">TaskTrek</span>
+      </div>
+
+      <nav class="sidebar__nav">
+        <a href="dashboard.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="tasks.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+          <span>Tasks</span>
+        </a>
+        <a href="shop.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg>
+          <span>Shop</span>
+        </a>
+        <a href="groups.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Groups</span>
+        </a>
+        <a href="leaderboard.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
+          <span>Leaderboard</span>
+        </a>
+        <a href="activity.html" class="nav__item active">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Activity</span>
+        </a>
+        <a href="team.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Team</span>
+        </a>
+        <a href="profile.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar__footer">
+        <a class="btn btn--ghost" href="index.html">Logout</a>
+      </div>
+    </aside>
+
+    <div class="content">
+      <section class="panel">
+        <div class="panel__header">
+          <h2>Activity Feed</h2>
+          <div class="panel__actions">
+            <select class="input" style="width: auto;" onchange="filterActivity(this.value)">
+              <option value="all">All Activities</option>
+              <option value="tasks">Tasks Only</option>
+              <option value="rewards">Rewards Only</option>
+              <option value="members">Members Only</option>
+            </select>
+          </div>
+        </div>
+        
+        <ul class="feed">
+          <li class="feed-item activity-task-completed">
+            <span class="dot dot--gold"></span>
+            <div><strong>Alex</strong> completed <em>Study for Math Exam</em> — +150 pts</div>
+            <time>2h ago</time>
+          </li>
+          <li class="feed-item activity-task-claimed">
+            <span class="dot dot--silver"></span>
+            <div><strong>Sarah</strong> claimed <em>Group Project Research</em></div>
+            <time>5h ago</time>
+          </li>
+          <li class="feed-item activity-reward-redeemed">
+            <span class="dot dot--bronze"></span>
+            <div><strong>Mike</strong> redeemed <em>Lunch Voucher</em> — -250 pts</div>
+            <time>Yesterday</time>
+          </li>
+          <li class="feed-item activity-member-joined">
+            <span class="dot dot--purple"></span>
+            <div><strong>Emma</strong> joined the School group</div>
+            <time>Yesterday</time>
+          </li>
+          <li class="feed-item activity-task-completed">
+            <span class="dot dot--gold"></span>
+            <div><strong>You</strong> completed <em>Literature Essay</em> — +200 pts</div>
+            <time>2 days ago</time>
+          </li>
+          <li class="feed-item activity-task-claimed">
+            <span class="dot dot--silver"></span>
+            <div><strong>Sam</strong> claimed <em>Physics Problem Set</em></div>
+            <time>2 days ago</time>
+          </li>
+          <li class="feed-item activity-reward-redeemed">
+            <span class="dot dot--bronze"></span>
+            <div><strong>David</strong> redeemed <em>Study Snack Pack</em> — -180 pts</div>
+            <time>3 days ago</time>
+          </li>
+          <li class="feed-item activity-task-completed">
+            <span class="dot dot--gold"></span>
+            <div><strong>Morgan</strong> completed <em>Lab Report Writing</em> — +75 pts</div>
+            <time>3 days ago</time>
+          </li>
+          <li class="feed-item activity-member-joined">
+            <span class="dot dot--purple"></span>
+            <div><strong>New Student</strong> joined the School group</div>
+            <time>4 days ago</time>
+          </li>
+          <li class="feed-item activity-reward-redeemed">
+            <span class="dot dot--bronze"></span>
+            <div><strong>Sarah</strong> redeemed <em>Custom Avatar</em> — -120 pts</div>
+            <time>5 days ago</time>
+          </li>
+          <li class="feed-item activity-task-completed">
+            <span class="dot dot--gold"></span>
+            <div><strong>Alex</strong> completed <em>Chemistry Lab</em> — +100 pts</div>
+            <time>1 week ago</time>
+          </li>
+          <li class="feed-item activity-task-claimed">
+            <span class="dot dot--silver"></span>
+            <div><strong>You</strong> claimed <em>History Presentation</em></div>
+            <time>1 week ago</time>
+          </li>
+          <li class="feed-item activity-reward-redeemed">
+            <span class="dot dot--bronze"></span>
+            <div><strong>Mike</strong> redeemed <em>Library Pass</em> — -300 pts</div>
+            <time>1 week ago</time>
+          </li>
+          <li class="feed-item activity-member-joined">
+            <span class="dot dot--purple"></span>
+            <div><strong>Freshman</strong> joined the School group</div>
+            <time>2 weeks ago</time>
+          </li>
+          <li class="feed-item activity-task-completed">
+            <span class="dot dot--gold"></span>
+            <div><strong>Emma</strong> completed <em>Art Portfolio</em> — +120 pts</div>
+            <time>2 weeks ago</time>
+          </li>
+        </ul>
+        
+        <div class="activity-stats">
+          <div class="stat-card">
+            <span class="stat-label">Activities Today</span>
+            <span class="stat-value">8</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Tasks Completed</span>
+            <span class="stat-value">3</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Rewards Redeemed</span>
+            <span class="stat-value">2</span>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <script>
+    function filterActivity(type) {
+      const feedItems = document.querySelectorAll('.feed-item');
+      
+      feedItems.forEach(item => {
+        if (type === 'all') {
+          item.style.display = 'grid';
+        } else {
+          const hasClass = item.classList.contains(`activity-${type}`);
+          item.style.display = hasClass ? 'grid' : 'none';
+        }
+      });
+    }
+
+    // Active nav highlighting
+    const navItems = document.querySelectorAll('.nav__item');
+    navItems.forEach(item => {
+      if (item.getAttribute('href') === 'activity.html') {
+        item.style.color = 'var(--text)';
+        item.style.background = 'rgba(124,58,237,0.14)';
+        item.style.borderColor = 'var(--outline)';
+        item.style.boxShadow = 'inset 0 0 0 1px rgba(124,58,237,0.25)';
+      }
+    });
+  </script>
+</body>
+</html>

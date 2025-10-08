@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskTrek — Profile</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section class="app">
+    <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
+    <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </label>
+
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <span class="logo-dot"></span>
+        <span class="brand-text">TaskTrek</span>
+      </div>
+
+      <nav class="sidebar__nav">
+        <a href="dashboard.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a href="tasks.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+          <span>Tasks</span>
+        </a>
+        <a href="shop.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg>
+          <span>Shop</span>
+        </a>
+        <a href="groups.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Groups</span>
+        </a>
+        <a href="leaderboard.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
+          <span>Leaderboard</span>
+        </a>
+        <a href="activity.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Activity</span>
+        </a>
+        <a href="team.html" class="nav__item">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Team</span>
+        </a>
+        <a href="profile.html" class="nav__item active">
+          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+          <span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar__footer">
+        <a class="btn btn--ghost" href="index.html">Logout</a>
+      </div>
+    </aside>
+
+    <div class="content">
+      <section class="panel">
+        <div class="panel__header">
+          <h2>Profile</h2>
+          <div class="panel__actions">
+            <button class="btn btn--primary" onclick="openModal('editProfileModal')">Edit Profile</button>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="profile__left">
+            <div class="avatar avatar--xl"></div>
+            <h3>Alex Johnson</h3>
+            <div class="muted">@alexj</div>
+            <div class="profile-bio">
+              <p>Computer Science student passionate about task management and productivity. Always striving for excellence!</p>
+            </div>
+            <div class="badges">
+              <span class="pill pill--gold">🥇 Gold Hunter</span>
+              <span class="pill pill--silver">🥈 Silver Streak</span>
+              <span class="pill pill--bronze">🥉 Bronze Beginner</span>
+              <span class="pill pill--purple">🎯 Task Master</span>
+              <span class="pill pill--green">⚡ Early Bird</span>
+              <span class="pill pill--blue">🏆 Team Player</span>
+            </div>
+          </div>
+          <div class="profile__right">
+            <div class="cards">
+              <div class="stat-card">
+                <span class="stat-label">Total Points</span>
+                <span class="stat-value">1,430</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Tasks Completed</span>
+                <span class="stat-value">69</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Current Streak</span>
+                <span class="stat-value">9 days</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Team Rank</span>
+                <span class="stat-value">#2</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Gold Tasks</span>
+                <span class="stat-value">12</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Silver Tasks</span>
+                <span class="stat-value">31</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Bronze Tasks</span>
+                <span class="stat-value">26</span>
+              </div>
+              <div class="stat-card">
+                <span class="stat-label">Rewards Redeemed</span>
+                <span class="stat-value">8</span>
+              </div>
+            </div>
+            
+            <div class="achievements">
+              <h3>Achievements</h3>
+              <ul class="achievements__list">
+                <li class="achievement-card">
+                  <div class="achievement-icon">🎯</div>
+                  <div class="achievement-info">
+                    <strong>Task Master</strong>
+                    <div class="muted">Complete 50 tasks</div>
+                  </div>
+                </li>
+                <li class="achievement-card">
+                  <div class="achievement-icon">⚡</div>
+                  <div class="achievement-info">
+                    <strong>Early Bird</strong>
+                    <div class="muted">Complete 10 tasks before 9 AM</div>
+                  </div>
+                </li>
+                <li class="achievement-card">
+                  <div class="achievement-icon">🏆</div>
+                  <div class="achievement-info">
+                    <strong>Team Player</strong>
+                    <div class="muted">Help 5 team members</div>
+                  </div>
+                </li>
+                <li class="achievement-card">
+                  <div class="achievement-icon">🔥</div>
+                  <div class="achievement-info">
+                    <strong>Streak Master</strong>
+                    <div class="muted">7-day completion streak</div>
+                  </div>
+                </li>
+                <li class="achievement-card">
+                  <div class="achievement-icon">🥇</div>
+                  <div class="achievement-info">
+                    <strong>Gold Hunter</strong>
+                    <div class="muted">Complete 10 Gold tasks</div>
+                  </div>
+                </li>
+                <li class="achievement-card">
+                  <div class="achievement-icon">🎓</div>
+                  <div class="achievement-info">
+                    <strong>Scholar</strong>
+                    <div class="muted">Complete 20 academic tasks</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="recent-activity">
+              <h3>Recent Activity</h3>
+              <ul class="feed">
+                <li class="feed-item">
+                  <span class="dot dot--gold"></span>
+                  <div><strong>You</strong> completed <em>Study for Math Exam</em> — +150 pts</div>
+                  <time>2h ago</time>
+                </li>
+                <li class="feed-item">
+                  <span class="dot dot--bronze"></span>
+                  <div><strong>You</strong> redeemed <em>Lunch Voucher</em> — -250 pts</div>
+                  <time>Yesterday</time>
+                </li>
+                <li class="feed-item">
+                  <span class="dot dot--gold"></span>
+                  <div><strong>You</strong> completed <em>Literature Essay</em> — +200 pts</div>
+                  <time>2 days ago</time>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Edit Profile</h3>
+          <button class="btn btn--ghost" onclick="closeModal('editProfileModal')">&times;</button>
+        </div>
+        <form class="modal-form" onsubmit="updateProfile(event)">
+          <div class="form-field">
+            <label for="profileName">Full Name</label>
+            <input type="text" id="profileName" class="input" value="Alex Johnson" required>
+          </div>
+          <div class="form-field">
+            <label for="profileUsername">Username</label>
+            <input type="text" id="profileUsername" class="input" value="@alexj" required>
+          </div>
+          <div class="form-field">
+            <label for="profileBio">Bio</label>
+            <textarea id="profileBio" class="input" rows="3" placeholder="Tell us about yourself">Computer Science student passionate about task management and productivity. Always striving for excellence!</textarea>
+          </div>
+          <div class="form-field">
+            <label for="profileEmail">Email</label>
+            <input type="email" id="profileEmail" class="input" value="alex.johnson@university.edu" required>
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn btn--ghost" onclick="closeModal('editProfileModal')">Cancel</button>
+            <button type="submit" class="btn btn--primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Modal functionality
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = 'flex';
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+      }
+    });
+
+    function updateProfile(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('profileName').value;
+      const username = document.getElementById('profileUsername').value;
+      const bio = document.getElementById('profileBio').value;
+      const email = document.getElementById('profileEmail').value;
+      
+      // Update profile display
+      document.querySelector('.profile h3').textContent = name;
+      document.querySelector('.profile .muted').textContent = username;
+      document.querySelector('.profile-bio p').textContent = bio;
+      
+      closeModal('editProfileModal');
+      alert('Profile updated successfully!');
+    }
+
+    // Active nav highlighting
+    const navItems = document.querySelectorAll('.nav__item');
+    navItems.forEach(item => {
+      if (item.getAttribute('href') === 'profile.html') {
+        item.style.color = 'var(--text)';
+        item.style.background = 'rgba(124,58,237,0.14)';
+        item.style.borderColor = 'var(--outline)';
+        item.style.boxShadow = 'inset 0 0 0 1px rgba(124,58,237,0.25)';
+      }
+    });
+  </script>
+</body>
+</html>

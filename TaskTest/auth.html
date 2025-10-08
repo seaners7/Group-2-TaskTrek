@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskTrek — Sign in / Sign up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="auth">
+    <a class="auth__back" href="index.html">← Back</a>
+
+    <div class="auth__card">
+      <div class="auth__brand">
+        <span class="logo-dot"></span>
+        <span class="brand-text">TaskTrek</span>
+      </div>
+
+      <!-- Tabs -->
+      <input type="radio" name="auth-tab" id="auth-login" class="auth-tab-radio" checked />
+      <input type="radio" name="auth-tab" id="auth-signup" class="auth-tab-radio" />
+
+      <div class="auth__tabs">
+        <label for="auth-login" class="auth__tab">Login</label>
+        <label for="auth-signup" class="auth__tab">Sign Up</label>
+      </div>
+
+      <div class="auth__panels">
+        <!-- Login Panel -->
+        <form class="auth__panel" data-auth="login" onsubmit="handleLogin(event)">
+          <div class="form-field">
+            <label for="login-email">Email</label>
+            <input class="input" type="email" id="login-email" placeholder="you@example.com" required />
+            <div class="error-message" id="login-email-error"></div>
+          </div>
+          <div class="form-field">
+            <label for="login-password">Password</label>
+            <input class="input" type="password" id="login-password" placeholder="••••••••" required />
+            <div class="error-message" id="login-password-error"></div>
+          </div>
+          <div class="form-row">
+            <button class="btn btn--primary" type="submit" id="login-btn">
+              <span class="btn-text">Login</span>
+              <span class="btn-spinner" style="display: none;">⏳</span>
+            </button>
+            <a class="btn btn--ghost" href="index.html">Cancel</a>
+          </div>
+          <div class="auth__links">
+            <a href="#" class="forgot-password" onclick="showForgotPassword()">Forgot password?</a>
+            <div class="signup-prompt" style="display: none;">
+              <span>Don't have an account?</span>
+              <a href="#" onclick="switchToSignup()">Sign up instead</a>
+            </div>
+          </div>
+          <div class="auth__or"><span>or</span></div>
+          <div class="social-row">
+            <button class="btn social social--google" type="button" onclick="handleGoogleLogin()">
+              <span class="social__icon">G</span>
+              <span>Continue with Google</span>
+            </button>
+            <button class="btn social social--facebook" type="button" onclick="handleFacebookLogin()">
+              <span class="social__icon">f</span>
+              <span>Continue with Facebook</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Signup Panel -->
+        <form class="auth__panel" data-auth="signup" onsubmit="handleSignup(event)">
+          <div class="form-field">
+            <label for="signup-name">Full Name</label>
+            <input class="input" type="text" id="signup-name" placeholder="Your full name" required />
+            <div class="error-message" id="signup-name-error"></div>
+          </div>
+          <div class="form-field">
+            <label for="signup-email">Email</label>
+            <input class="input" type="email" id="signup-email" placeholder="you@example.com" required />
+            <div class="error-message" id="signup-email-error"></div>
+          </div>
+          <div class="form-field">
+            <label for="signup-username">Username</label>
+            <input class="input" type="text" id="signup-username" placeholder="Choose a username" required />
+            <div class="error-message" id="signup-username-error"></div>
+          </div>
+          <div class="form-field">
+            <label for="signup-password">Password</label>
+            <input class="input" type="password" id="signup-password" placeholder="Create a password" required oninput="validatePassword()" />
+            <div class="password-requirements" id="password-requirements">
+              <div class="requirement" id="req-length">✓ At least 8 characters</div>
+              <div class="requirement" id="req-uppercase">✓ One uppercase letter</div>
+              <div class="requirement" id="req-lowercase">✓ One lowercase letter</div>
+              <div class="requirement" id="req-number">✓ One number</div>
+              <div class="requirement" id="req-special">✓ One special character</div>
+              <div class="requirement" id="req-nospace">✓ No spaces allowed</div>
+            </div>
+            <div class="error-message" id="signup-password-error"></div>
+          </div>
+          <div class="form-field">
+            <label for="signup-confirm">Confirm Password</label>
+            <input class="input" type="password" id="signup-confirm" placeholder="Confirm your password" required />
+            <div class="error-message" id="signup-confirm-error"></div>
+          </div>
+          <div class="form-row">
+            <button class="btn btn--primary" type="submit" id="signup-btn">
+              <span class="btn-text">Create Account</span>
+              <span class="btn-spinner" style="display: none;">⏳</span>
+            </button>
+            <a class="btn btn--ghost" href="index.html">Cancel</a>
+          </div>
+          <div class="auth__links">
+            <div class="login-prompt">
+              <span>Already have an account?</span>
+              <a href="#" onclick="switchToLogin()">Login instead</a>
+            </div>
+          </div>
+          <div class="auth__or"><span>or</span></div>
+          <div class="social-row">
+            <button class="btn social social--google" type="button" onclick="handleGoogleSignup()">
+              <span class="social__icon">G</span>
+              <span>Sign up with Google</span>
+            </button>
+            <button class="btn social social--facebook" type="button" onclick="handleFacebookSignup()">
+              <span class="social__icon">f</span>
+              <span>Sign up with Facebook</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="auth__footer">
+        <span class="muted">By continuing, you agree to our</span>
+        <a class="link-muted" href="#">Terms</a>
+        <span class="muted">and</span>
+        <a class="link-muted" href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Forgot Password Modal -->
+  <div id="forgotPasswordModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Reset Password</h3>
+        <button class="btn btn--ghost" onclick="closeModal('forgotPasswordModal')">&times;</button>
+      </div>
+      <form onsubmit="handleForgotPassword(event)">
+        <div class="form-field">
+          <label for="reset-email">Email Address</label>
+          <input class="input" type="email" id="reset-email" placeholder="Enter your email" required />
+          <div class="error-message" id="reset-email-error"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn--ghost" onclick="closeModal('forgotPasswordModal')">Cancel</button>
+          <button type="submit" class="btn btn--primary">Send Reset Link</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Email Verification Modal -->
+  <div id="emailVerificationModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Verify Your Email</h3>
+      </div>
+      <div class="modal-form">
+        <p>We've sent a verification link to <strong id="verification-email"></strong></p>
+        <p class="muted">Please check your email and click the link to verify your account.</p>
+        <div class="modal-actions">
+          <button class="btn btn--ghost" onclick="resendVerification()">Resend Email</button>
+          <button class="btn btn--primary" onclick="closeModal('emailVerificationModal')">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Form validation and handling
+    function handleLogin(event) {
+      event.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      
+      // Clear previous errors
+      clearErrors(['login-email-error', 'login-password-error']);
+      
+      // Validate inputs
+      let hasErrors = false;
+      
+      if (!email || !isValidEmail(email)) {
+        showError('login-email-error', 'Please enter a valid email address');
+        hasErrors = true;
+      }
+      
+      if (!password) {
+        showError('login-password-error', 'Password is required');
+        hasErrors = true;
+      }
+      
+      if (hasErrors) return;
+      
+      // Show loading state
+      setLoadingState('login-btn', true);
+      
+      // Simulate API call
+      setTimeout(() => {
+        // Simulate different scenarios
+        if (email === 'test@example.com' && password === 'password123') {
+          // Successful login
+          window.location.href = 'dashboard.html';
+        } else if (email === 'nonexistent@example.com') {
+          // User doesn't exist
+          showError('login-password-error', 'User not found');
+          document.querySelector('.signup-prompt').style.display = 'block';
+        } else {
+          // Wrong credentials
+          showError('login-password-error', 'Invalid email or password');
+        }
+        setLoadingState('login-btn', false);
+      }, 1500);
+    }
+    
+    function handleSignup(event) {
+      event.preventDefault();
+      const name = document.getElementById('signup-name').value;
+      const email = document.getElementById('signup-email').value;
+      const username = document.getElementById('signup-username').value;
+      const password = document.getElementById('signup-password').value;
+      const confirmPassword = document.getElementById('signup-confirm').value;
+      
+      // Clear previous errors
+      clearErrors(['signup-name-error', 'signup-email-error', 'signup-username-error', 'signup-password-error', 'signup-confirm-error']);
+      
+      // Validate inputs
+      let hasErrors = false;
+      
+      if (!name.trim()) {
+        showError('signup-name-error', 'Name is required');
+        hasErrors = true;
+      }
+      
+      if (!email || !isValidEmail(email)) {
+        showError('signup-email-error', 'Please enter a valid email address');
+        hasErrors = true;
+      }
+      
+      if (!username.trim()) {
+        showError('signup-username-error', 'Username is required');
+        hasErrors = true;
+      }
+      
+      if (!isValidPassword(password)) {
+        showError('signup-password-error', 'Password does not meet requirements');
+        hasErrors = true;
+      }
+      
+      if (password !== confirmPassword) {
+        showError('signup-confirm-error', 'Passwords do not match');
+        hasErrors = true;
+      }
+      
+      if (hasErrors) return;
+      
+      // Show loading state
+      setLoadingState('signup-btn', true);
+      
+      // Simulate API call
+      setTimeout(() => {
+        // Show email verification modal
+        document.getElementById('verification-email').textContent = email;
+        closeModal('forgotPasswordModal'); // Close any open modals
+        document.getElementById('emailVerificationModal').style.display = 'flex';
+        setLoadingState('signup-btn', false);
+      }, 1500);
+    }
+    
+    function validatePassword() {
+      const password = document.getElementById('signup-password').value;
+      const requirements = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /\d/.test(password),
+        special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+        nospace: !/\s/.test(password)
+      };
+      
+      // Update requirement indicators
+      Object.keys(requirements).forEach(req => {
+        const element = document.getElementById(`req-${req}`);
+        if (requirements[req]) {
+          element.className = 'requirement valid';
+          element.textContent = element.textContent.replace('✗', '✓');
+        } else {
+          element.className = 'requirement invalid';
+          element.textContent = element.textContent.replace('✓', '✗');
+        }
+      });
+    }
+    
+    function showForgotPassword() {
+      document.getElementById('forgotPasswordModal').style.display = 'flex';
+    }
+    
+    function handleForgotPassword(event) {
+      event.preventDefault();
+      const email = document.getElementById('reset-email').value;
+      
+      if (!email || !isValidEmail(email)) {
+        showError('reset-email-error', 'Please enter a valid email address');
+        return;
+      }
+      
+      // Simulate sending reset email
+      alert('Password reset link sent to ' + email);
+      closeModal('forgotPasswordModal');
+    }
+    
+    function handleGoogleLogin() {
+      setLoadingState(event.target, true);
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1000);
+    }
+    
+    function handleFacebookLogin() {
+      setLoadingState(event.target, true);
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1000);
+    }
+    
+    function handleGoogleSignup() {
+      setLoadingState(event.target, true);
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1000);
+    }
+    
+    function handleFacebookSignup() {
+      setLoadingState(event.target, true);
+      setTimeout(() => {
+        window.location.href = 'dashboard.html';
+      }, 1000);
+    }
+    
+    function switchToSignup() {
+      document.getElementById('auth-signup').checked = true;
+    }
+    
+    function switchToLogin() {
+      document.getElementById('auth-login').checked = true;
+    }
+    
+    function resendVerification() {
+      alert('Verification email resent!');
+    }
+    
+    // Utility functions
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+    
+    function isValidPassword(password) {
+      return password.length >= 8 &&
+             /[A-Z]/.test(password) &&
+             /[a-z]/.test(password) &&
+             /\d/.test(password) &&
+             /[!@#$%^&*(),.?":{}|<>]/.test(password) &&
+             !/\s/.test(password);
+    }
+    
+    function showError(elementId, message) {
+      document.getElementById(elementId).textContent = message;
+    }
+    
+    function clearErrors(errorIds) {
+      errorIds.forEach(id => {
+        document.getElementById(id).textContent = '';
+      });
+    }
+    
+    function setLoadingState(buttonId, isLoading) {
+      const button = document.getElementById(buttonId);
+      const text = button.querySelector('.btn-text');
+      const spinner = button.querySelector('.btn-spinner');
+      
+      if (isLoading) {
+        button.disabled = true;
+        text.style.display = 'none';
+        spinner.style.display = 'inline';
+      } else {
+        button.disabled = false;
+        text.style.display = 'inline';
+        spinner.style.display = 'none';
+      }
+    }
+    
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+    
+    // Close modal when clicking outside
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
+
