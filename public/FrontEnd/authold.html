@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TaskTrek — Sign in / Sign up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="auth">
+    <a class="auth__back" href="index.html">← Back</a>
+
+    <div class="auth__card">
+      <div class="auth__brand">
+        <span class="logo-dot"></span>
+        <span class="brand-text">TaskTrek</span>
+      </div>
+
+      <!-- Tabs -->
+      <input type="radio" name="auth-tab" id="auth-login" class="auth-tab-radio" checked />
+      <input type="radio" name="auth-tab" id="auth-signup" class="auth-tab-radio" />
+
+      <div class="auth__tabs">
+        <label for="auth-login" class="auth__tab">Login</label>
+        <label for="auth-signup" class="auth__tab">Sign Up</label>
+      </div>
+
+      <div class="auth__panels">
+        <!-- Login Panel -->
+        <form class="auth__panel" data-auth="login">
+          <div class="form-field">
+            <label>Email</label>
+            <input class="input" type="email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-field">
+            <label>Password</label>
+            <input class="input" type="password" placeholder="••••••••" required />
+          </div>
+          <div class="form-row">
+            <button class="btn btn--primary" type="submit">Login</button>
+            <a class="btn btn--ghost" href="index.html">Cancel</a>
+          </div>
+          <div class="auth__or"><span>or</span></div>
+          <div class="social-row">
+            <button class="btn social social--google" type="button" id="googleLoginBtn">
+              <span class="social__icon">G</span>
+              <span>Continue with Google</span>
+            </button>
+            <button class="btn social social--facebook" type="button" id="facebookLoginBtn">
+              <span class="social__icon">f</span>
+              <span>Continue with Facebook</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Signup Panel -->
+        <form class="auth__panel" data-auth="signup" >
+          <div class="form-field">
+            <label>Name</label>
+            <input class="input" type="text" placeholder="Your full name" required />
+          </div>
+          <div class="form-field">
+            <label>Email</label>
+            <input class="input" type="email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-field">
+            <label>Password</label>
+            <input class="input" type="password" placeholder="Create a password" required />
+          </div>
+          <div class="form-row">
+            <button class="btn btn--primary" type="submit">Create Account</button>
+            <a class="btn btn--ghost" href="index.html">Cancel</a>
+          </div>
+          <div class="auth__or"><span>or</span></div>
+          <div class="social-row">
+            <button class="btn social social--google" type="button" id="googleSignupBtn" >
+              <span class="social__icon">G</span>
+              <span>Sign up with Google</span>
+            </button>
+            <button class="btn social social--facebook" type="button" id="facebookSignupBtn">
+              <span class="social__icon">f</span>
+              <span>Sign up with Facebook</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="auth__footer">
+        <span class="muted">By continuing, you agree to our</span>
+        <a class="link-muted" href="#">Terms</a>
+        <span class="muted">and</span>
+        <a class="link-muted" href="#">Privacy Policy</a>
+      </div>
+    </div>
+  </main>
+  <script type="module">
+   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCVZmortwiPrLezWCxQo53u60b4-IGgeWw",
+  authDomain: "tasktrek-e7a04.firebaseapp.com",
+  projectId: "tasktrek-e7a04",
+  storageBucket: "tasktrek-e7a04.firebasestorage.app",
+  messagingSenderId: "900463967783",
+  appId: "1:900463967783:web:9dc9485517aa908fbdd802",
+  measurementId: "G-6BCT9FME3V"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const provider = new GoogleAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
+
+
+// ✅ Login
+document.querySelector('[data-auth="login"]').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = e.target.querySelector('input[type="email"]').value;
+  const password = e.target.querySelector('input[type="password"]').value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    console.log("✅ Login successful");
+    window.location.href = "app.html";
+  } catch (err) {
+    alert("❌ Login failed: " + err.message);
+  }
+});
+
+// ✅ Signup
+document.querySelector('[data-auth="signup"]').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = e.target.querySelector('input[type="text"]').value;
+  const email = e.target.querySelector('input[type="email"]').value;
+  const password = e.target.querySelector('input[type="password"]').value;
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    await setDoc(doc(db, "users", user.uid), {
+      name,
+      email,
+      role: "member",
+      createdAt: new Date().toISOString(),
+      verified: user.emailVerified
+
+    });
+    console.log("✅ Signup successful");
+    window.location.href = "app.html";
+  } catch (err) {
+    alert("❌ Signup failed: " + err.message);
+  }
+});
+
+// ✅ Google Login
+const googleBtn = document.getElementById("googleLoginBtn");
+if (googleBtn) {
+  googleBtn.addEventListener("click", async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        name: user.displayName,
+        email: user.email,
+        role: "member",
+        createdAt: new Date().toISOString(),
+      }, { merge: true });
+
+      console.log("✅ Google login successful");
+      window.location.href = "app.html";
+    } catch (err) {
+      alert("❌ Google login failed: " + err.message);
+    }
+  });
+}
+const googleSignupBtn = document.getElementById("googleSignupBtn");
+if (googleSignupBtn) {
+  googleSignupBtn.addEventListener("click", async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        name: user.displayName,
+        email: user.email,
+        role: "member",
+        createdAt: new Date().toISOString(),
+        verified: user.emailVerified
+      }, { merge: true });
+
+      alert("✅ Google signup successful!");
+      window.location.href = "app.html";
+    } catch (err) {
+      alert("❌ Google signup failed: " + err.message);
+    }
+  });
+}
+const fbSignupBtn = document.getElementById("facebookSignupBtn");
+if (fbSignupBtn) {
+  fbSignupBtn.addEventListener("click", async () => {
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      const user = result.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        name: user.displayName,
+        email: user.email,
+        role: "member",
+        createdAt: new Date().toISOString(),
+        verified: user.emailVerified
+      }, { merge: true });
+
+      alert("✅ Facebook signup successful!");
+      window.location.href = "app.html";
+    } catch (err) {
+      alert("❌ Facebook signup failed: " + err.message);
+      console.error(err);
+    }
+  });
+}
+
+// ✅ Facebook Login
+const fbBtn = document.getElementById("facebookLoginBtn");
+if (fbBtn) {
+  fbBtn.addEventListener("click", async () => {
+    try {
+      console.log("FB button clicked");
+
+      const result = await signInWithPopup(auth, facebookProvider);
+      const user = result.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        name: user.displayName,
+        email: user.email,
+        role: "member",
+        createdAt: new Date().toISOString(),
+      }, { merge: true });
+
+      console.log("✅ Facebook login successful");
+      window.location.href = "app.html";
+    } catch (err) {
+      alert("❌ Facebook login failed: " + err.message);
+      console.error(err);
+    }
+  });
+}
+
+  </script>
+  
+  
+</body>
+</html>
+
