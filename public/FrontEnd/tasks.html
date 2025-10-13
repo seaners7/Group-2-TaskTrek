@@ -1,540 +1,259 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TaskTrek — Tasks</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TaskTrek — Tasks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <section class="app">
-    <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
-    <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
-      <span></span><span></span><span></span>
-    </label>
+    <section class="app">
+        <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
+        <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </label>
 
-    <aside class="sidebar">
-      <div class="sidebar__brand">
-        <span class="logo-dot"></span>
-        <span class="brand-text">TaskTrek</span>
-      </div>
+        <aside class="sidebar">
+            <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
+            <nav class="sidebar__nav">
+                <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
+                <a href="tasks.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
+                <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
+                <a href="groups.html" class="nav__item"><svg xmlns="http://www.w.3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
+                <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
+                <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
+                <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
+                <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
+            </nav>
+            <div class="sidebar__footer"><a class="btn btn--ghost" id="logout-btn" href="#">Logout</a></div>
+        </aside>
 
-      <nav class="sidebar__nav">
-        <a href="dashboard.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
-          <span>Dashboard</span>
-        </a>
-        <a href="tasks.html" class="nav__item active">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
-          <span>Tasks</span>
-        </a>
-        <a href="shop.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg>
-          <span>Shop</span>
-        </a>
-        <a href="groups.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Groups</span>
-        </a>
-        <a href="leaderboard.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
-          <span>Leaderboard</span>
-        </a>
-        <a href="activity.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <span>Activity</span>
-        </a>
-        <a href="team.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Team</span>
-        </a>
-        <a href="profile.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>Profile</span>
-        </a>
-      </nav>
-
-      <div class="sidebar__footer">
-        <a class="btn btn--ghost" href="index.html">Logout</a>
-      </div>
-    </aside>
-
-    <div class="content">
-      <section class="panel">
-        <div class="panel__header">
-          <h2>Tasks</h2>
-          <div class="panel__actions">
-            <select class="input" style="width: auto;" onchange="filterTasks(this.value)">
-              <option value="all">All Tasks</option>
-              <option value="available">Available</option>
-              <option value="in-progress">In Progress</option>
-              <option value="completed">Completed</option>
-              <option value="my-tasks">My Tasks</option>
-            </select>
-            <button class="btn btn--primary" onclick="openModal('addTaskModal')">Add Task</button>
-          </div>
+        <div class="content">
+            <section class="panel">
+                <div class="panel__header">
+                    <h2>Tasks</h2>
+                    <div class="panel__actions">
+                        <select class="input" style="width: auto;" onchange="filterTasks(this.value)">
+                            <option value="all">All Tasks</option>
+                            <option value="available">Available</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="my-tasks">My Tasks</option>
+                        </select>
+                        <button class="btn btn--primary" onclick="openModal('addTaskModal')">Add Task</button>
+                    </div>
+                </div>
+                
+                <div class="task-summary">
+                    <div class="stat-card"><span class="stat-label">Total Tasks</span><span class="stat-value" id="total-tasks">0</span></div>
+                    <div class="stat-card"><span class="stat-label">In Progress</span><span class="stat-value" id="in-progress-tasks">0</span></div>
+                    <div class="stat-card"><span class="stat-label">Completed</span><span class="stat-value" id="completed-tasks">0</span></div>
+                    <div class="stat-card"><span class="stat-label">My Points</span><span class="stat-value" id="my-points">...</span></div>
+                </div>
+                <div class="task-list"><p>Loading tasks...</p></div>
+            </section>
         </div>
-        
-        <div class="task-summary">
-          <div class="stat-card">
-            <span class="stat-label">Total Tasks</span>
-            <span class="stat-value" id="total-tasks">5</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">In Progress</span>
-            <span class="stat-value" id="in-progress-tasks">2</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Completed</span>
-            <span class="stat-value" id="completed-tasks">1</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">My Points</span>
-            <span class="stat-value" id="my-points">1,430</span>
-          </div>
+
+        <div id="addTaskModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add New Task</h3>
+                    <button class="btn btn--ghost" onclick="closeModal('addTaskModal')">&times;</button>
+                </div>
+                <form id="addTaskForm" class="modal-form">
+                    <div class="form-field"><label for="taskTitle">Task Title</label><input type="text" id="taskTitle" class="input" required></div>
+                    <div class="form-field"><label for="taskDescription">Description</label><textarea id="taskDescription" class="input" rows="3" required></textarea></div>
+                    <div class="form-field">
+                        <label for="taskDifficulty">Difficulty</label>
+                        <select id="taskDifficulty" class="input" required>
+                            <option value="">Select difficulty</option>
+                            <option value="bronze">🥉 Bronze</option>
+                            <option value="silver">🥈 Silver</option>
+                            <option value="gold">🥇 Gold</option>
+                        </select>
+                    </div>
+                    <div class="form-field"><label for="taskPoints">Points</label><input type="number" id="taskPoints" class="input" required min="1"></div>
+                    <div class="form-field"><label for="taskDueDate">Due Date</label><input type="date" id="taskDueDate" class="input" required></div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn--ghost" onclick="closeModal('addTaskModal')">Cancel</button>
+                        <button type="submit" class="btn btn--primary">Add Task</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="task-list">
-          <article class="task-card" data-status="available" data-assignee="" onclick="openTaskDetails(this)">
-            <div class="task-card__top">
-              <h3>Study for Math Exam</h3>
-              <span class="badge badge--gold">🥇 Gold</span>
-            </div>
-            <p>Complete chapters 5-8 of Calculus textbook and solve practice problems.</p>
-            <div class="task-meta">
-              <span>Created: 2025-01-15</span>
-              <span>Claimed: —</span>
-              <span>Done: —</span>
-              <span>By: —</span>
-              <span>Points: 150</span>
-              <span>Due: 2025-01-20</span>
-            </div>
-            <div class="task-actions">
-              <button class="btn btn--neon" onclick="claimTask(this); event.stopPropagation();">Claim Task</button>
-              <button class="btn btn--secondary" disabled>Mark as Done</button>
-            </div>
-          </article>
+    </section>
 
-          <article class="task-card" data-status="in-progress" data-assignee="sarah" onclick="openTaskDetails(this)">
-            <div class="task-card__top">
-              <h3>Group Project Research</h3>
-              <span class="badge badge--silver">🥈 Silver</span>
-            </div>
-            <p>Research renewable energy sources for the environmental science presentation.</p>
-            <div class="task-meta">
-              <span>Created: 2025-01-14</span>
-              <span>Claimed: 2025-01-15</span>
-              <span>Done: —</span>
-              <span>By: Sarah</span>
-              <span>Points: 100</span>
-              <span>Due: 2025-01-18</span>
-            </div>
-            <div class="task-actions">
-              <button class="btn btn--secondary" disabled>Claimed</button>
-              <button class="btn btn--primary" onclick="markAsDone(this); event.stopPropagation();">Mark as Done</button>
-            </div>
-          </article>
-
-          <article class="task-card" data-status="completed" data-assignee="mike" onclick="openTaskDetails(this)">
-            <div class="task-card__top">
-              <h3>Lab Report Writing</h3>
-              <span class="badge badge--bronze">🥉 Bronze</span>
-            </div>
-            <p>Write and format the chemistry lab report on acid-base reactions.</p>
-            <div class="task-meta">
-              <span>Created: 2025-01-12</span>
-              <span>Claimed: 2025-01-13</span>
-              <span>Done: 2025-01-16</span>
-              <span>By: Mike</span>
-              <span>Points: 75</span>
-              <span>Due: 2025-01-17</span>
-            </div>
-            <div class="task-actions">
-              <button class="btn btn--secondary" disabled>Claimed</button>
-              <button class="btn btn--success" disabled>Completed</button>
-            </div>
-          </article>
-
-          <article class="task-card" data-status="available" data-assignee="" onclick="openTaskDetails(this)">
-            <div class="task-card__top">
-              <h3>Literature Essay</h3>
-              <span class="badge badge--gold">🥇 Gold</span>
-            </div>
-            <p>Write a 2000-word analytical essay on Shakespeare's Hamlet.</p>
-            <div class="task-meta">
-              <span>Created: 2025-01-10</span>
-              <span>Claimed: —</span>
-              <span>Done: —</span>
-              <span>By: —</span>
-              <span>Points: 200</span>
-              <span>Due: 2025-01-25</span>
-            </div>
-            <div class="task-actions">
-              <button class="btn btn--neon" onclick="claimTask(this); event.stopPropagation();">Claim Task</button>
-              <button class="btn btn--secondary" disabled>Mark as Done</button>
-            </div>
-          </article>
-
-          <article class="task-card" data-status="in-progress" data-assignee="alex" onclick="openTaskDetails(this)">
-            <div class="task-card__top">
-              <h3>Physics Problem Set</h3>
-              <span class="badge badge--silver">🥈 Silver</span>
-            </div>
-            <p>Solve problems 1-15 from chapter 12 on electromagnetic fields.</p>
-            <div class="task-meta">
-              <span>Created: 2025-01-13</span>
-              <span>Claimed: 2025-01-14</span>
-              <span>Done: —</span>
-              <span>By: Alex</span>
-              <span>Points: 120</span>
-              <span>Due: 2025-01-19</span>
-            </div>
-            <div class="task-actions">
-              <button class="btn btn--secondary" disabled>Claimed</button>
-              <button class="btn btn--primary" onclick="markAsDone(this); event.stopPropagation();">Mark as Done</button>
-            </div>
-          </article>
-        </div>
-      </section>
-    </div>
-
-    <!-- Add Task Modal -->
-    <div id="addTaskModal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Add New Task</h3>
-          <button class="btn btn--ghost" onclick="closeModal('addTaskModal')">&times;</button>
-        </div>
-        <form class="modal-form" onsubmit="addTask(event)">
-          <div class="form-field">
-            <label for="taskTitle">Task Title</label>
-            <input type="text" id="taskTitle" class="input" required placeholder="Enter task title">
-          </div>
-          <div class="form-field">
-            <label for="taskDescription">Description</label>
-            <textarea id="taskDescription" class="input" rows="3" required placeholder="Describe the task details"></textarea>
-          </div>
-          <div class="form-field">
-            <label for="taskDifficulty">Difficulty</label>
-            <select id="taskDifficulty" class="input" required>
-              <option value="">Select difficulty</option>
-              <option value="bronze">🥉 Bronze</option>
-              <option value="silver">🥈 Silver</option>
-              <option value="gold">🥇 Gold</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="taskPoints">Points</label>
-            <input type="number" id="taskPoints" class="input" required placeholder="Points for completion" min="1">
-          </div>
-          <div class="form-field">
-            <label for="taskDueDate">Due Date</label>
-            <input type="date" id="taskDueDate" class="input" required>
-          </div>
-          <div class="modal-actions">
-            <button type="button" class="btn btn--ghost" onclick="closeModal('addTaskModal')">Cancel</button>
-            <button type="submit" class="btn btn--primary">Add Task</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Task Details Modal -->
-    <div id="taskDetailsModal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3 id="task-detail-title">Task Details</h3>
-          <button class="btn btn--ghost" onclick="closeModal('taskDetailsModal')">&times;</button>
-        </div>
-        <div class="modal-form">
-          <div class="task-detail-info">
-            <div class="task-detail-meta">
-              <div class="meta-item">
-                <strong>Status:</strong>
-                <span id="task-detail-status" class="status-badge">Available</span>
-              </div>
-              <div class="meta-item">
-                <strong>Difficulty:</strong>
-                <span id="task-detail-difficulty" class="badge">🥇 Gold</span>
-              </div>
-              <div class="meta-item">
-                <strong>Points:</strong>
-                <span id="task-detail-points">150</span>
-              </div>
-              <div class="meta-item">
-                <strong>Due Date:</strong>
-                <span id="task-detail-due">2025-01-20</span>
-              </div>
-              <div class="meta-item">
-                <strong>Assignee:</strong>
-                <span id="task-detail-assignee">—</span>
-              </div>
-            </div>
-            <div class="task-detail-description">
-              <h4>Description</h4>
-              <p id="task-detail-desc">Complete chapters 5-8 of Calculus textbook and solve practice problems.</p>
-            </div>
-            <div class="task-detail-history">
-              <h4>Activity History</h4>
-              <ul id="task-detail-history" class="task-history">
-                <li>Task created on 2025-01-15</li>
-              </ul>
-            </div>
-            <div class="task-detail-attachments">
-              <h4>Attachments</h4>
-              <div id="task-detail-files" class="attachments-list">
-                <p class="muted">No attachments</p>
-              </div>
-            </div>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn--ghost" onclick="closeModal('taskDetailsModal')">Close</button>
-            <button class="btn btn--primary" id="task-detail-action" onclick="handleTaskDetailAction()">Claim Task</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    // Modal functionality
-    function openModal(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) {
-        modal.style.display = 'flex';
-      }
-    }
-
-    function closeModal(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) {
-        modal.style.display = 'none';
-        // Reset form
-        const form = modal.querySelector('form');
-        if (form) form.reset();
-      }
-    }
-
-    // Close modal when clicking outside
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('modal')) {
-        e.target.style.display = 'none';
-      }
-    });
-
-    // Task filtering
-    function filterTasks(filter) {
-      const taskCards = document.querySelectorAll('.task-card');
+    <script type="module">
+        import { db, auth, onAuthStateChanged, doc, updateDoc, increment } from './firebase.js';
+        import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { collection, addDoc, query, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
       
-      taskCards.forEach(card => {
-        const status = card.dataset.status;
-        const assignee = card.dataset.assignee;
-        
-        let show = false;
-        
-        switch(filter) {
-          case 'all':
-            show = true;
-            break;
-          case 'available':
-            show = status === 'available';
-            break;
-          case 'in-progress':
-            show = status === 'in-progress';
-            break;
-          case 'completed':
-            show = status === 'completed';
-            break;
-          case 'my-tasks':
-            show = assignee === 'you' || assignee === 'alex'; // Assuming current user is Alex
-            break;
+        const taskListEl = document.querySelector('.task-list');
+        const addTaskForm = document.getElementById('addTaskForm');
+        const myPointsEl = document.getElementById('my-points');
+        const logoutBtn = document.getElementById('logout-btn');
+     
+        let currentUser = null;
+
+        window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
+        window.closeModal = (modalId) => document.getElementById(modalId).style.display = 'none';
+
+        // ✅ FIXED: Filter function restored
+        window.filterTasks = (filter) => {
+            const taskCards = document.querySelectorAll('.task-card');
+            taskCards.forEach(card => {
+                const status = card.dataset.status;
+                const assignee = card.dataset.assignee;
+                let show = false;
+                switch(filter) {
+                    case 'all': show = true; break;
+                    case 'available': show = status === 'available'; break;
+                    case 'in-progress': show = status === 'in-progress'; break;
+                    case 'completed': show = status === 'completed'; break;
+                    case 'my-tasks': show = assignee === currentUser.uid; break;
+                }
+                card.style.display = show ? 'block' : 'none';
+            });
+        };
+
+        // ✅ NEW: Simple date formatting helper
+        function formatDate(timestamp) {
+            if (!timestamp || !timestamp.toDate) return '—';
+            return timestamp.toDate().toLocaleDateString();
         }
+
+        function listenForTasks() {
+            const q = query(collection(db, "tasks"));
+            onSnapshot(q, (snapshot) => {
+                taskListEl.innerHTML = '';
+                if(snapshot.empty) taskListEl.innerHTML = '<p>No tasks created yet. Add one!</p>';
+                snapshot.forEach(doc => renderTask(doc.id, doc.data()));
+                updateTaskSummary();
+            });
+        }
+     
+        function renderTask(id, data) {
+            const card = document.createElement('article');
+            card.className = 'task-card';
+            card.dataset.id = id;
+            card.dataset.status = data.status || 'available';
+            card.dataset.assignee = data.assignee || '';
+            
+            const difficultyMap = { gold: '🥇 Gold', silver: '🥈 Silver', bronze: '🥉 Bronze' };
+            const isClaimedByMe = data.assignee === currentUser.uid;
+            const isAvailable = data.status === 'available';
+            const isInProgress = data.status === 'in-progress';
+            const isCompleted = data.status === 'completed';
+     
+            // ✅ FIXED: Task meta order and content
+            card.innerHTML = `
+                <div class="task-card__top">
+                    <h3>${data.title || 'Untitled Task'}</h3>
+                    <span class="badge badge--${data.difficulty}">${difficultyMap[data.difficulty] || ''}</span>
+                </div>
+                <p>${data.description || 'No description.'}</p>
+                <div class="task-meta">
+                    <span>Created: ${formatDate(data.createdAt)}</span>
+                    <span>Claimed: ${formatDate(data.claimedAt)}</span>
+                    <span>Done: ${formatDate(data.completedAt)}</span>
+                    <span>By: ${data.assigneeName || '—'}</span>
+                    <span>Points: ${data.points || 0}</span>
+                    <span>Due: ${data.dueDate || 'N/A'}</span>
+                </div>
+                <div class="task-actions">
+                    <button class="btn ${isAvailable ? 'btn--neon' : 'btn--secondary'}" ${!isAvailable ? 'disabled' : ''} onclick="claimTask(this)">
+                      ${isInProgress ? (isClaimedByMe ? 'You Claimed' : 'Claimed') : 'Claim Task'}
+                    </button>
+                    <button class="btn ${isInProgress && isClaimedByMe ? 'btn--primary' : 'btn--secondary'}" ${!(isInProgress && isClaimedByMe) ? 'disabled' : ''} onclick="markAsDone(this)">
+                      ${isCompleted ? 'Completed' : 'Mark as Done'}
+                    </button>
+                </div>
+            `;
+            taskListEl.appendChild(card);
+        }
+     
+        function updateTaskSummary() {
+            document.getElementById('total-tasks').textContent = document.querySelectorAll('.task-card').length;
+            document.getElementById('in-progress-tasks').textContent = document.querySelectorAll('.task-card[data-status="in-progress"]').length;
+            document.getElementById('completed-tasks').textContent = document.querySelectorAll('.task-card[data-status="completed"]').length;
+        }
+     
+        window.claimTask = async (button) => {
+            event.stopPropagation();
+            const card = button.closest('.task-card');
+            const taskId = card.dataset.id;
+            const taskTitle = card.querySelector('h3').textContent;
+            const taskRef = doc(db, "tasks", taskId);
+            
+            try {
+                await updateDoc(taskRef, {
+                    status: "in-progress",
+                    assignee: currentUser.uid,
+                    assigneeName: currentUser.displayName || "Anonymous",
+                    claimedAt: serverTimestamp() // ✅ ADDED: Track claim date
+                });
+                await addDoc(collection(db, "activities"), {
+                    userId: currentUser.uid, userName: currentUser.displayName || 'Anonymous', type: 'task-claimed',
+                    details: `claimed task: <em>${taskTitle}</em>`, createdAt: serverTimestamp()
+                });
+            } catch (err) { console.error("Error claiming task: ", err); }
+        };
+     
+        window.markAsDone = async (button) => {
+            event.stopPropagation();
+            const card = button.closest('.task-card');
+            const taskId = card.dataset.id;
+            const taskTitle = card.querySelector('h3').textContent;
+            const taskRef = doc(db, "tasks", taskId);
+            const userRef = doc(db, "users", currentUser.uid);
+     
+            try {
+                const points = parseInt(card.querySelector('.task-meta span:nth-child(5)').textContent.replace('Points: ', ''));
+                await updateDoc(taskRef, { 
+                    status: "completed",
+                    completedAt: serverTimestamp() // ✅ ADDED: Track completion date
+                });
+                await updateDoc(userRef, { points: increment(points) });
+                await addDoc(collection(db, "activities"), {
+                    userId: currentUser.uid, userName: currentUser.displayName || 'Anonymous', type: 'task-completed',
+                    details: `completed task: <em>${taskTitle}</em> for +${points} pts`, createdAt: serverTimestamp()
+                });
+            } catch (err) { console.error("Error completing task: ", err); }
+        };
         
-        card.style.display = show ? 'block' : 'none';
-      });
-      
-      updateTaskSummary();
-    }
-    
-    // Task details functionality
-    function openTaskDetails(taskCard) {
-      const title = taskCard.querySelector('h3').textContent;
-      const description = taskCard.querySelector('p').textContent;
-      const status = taskCard.dataset.status;
-      const difficulty = taskCard.querySelector('.badge').textContent;
-      const meta = taskCard.querySelector('.task-meta').querySelectorAll('span');
-      
-      // Extract task details
-      const points = meta[4].textContent.replace('Points: ', '');
-      const due = meta[5].textContent.replace('Due: ', '');
-      const assignee = meta[3].textContent.replace('By: ', '');
-      
-      // Update modal content
-      document.getElementById('task-detail-title').textContent = title;
-      document.getElementById('task-detail-desc').textContent = description;
-      document.getElementById('task-detail-status').textContent = status.charAt(0).toUpperCase() + status.slice(1);
-      document.getElementById('task-detail-difficulty').textContent = difficulty;
-      document.getElementById('task-detail-points').textContent = points;
-      document.getElementById('task-detail-due').textContent = due;
-      document.getElementById('task-detail-assignee').textContent = assignee;
-      
-      // Update action button based on status
-      const actionButton = document.getElementById('task-detail-action');
-      if (status === 'available') {
-        actionButton.textContent = 'Claim Task';
-        actionButton.className = 'btn btn--primary';
-      } else if (status === 'in-progress') {
-        actionButton.textContent = 'Mark as Done';
-        actionButton.className = 'btn btn--primary';
-      } else {
-        actionButton.textContent = 'View Only';
-        actionButton.className = 'btn btn--secondary';
-        actionButton.disabled = true;
-      }
-      
-      // Store reference to task card for action
-      actionButton.dataset.taskCard = taskCard;
-      
-      openModal('taskDetailsModal');
-    }
-    
-    function handleTaskDetailAction() {
-      const actionButton = document.getElementById('task-detail-action');
-      const taskCard = actionButton.dataset.taskCard;
-      
-      if (actionButton.textContent === 'Claim Task') {
-        claimTask(taskCard.querySelector('.btn'));
-        closeModal('taskDetailsModal');
-      } else if (actionButton.textContent === 'Mark as Done') {
-        markAsDone(taskCard.querySelector('.btn:last-child'));
-        closeModal('taskDetailsModal');
-      }
-    }
-    
-    // Update task summary counts
-    function updateTaskSummary() {
-      const allTasks = document.querySelectorAll('.task-card');
-      const inProgressTasks = document.querySelectorAll('.task-card[data-status="in-progress"]');
-      const completedTasks = document.querySelectorAll('.task-card[data-status="completed"]');
-      
-      document.getElementById('total-tasks').textContent = allTasks.length;
-      document.getElementById('in-progress-tasks').textContent = inProgressTasks.length;
-      document.getElementById('completed-tasks').textContent = completedTasks.length;
-    }
-    
-    // Task functionality
-    function claimTask(button) {
-      const taskCard = button.closest('.task-card');
-      const meta = taskCard.querySelector('.task-meta');
-      const metaSpans = meta.querySelectorAll('span');
-      
-      // Update claimed info
-      metaSpans[1].textContent = 'Claimed: ' + new Date().toISOString().split('T')[0];
-      metaSpans[3].textContent = 'By: You';
-      
-      // Update task card data
-      taskCard.dataset.status = 'in-progress';
-      taskCard.dataset.assignee = 'you';
-      
-      // Update buttons
-      button.textContent = 'Claimed';
-      button.className = 'btn btn--secondary';
-      button.disabled = true;
-      
-      const doneButton = button.nextElementSibling;
-      doneButton.disabled = false;
-      doneButton.className = 'btn btn--primary';
-      
-      // Update summary
-      updateTaskSummary();
-      
-      // Show success message
-      alert('Task claimed successfully!');
-    }
-
-    function markAsDone(button) {
-      const taskCard = button.closest('.task-card');
-      const meta = taskCard.querySelector('.task-meta');
-      const metaSpans = meta.querySelectorAll('span');
-      
-      // Update done info
-      metaSpans[2].textContent = 'Done: ' + new Date().toISOString().split('T')[0];
-      
-      // Update task card data
-      taskCard.dataset.status = 'completed';
-      
-      // Update button
-      button.textContent = 'Completed';
-      button.className = 'btn btn--success';
-      button.disabled = true;
-      
-      // Update summary and points
-      updateTaskSummary();
-      updatePoints(parseInt(metaSpans[4].textContent.replace('Points: ', '')));
-      
-      // Show success message
-      alert('Task completed! Points earned: ' + metaSpans[4].textContent.replace('Points: ', ''));
-    }
-    
-    function updatePoints(points) {
-      const currentPoints = parseInt(document.getElementById('my-points').textContent.replace(',', ''));
-      document.getElementById('my-points').textContent = (currentPoints + points).toLocaleString();
-    }
-
-    function addTask(event) {
-      event.preventDefault();
-      
-      const formData = new FormData(event.target);
-      const title = document.getElementById('taskTitle').value;
-      const description = document.getElementById('taskDescription').value;
-      const difficulty = document.getElementById('taskDifficulty').value;
-      const points = document.getElementById('taskPoints').value;
-      const dueDate = document.getElementById('taskDueDate').value;
-      
-      // Create new task card
-      const taskList = document.querySelector('.task-list');
-      const newTask = document.createElement('article');
-      newTask.className = 'task-card';
-      
-      const difficultyEmoji = difficulty === 'gold' ? '🥇' : difficulty === 'silver' ? '🥈' : '🥉';
-      const difficultyText = difficulty === 'gold' ? 'Gold' : difficulty === 'silver' ? 'Silver' : 'Bronze';
-      
-      newTask.innerHTML = `
-        <div class="task-card__top">
-          <h3>${title}</h3>
-          <span class="badge badge--${difficulty}">${difficultyEmoji} ${difficultyText}</span>
-        </div>
-        <p>${description}</p>
-        <div class="task-meta">
-          <span>Created: ${new Date().toISOString().split('T')[0]}</span>
-          <span>Claimed: —</span>
-          <span>Done: —</span>
-          <span>By: —</span>
-          <span>Points: ${points}</span>
-          <span>Due: ${dueDate}</span>
-        </div>
-        <div class="task-actions">
-          <button class="btn btn--neon" onclick="claimTask(this)">Claim Task</button>
-          <button class="btn btn--secondary" disabled>Mark as Done</button>
-        </div>
-      `;
-      
-      taskList.insertBefore(newTask, taskList.firstChild);
-      closeModal('addTaskModal');
-    }
-
-    // Active nav highlighting
-    const navItems = document.querySelectorAll('.nav__item');
-    navItems.forEach(item => {
-      if (item.getAttribute('href') === 'tasks.html') {
-        item.style.color = 'var(--text)';
-        item.style.background = 'rgba(124,58,237,0.14)';
-        item.style.borderColor = 'var(--outline)';
-        item.style.boxShadow = 'inset 0 0 0 1px rgba(124,58,237,0.25)';
-      }
-    });
-  </script>
+        addTaskForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentUser) return alert("You must be logged in to add a task.");
+            try {
+                await addDoc(collection(db, "tasks"), {
+                    title: addTaskForm.taskTitle.value, description: addTaskForm.taskDescription.value,
+                    difficulty: addTaskForm.taskDifficulty.value, points: parseInt(addTaskForm.taskPoints.value),
+                    dueDate: addTaskForm.taskDueDate.value, createdAt: serverTimestamp(), status: "available",
+                    assignee: null, assigneeName: null, createdBy: currentUser.uid,
+                    claimedAt: null, completedAt: null // ✅ ADDED: Initialize new date fields
+                });
+                closeModal('addTaskModal');
+                addTaskForm.reset();
+            } catch (err) { console.error("Error adding task:", err); }
+        });
+     
+        logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+        
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                const userRef = doc(db, "users", user.uid);
+                onSnapshot(userRef, (doc) => {
+                    if (doc.exists()) myPointsEl.textContent = (doc.data().points || 0).toLocaleString();
+                });
+                listenForTasks();
+            } else {
+                window.location.href = 'auth.html';
+            }
+        });
+    </script>
 </body>
 </html>

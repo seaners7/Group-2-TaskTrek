@@ -246,130 +246,98 @@
       </div>
     </div>
   </section>
-
-  <script>
-    let memberToRemove = null;
-    let isAdminMember = false;
-
-    // Modal functionality
-    function openModal(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) {
-        modal.style.display = 'flex';
+  <script type="module">
+    import { db, auth, onAuthStateChanged, doc, getDoc } from './firebase.js';
+    import { collection, query, where, getDocs, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  
+    const teamListEl = document.querySelector('.list--team');
+    const totalMembersEl = document.querySelector('.team-stats .stat-card:first-child .stat-value');
+    
+    let currentUser = null;
+    let activeGroupId = null;
+    let groupData = null;
+  
+    // --- Load Team Members for the Active Group ---
+    async function loadTeamMembers() {
+      if (!currentUser) return;
+  
+      // 1. Get active group ID from user document
+      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+      if (!userDoc.exists() || !userDoc.data().activeGroupId) {
+        teamListEl.innerHTML = "<li>Please select an active group first.</li>";
+        return;
       }
-    }
-
-    function closeModal(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) {
-        modal.style.display = 'none';
-        // Reset form
-        const form = modal.querySelector('form');
-        if (form) form.reset();
+      activeGroupId = userDoc.data().activeGroupId;
+  
+      // 2. Get the active group's document
+      const groupDoc = await getDoc(doc(db, "groups", activeGroupId));
+      if (!groupDoc.exists()) {
+        teamListEl.innerHTML = "<li>Could not find the active group.</li>";
+        return;
       }
-    }
-
-    // Close modal when clicking outside
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('modal')) {
-        e.target.style.display = 'none';
-      }
-    });
-
-    // Team management functionality
-    function filterMembers(filter) {
-      const members = document.querySelectorAll('.team-member');
+      groupData = groupDoc.data();
       
-      members.forEach(member => {
-        if (filter === 'all') {
-          member.style.display = 'flex';
-        } else {
-          const hasClass = member.classList.contains(filter);
-          member.style.display = hasClass ? 'flex' : 'none';
-        }
+      // 3. Fetch all member documents based on the 'members' array
+      const membersQuery = query(collection(db, "users"), where("__name__", "in", groupData.members));
+      const membersSnapshot = await getDocs(membersQuery);
+      
+      teamListEl.innerHTML = "";
+      totalMembersEl.textContent = membersSnapshot.size;
+  
+      membersSnapshot.forEach(memberDoc => {
+        renderMember(memberDoc.data(), memberDoc.id);
       });
     }
-
-    function viewProfile(memberName) {
-      alert(`Viewing profile for ${memberName}`);
-      // In a real app, this would navigate to the member's profile
-    }
-
-    function removeMember(memberName, isAdmin) {
-      memberToRemove = memberName;
-      isAdminMember = isAdmin;
-      
-      document.getElementById('memberToRemove').textContent = memberName;
-      openModal('removeMemberModal');
-    }
-
-    function confirmRemoveMember() {
-      if (memberToRemove) {
-        // Remove the member from the list
-        const members = document.querySelectorAll('.team-member');
-        members.forEach(member => {
-          const nameElement = member.querySelector('strong');
-          if (nameElement && nameElement.textContent === memberToRemove) {
-            member.remove();
-          }
-        });
-        
-        // Update total members count
-        const totalMembersElement = document.querySelector('.team-stats .stat-card:first-child .stat-value');
-        const currentCount = parseInt(totalMembersElement.textContent);
-        totalMembersElement.textContent = currentCount - 1;
-        
-        closeModal('removeMemberModal');
-        alert(`${memberToRemove} has been removed from the team.`);
-        memberToRemove = null;
-      }
-    }
-
-    function inviteMember(event) {
-      event.preventDefault();
-      
-      const email = document.getElementById('memberEmail').value;
-      const role = document.getElementById('memberRole').value;
-      const message = document.getElementById('memberMessage').value;
-      
-      // Simulate adding a new member
-      const membersList = document.querySelector('.list--team');
-      const newMember = document.createElement('li');
-      newMember.className = `list-card team-member ${role}`;
-      newMember.innerHTML = `
-        <div class="avatar"></div>
+  
+    // --- Render a Single Team Member ---
+    function renderMember(memberData, memberId) {
+      const isCurrentUser = memberId === currentUser.uid;
+      const isOwner = memberId === groupData.ownerId;
+      const currentUserIsOwner = currentUser.uid === groupData.ownerId;
+  
+      const li = document.createElement('li');
+      li.className = 'list-card team-member';
+      if(isCurrentUser) li.classList.add('current-user');
+  
+      li.innerHTML = `
+        <div class="avatar" style="background-image:url(${memberData.photoURL || ''})"></div>
         <div class="who">
-          <strong>New Member</strong>
-          <div class="muted">${role.charAt(0).toUpperCase() + role.slice(1)} • ${email}</div>
-          <div class="member-stats">0 pts • 0 tasks</div>
+          <strong>${memberData.name} ${isCurrentUser ? '(You)' : ''}</strong>
+          <div class="muted">${isOwner ? 'Admin' : 'Member'} • ${memberData.email}</div>
+          <div class="member-stats">${memberData.points || 0} pts • ${memberData.tasksCompleted || 0} tasks</div>
         </div>
         <div class="member-actions">
-          <button class="btn btn--ghost" onclick="viewProfile('New Member')">View</button>
-          <button class="btn btn--danger btn--ghostlike" onclick="removeMember('New Member', false)">Remove</button>
+          ${!isCurrentUser && currentUserIsOwner ? 
+              `<button class="btn btn--danger btn--ghostlike" onclick="removeMember('${memberId}', '${memberData.name}')">Remove</button>` : 
+              `<button class="btn btn--secondary" disabled>${isCurrentUser ? 'Current User' : 'View'}</button>`
+          }
         </div>
       `;
-      
-      membersList.appendChild(newMember);
-      
-      // Update total members count
-      const totalMembersElement = document.querySelector('.team-stats .stat-card:first-child .stat-value');
-      const currentCount = parseInt(totalMembersElement.textContent);
-      totalMembersElement.textContent = currentCount + 1;
-      
-      closeModal('addMemberModal');
-      alert(`Invitation sent to ${email}`);
+      teamListEl.appendChild(li);
     }
-
-    // Active nav highlighting
-    const navItems = document.querySelectorAll('.nav__item');
-    navItems.forEach(item => {
-      if (item.getAttribute('href') === 'team.html') {
-        item.style.color = 'var(--text)';
-        item.style.background = 'rgba(124,58,237,0.14)';
-        item.style.borderColor = 'var(--outline)';
-        item.style.boxShadow = 'inset 0 0 0 1px rgba(124,58,237,0.25)';
+    
+    // --- Remove a member (Admin function) ---
+    window.removeMember = async (memberId, memberName) => {
+      if (!confirm(`Are you sure you want to remove ${memberName}?`)) return;
+      
+      const groupRef = doc(db, "groups", activeGroupId);
+      await updateDoc(groupRef, {
+          members: arrayRemove(memberId)
+      });
+      
+      alert(`${memberName} has been removed.`);
+      loadTeamMembers(); // Refresh the list
+    }
+    
+    // --- Initialize Page ---
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        loadTeamMembers();
       }
     });
+  
   </script>
+
 </body>
 </html>

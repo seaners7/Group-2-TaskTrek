@@ -281,5 +281,54 @@
       }
     });
   </script>
+  <script type="module">
+    import { db, auth, onAuthStateChanged } from './firebase.js';
+    import { collection, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    
+    const leaderboardTableBody = document.querySelector(".leaderboard-table tbody");
+  
+    async function loadLeaderboard(currentUserId) {
+      const q = query(collection(db, "users"), orderBy("points", "desc"), limit(20));
+      const snapshot = await getDocs(q);
+  
+      leaderboardTableBody.innerHTML = ""; // Clear static data
+      let rank = 1;
+      snapshot.forEach(doc => {
+        const user = doc.data();
+        const isCurrentUser = doc.id === currentUserId;
+        
+        const row = document.createElement("tr");
+        row.className = `leaderboard-row ${isCurrentUser ? 'current-user' : ''}`;
+        
+        row.innerHTML = `
+          <td><div class="rank-badge rank-${rank}">${rank}</div></td>
+          <td>
+            <div class="member-info">
+              <div class="avatar" style="background-image: url(${user.photoURL || 'placeholder.png'})"></div>
+              <div>
+                <strong>${user.name} ${isCurrentUser ? '(You)' : ''}</strong>
+                <div class="muted">${user.email}</div>
+              </div>
+            </div>
+          </td>
+          <td><strong>${user.points.toLocaleString()}</strong></td>
+          <td>${user.tasksCompleted || 0}</td>
+          <td>${user.goldTasks || 0}</td>
+          <td>${user.silverTasks || 0}</td>
+          <td>${user.bronzeTasks || 0}</td>
+        `;
+        leaderboardTableBody.appendChild(row);
+        rank++;
+      });
+    }
+  
+    // --- Initialize Page ---
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        loadLeaderboard(user.uid);
+      }
+    });
+  </script>
+    
 </body>
 </html>

@@ -21,7 +21,6 @@
         <span class="logo-dot"></span>
         <span class="brand-text">TaskTrek</span>
       </div>
-
       <nav class="sidebar__nav">
         <a href="dashboard.html" class="nav__item">
           <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
@@ -40,25 +39,24 @@
           <span>Groups</span>
         </a>
         <a href="leaderboard.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
+           <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
           <span>Leaderboard</span>
         </a>
         <a href="activity.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+           <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           <span>Activity</span>
         </a>
         <a href="team.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+           <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span>Team</span>
         </a>
         <a href="profile.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+           <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
           <span>Profile</span>
         </a>
       </nav>
-
       <div class="sidebar__footer">
-        <a class="btn btn--ghost" href="index.html">Logout</a>
+        <a class="btn btn--ghost" href="index.html" id="logout-btn">Logout</a>
       </div>
     </aside>
 
@@ -67,13 +65,6 @@
         <div class="panel__header">
           <h2>Shop</h2>
           <div class="panel__actions">
-            <input class="input" type="text" placeholder="Search rewards..." style="width: 200px;" oninput="searchRewards(this.value)">
-            <select class="input" style="width: auto;" onchange="filterRewards(this.value)">
-              <option value="all">All Items</option>
-              <option value="affordable">I Can Afford</option>
-              <option value="expensive">Too Expensive</option>
-              <option value="available">Available</option>
-            </select>
             <button class="btn btn--primary" onclick="openModal('addItemModal')">Add Item</button>
           </div>
         </div>
@@ -81,91 +72,23 @@
         <div class="shop-summary">
           <div class="stat-card">
             <span class="stat-label">Your Points</span>
-            <span class="stat-value" id="user-points">1,430</span>
+            <span class="stat-value" id="user-points">...</span>
           </div>
-          <div class="stat-card">
-            <span class="stat-label">Available Items</span>
-            <span class="stat-value" id="available-count">8</span>
           </div>
-          <div class="stat-card">
-            <span class="stat-label">You Can Afford</span>
-            <span class="stat-value" id="affordable-count">6</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Total Redeemed</span>
-            <span class="stat-value" id="redeemed-count">8</span>
-          </div>
-        </div>
         
         <div class="shop-grid">
-          <div class="shop-item" data-name="lunch voucher" data-price="250" data-stock="12" data-affordable="true">
-            <div class="shop-thumb"></div>
-            <h3>Lunch Voucher</h3>
-            <div class="price">250 pts</div>
-            <div class="quantity">Stock: 12</div>
-            <button class="btn btn--primary" onclick="redeemItem(this)">Redeem</button>
-          </div>
-          <div class="shop-item" data-name="custom avatar" data-price="120" data-stock="5" data-affordable="true">
-            <div class="shop-thumb"></div>
-            <h3>Custom Avatar</h3>
-            <div class="price">120 pts</div>
-            <div class="quantity">Stock: 5</div>
-            <button class="btn btn--primary" onclick="redeemItem(this)">Redeem</button>
-          </div>
-          <div class="shop-item" data-name="school supplies pack" data-price="400" data-stock="8" data-affordable="true">
-            <div class="shop-thumb"></div>
-            <h3>School Supplies Pack</h3>
-            <div class="price">400 pts</div>
-            <div class="quantity">Stock: 8</div>
-            <button class="btn btn--primary" onclick="redeemItem(this)">Redeem</button>
-          </div>
-          <div class="shop-item" data-name="day off token" data-price="800" data-stock="3" data-affordable="false">
-            <div class="shop-thumb"></div>
-            <h3>Day Off Token</h3>
-            <div class="price">800 pts</div>
-            <div class="quantity">Stock: 3</div>
-            <button class="btn btn--secondary" disabled>Need 370 more pts</button>
-          </div>
-          <div class="shop-item" data-name="study snack pack" data-price="180" data-stock="15" data-affordable="true">
-            <div class="shop-thumb"></div>
-            <h3>Study Snack Pack</h3>
-            <div class="price">180 pts</div>
-            <div class="quantity">Stock: 15</div>
-            <button class="btn btn--primary" onclick="redeemItem(this)">Redeem</button>
-          </div>
-          <div class="shop-item" data-name="extra credit point" data-price="600" data-stock="10" data-affordable="false">
-            <div class="shop-thumb"></div>
-            <h3>Extra Credit Point</h3>
-            <div class="price">600 pts</div>
-            <div class="quantity">Stock: 10</div>
-            <button class="btn btn--secondary" disabled>Need 170 more pts</button>
-          </div>
-          <div class="shop-item" data-name="library pass" data-price="300" data-stock="20" data-affordable="true">
-            <div class="shop-thumb"></div>
-            <h3>Library Pass</h3>
-            <div class="price">300 pts</div>
-            <div class="quantity">Stock: 20</div>
-            <button class="btn btn--primary" onclick="redeemItem(this)">Redeem</button>
-          </div>
-          <div class="shop-item" data-name="gym access pass" data-price="350" data-stock="7" data-affordable="true">
-            <div class="shop-thumb"></div>
-            <h3>Gym Access Pass</h3>
-            <div class="price">350 pts</div>
-            <div class="quantity">Stock: 7</div>
-            <button class="btn btn--primary" onclick="redeemItem(this)">Redeem</button>
-          </div>
+          <p>Loading shop items...</p>
         </div>
       </section>
     </div>
 
-    <!-- Add Item Modal -->
     <div id="addItemModal" class="modal" style="display: none;">
       <div class="modal-content">
         <div class="modal-header">
           <h3>Add Shop Item</h3>
           <button class="btn btn--ghost" onclick="closeModal('addItemModal')">&times;</button>
         </div>
-        <form class="modal-form" onsubmit="addShopItem(event)">
+        <form id="addItemForm" class="modal-form">
           <div class="form-field">
             <label for="itemName">Item Name</label>
             <input type="text" id="itemName" class="input" required placeholder="Enter item name">
@@ -178,10 +101,6 @@
             <label for="itemQuantity">Quantity</label>
             <input type="number" id="itemQuantity" class="input" required placeholder="Stock quantity" min="1">
           </div>
-          <div class="form-field">
-            <label for="itemDescription">Description (Optional)</label>
-            <textarea id="itemDescription" class="input" rows="3" placeholder="Describe the item"></textarea>
-          </div>
           <div class="modal-actions">
             <button type="button" class="btn btn--ghost" onclick="closeModal('addItemModal')">Cancel</button>
             <button type="submit" class="btn btn--primary">Add Item</button>
@@ -189,252 +108,159 @@
         </form>
       </div>
     </div>
-
-    <!-- Redemption Confirmation Modal -->
-    <div id="redemptionModal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Confirm Redemption</h3>
-          <button class="btn btn--ghost" onclick="closeModal('redemptionModal')">&times;</button>
-        </div>
-        <div class="modal-form">
-          <div class="redemption-details">
-            <div class="item-preview">
-              <div class="shop-thumb"></div>
-              <div class="item-info">
-                <h4 id="confirm-item-name">Lunch Voucher</h4>
-                <p id="confirm-item-desc">Redeem this item for <strong id="confirm-item-cost">250 points</strong></p>
-              </div>
-            </div>
-            <div class="balance-info">
-              <div class="current-balance">
-                <span>Current Balance:</span>
-                <span id="current-balance">1,430 points</span>
-              </div>
-              <div class="after-redemption">
-                <span>After Redemption:</span>
-                <span id="after-balance">1,180 points</span>
-              </div>
-            </div>
-          </div>
-          <div class="modal-actions">
-            <button class="btn btn--ghost" onclick="closeModal('redemptionModal')">Cancel</button>
-            <button class="btn btn--primary" onclick="confirmRedemption()">Confirm Redemption</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <script>
-    // Modal functionality
-    function openModal(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) {
-        modal.style.display = 'flex';
-      }
+    
+  </section><script type="module">
+    import { db, auth, onAuthStateChanged, doc, getDoc, updateDoc, increment } from './firebase.js';
+    import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { collection, addDoc, query, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  
+    // --- UI Elements ---
+    const shopGridEl = document.querySelector('.shop-grid');
+    const userPointsEl = document.getElementById('user-points');
+    const addItemForm = document.getElementById('addItemForm');
+    const logoutBtn = document.querySelector('.sidebar__footer a');
+  
+    // --- Global State ---
+    let currentUser = null;
+    let userPoints = 0;
+  
+    // --- MODAL FUNCTIONS (Exposed to window) ---
+    window.openModal = (modalId) => {
+        document.getElementById(modalId).style.display = 'flex';
+    };
+  
+    window.closeModal = (modalId) => {
+        document.getElementById(modalId).style.display = 'none';
+    };
+  
+    // --- RENDER FUNCTIONS ---
+    function listenForShopItems() {
+      const q = query(collection(db, "shopItems"));
+      onSnapshot(q, (snapshot) => {
+        shopGridEl.innerHTML = ''; 
+        if(snapshot.empty) {
+            shopGridEl.innerHTML = '<p>No items in the shop yet. Add one!</p>';
+            return;
+        }
+        snapshot.forEach(doc => {
+          renderShopItem(doc.id, doc.data());
+        });
+      });
     }
-
-    function closeModal(modalId) {
-      const modal = document.getElementById(modalId);
-      if (modal) {
-        modal.style.display = 'none';
-        // Reset form
-        const form = modal.querySelector('form');
-        if (form) form.reset();
-      }
-    }
-
-    // Close modal when clicking outside
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('modal')) {
-        e.target.style.display = 'none';
-      }
-    });
-
-    // Shop search and filtering
-    function searchRewards(searchTerm) {
-      const shopItems = document.querySelectorAll('.shop-item');
-      const term = searchTerm.toLowerCase();
-      
-      shopItems.forEach(item => {
-        const name = item.dataset.name;
-        const title = item.querySelector('h3').textContent.toLowerCase();
-        
-        if (name.includes(term) || title.includes(term)) {
-          item.style.display = 'grid';
+  
+    function renderShopItem(id, data) {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'shop-item';
+      itemEl.dataset.id = id;
+      itemEl.dataset.price = data.price;
+      itemEl.dataset.name = data.name;
+  
+      const itemPrice = data.price || 0;
+      const canAfford = userPoints >= itemPrice;
+      const inStock = (data.stock || 0) > 0;
+  
+      let buttonHtml = `<button class="btn btn--secondary" disabled>Out of Stock</button>`;
+      if (inStock) {
+        if (canAfford) {
+          buttonHtml = `<button class="btn btn--primary" onclick="redeemItem(this)">Redeem</button>`;
         } else {
-          item.style.display = 'none';
+          const needed = itemPrice - userPoints;
+          buttonHtml = `<button class="btn btn--secondary" disabled>Need ${needed} more pts</button>`;
         }
-      });
-      
-      updateShopSummary();
-    }
-    
-    function filterRewards(filter) {
-      const shopItems = document.querySelectorAll('.shop-item');
-      const userPoints = parseInt(document.getElementById('user-points').textContent.replace(',', ''));
-      
-      shopItems.forEach(item => {
-        const price = parseInt(item.dataset.price);
-        const stock = parseInt(item.dataset.stock);
-        const isAffordable = price <= userPoints;
-        
-        let show = false;
-        
-        switch(filter) {
-          case 'all':
-            show = true;
-            break;
-          case 'affordable':
-            show = isAffordable && stock > 0;
-            break;
-          case 'expensive':
-            show = !isAffordable;
-            break;
-          case 'available':
-            show = stock > 0;
-            break;
-        }
-        
-        item.style.display = show ? 'grid' : 'none';
-      });
-      
-      updateShopSummary();
-    }
-    
-    function updateShopSummary() {
-      const visibleItems = document.querySelectorAll('.shop-item[style*="grid"], .shop-item:not([style])');
-      const userPoints = parseInt(document.getElementById('user-points').textContent.replace(',', ''));
-      
-      let affordableCount = 0;
-      let availableCount = 0;
-      
-      visibleItems.forEach(item => {
-        const price = parseInt(item.dataset.price);
-        const stock = parseInt(item.dataset.stock);
-        
-        if (price <= userPoints && stock > 0) {
-          affordableCount++;
-        }
-        if (stock > 0) {
-          availableCount++;
-        }
-      });
-      
-      document.getElementById('available-count').textContent = availableCount;
-      document.getElementById('affordable-count').textContent = affordableCount;
-    }
-    
-    // Shop functionality
-    let currentRedemptionItem = null;
-    
-    function redeemItem(button) {
-      const shopItem = button.closest('.shop-item');
-      const itemName = shopItem.querySelector('h3').textContent;
-      const price = parseInt(shopItem.dataset.price);
-      const userPoints = parseInt(document.getElementById('user-points').textContent.replace(',', ''));
-      
-      if (price > userPoints) {
-        alert('You don\'t have enough points for this item!');
-        return;
       }
-      
-      // Store reference for confirmation
-      currentRedemptionItem = shopItem;
-      
-      // Update confirmation modal
-      document.getElementById('confirm-item-name').textContent = itemName;
-      document.getElementById('confirm-item-cost').textContent = `${price} points`;
-      document.getElementById('current-balance').textContent = `${userPoints.toLocaleString()} points`;
-      document.getElementById('after-balance').textContent = `${(userPoints - price).toLocaleString()} points`;
-      
-      openModal('redemptionModal');
-    }
-    
-    function confirmRedemption() {
-      if (!currentRedemptionItem) return;
-      
-      const shopItem = currentRedemptionItem;
-      const itemName = shopItem.querySelector('h3').textContent;
-      const price = parseInt(shopItem.dataset.price);
-      const quantitySpan = shopItem.querySelector('.quantity');
-      const currentStock = parseInt(quantitySpan.textContent.split(': ')[1]);
-      const button = shopItem.querySelector('button');
-      
-      // Update stock
-      const newStock = currentStock - 1;
-      quantitySpan.textContent = `Stock: ${newStock}`;
-      
-      // Update user points
-      const userPoints = parseInt(document.getElementById('user-points').textContent.replace(',', ''));
-      document.getElementById('user-points').textContent = (userPoints - price).toLocaleString();
-      
-      // Update affordable status
-      const newAffordable = (userPoints - price) >= parseInt(shopItem.dataset.price);
-      shopItem.dataset.affordable = newAffordable;
-      
-      // Disable button if out of stock or too expensive
-      if (newStock === 0) {
-        button.textContent = 'Out of Stock';
-        button.className = 'btn btn--secondary';
-        button.disabled = true;
-        shopItem.dataset.affordable = 'false';
-      } else if (!newAffordable) {
-        const needed = price - (userPoints - price);
-        button.textContent = `Need ${needed} more pts`;
-        button.className = 'btn btn--secondary';
-        button.disabled = true;
-        shopItem.dataset.affordable = 'false';
-      }
-      
-      // Update redeemed count
-      const redeemedCount = parseInt(document.getElementById('redeemed-count').textContent);
-      document.getElementById('redeemed-count').textContent = redeemedCount + 1;
-      
-      closeModal('redemptionModal');
-      alert(`Successfully redeemed ${itemName} for ${price} points!`);
-      
-      currentRedemptionItem = null;
-      updateShopSummary();
-    }
-
-    function addShopItem(event) {
-      event.preventDefault();
-      
-      const itemName = document.getElementById('itemName').value;
-      const itemPrice = document.getElementById('itemPrice').value;
-      const itemQuantity = document.getElementById('itemQuantity').value;
-      const itemDescription = document.getElementById('itemDescription').value;
-      
-      // Create new shop item
-      const shopGrid = document.querySelector('.shop-grid');
-      const newItem = document.createElement('div');
-      newItem.className = 'shop-item';
-      
-      newItem.innerHTML = `
+  
+      itemEl.innerHTML = `
         <div class="shop-thumb"></div>
-        <h3>${itemName}</h3>
-        <div class="price">${itemPrice} pts</div>
-        <div class="quantity">Stock: ${itemQuantity}</div>
-        ${itemDescription ? `<div class="item-description">${itemDescription}</div>` : ''}
-        <button class="btn btn--primary" onclick="redeemItem(this)">Redeem</button>
+        <h3>${data.name || 'Unnamed Item'}</h3>
+        <div class="price">${itemPrice.toLocaleString()} pts</div>
+        <div class="quantity">Stock: ${data.stock || 0}</div>
+        ${buttonHtml}
       `;
-      
-      shopGrid.appendChild(newItem);
-      closeModal('addItemModal');
+      shopGridEl.appendChild(itemEl);
     }
-
-    // Active nav highlighting
-    const navItems = document.querySelectorAll('.nav__item');
-    navItems.forEach(item => {
-      if (item.getAttribute('href') === 'shop.html') {
-        item.style.color = 'var(--text)';
-        item.style.background = 'rgba(124,58,237,0.14)';
-        item.style.borderColor = 'var(--outline)';
-        item.style.boxShadow = 'inset 0 0 0 1px rgba(124,58,237,0.25)';
+  
+    // --- ACTION FUNCTIONS (Exposed to window) ---
+    window.redeemItem = async (button) => {
+      if (!currentUser) return alert('You must be logged in!');
+      
+      const itemEl = button.closest('.shop-item');
+      const itemId = itemEl.dataset.id;
+      const itemPrice = parseInt(itemEl.dataset.price);
+  
+      const itemRef = doc(db, "shopItems", itemId);
+      const userRef = doc(db, "users", currentUser.uid);
+      
+      try {
+        await runTransaction(db, async (transaction) => {
+          const itemDoc = await transaction.get(itemRef);
+          const userDoc = await transaction.get(userRef);
+  
+          if (!itemDoc.exists() || !userDoc.exists()) throw "Document does not exist!";
+          
+          const currentStock = itemDoc.data().stock;
+          const currentPoints = userDoc.data().points || 0; // Defensive check here too
+  
+          if (currentStock <= 0) throw "Sorry, this item is out of stock!";
+          if (currentPoints < itemPrice) throw "You don't have enough points for this item!";
+  
+          transaction.update(itemRef, { stock: increment(-1) });
+          transaction.update(userRef, { points: increment(-itemPrice) });
+        });
+        
+        alert(`Successfully redeemed ${itemEl.dataset.name}!`);
+      } catch (e) {
+        console.error("Redemption failed: ", e);
+        alert("Redemption failed: " + e);
+      }
+    };
+    
+    // --- EVENT LISTENERS ---
+    addItemForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newItem = {
+            name: addItemForm.itemName.value,
+            price: parseInt(addItemForm.itemPrice.value),
+            stock: parseInt(addItemForm.itemQuantity.value),
+            createdAt: serverTimestamp()
+        };
+        try {
+            await addDoc(collection(db, "shopItems"), newItem);
+            closeModal('addItemModal');
+            addItemForm.reset();
+        } catch (error) {
+            console.error("Error adding item: ", error);
+        }
+    });
+  
+    logoutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        signOut(auth).catch(err => console.error("Logout error:", err));
+    });
+  
+    // --- INITIALIZE PAGE ---
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        currentUser = user;
+        const userRef = doc(db, "users", user.uid);
+        
+        onSnapshot(userRef, (doc) => {
+            if (doc.exists()) {
+                // ✅ THE FIX IS HERE: Use a default of 0 if points field is missing
+                userPoints = doc.data().points || 0;
+                userPointsEl.textContent = userPoints.toLocaleString();
+                // Re-render the shop items in case the user's new point total allows them to buy something
+                listenForShopItems(); 
+            } else {
+              // Handle case where user exists in Auth but not in 'users' collection yet
+              userPointsEl.textContent = "0";
+              listenForShopItems();
+            }
+        });
+      } else {
+        window.location.href = 'auth.html';
       }
     });
   </script>
+
 </body>
 </html>

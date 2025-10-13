@@ -1,128 +1,181 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TaskTrek — Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <section class="app">
-    <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
-    <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
-      <span></span><span></span><span></span>
-    </label>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TaskTrek — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <section class="app">
+      <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
+      <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </label>
 
-    <aside class="sidebar">
-      <div class="sidebar__brand">
-        <span class="logo-dot"></span>
-        <span class="brand-text">TaskTrek</span>
-      </div>
-
-      <nav class="sidebar__nav">
-        <a href="dashboard.html" class="nav__item active">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
-          <span>Dashboard</span>
-        </a>
-        <a href="tasks.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
-          <span>Tasks</span>
-        </a>
-        <a href="shop.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg>
-          <span>Shop</span>
-        </a>
-        <a href="groups.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Groups</span>
-        </a>
-        <a href="leaderboard.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
-          <span>Leaderboard</span>
-        </a>
-        <a href="activity.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <span>Activity</span>
-        </a>
-        <a href="team.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Team</span>
-        </a>
-        <a href="profile.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>Profile</span>
-        </a>
-      </nav>
-
-      <div class="sidebar__footer">
-        <a class="btn btn--ghost" href="index.html">Logout</a>
-      </div>
-    </aside>
-
-    <div class="content">
-      <section class="panel">
-        <h2>Dashboard</h2>
-        <div class="cards">
-          <div class="stat-card">
-            <span class="stat-label">Total Tasks</span>
-            <span class="stat-value">128</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">In Progress</span>
-            <span class="stat-value">19</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Completed</span>
-            <span class="stat-value">87</span>
-          </div>
+      <aside class="sidebar">
+        <div class="sidebar__brand">
+          <span class="logo-dot"></span>
+          <span class="brand-text">TaskTrek</span>
         </div>
-        
-        <!-- Additional dashboard content -->
-        <div class="dashboard-grid" style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-          <div class="dashboard-card">
-            <h3>Recent Activity</h3>
-            <ul class="feed">
-              <li class="feed-item">
-                <span class="dot dot--gold"></span>
-                <div><strong>Alex</strong> completed <em>Study for Math Exam</em> — +150 pts</div>
-                <time>2h ago</time>
-              </li>
-              <li class="feed-item">
-                <span class="dot dot--silver"></span>
-                <div><strong>Sarah</strong> claimed <em>Group Project Research</em></div>
-                <time>5h ago</time>
-              </li>
-              <li class="feed-item">
-                <span class="dot dot--bronze"></span>
-                <div><strong>Mike</strong> redeemed <em>Lunch Voucher</em> — -250 pts</div>
-                <time>Yesterday</time>
-              </li>
-            </ul>
+
+        <nav class="sidebar__nav">
+          <a href="dashboard.html" class="nav__item active">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
+            <span>Dashboard</span>
+          </a>
+          <a href="tasks.html" class="nav__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+            <span>Tasks</span>
+          </a>
+          <a href="shop.html" class="nav__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg>
+            <span>Shop</span>
+          </a>
+          <a href="groups.html" class="nav__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Groups</span>
+          </a>
+          <a href="leaderboard.html" class="nav__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
+            <span>Leaderboard</span>
+          </a>
+          <a href="activity.html" class="nav__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>Activity</span>
+          </a>
+          <a href="team.html" class="nav__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <span>Team</span>
+          </a>
+          <a href="profile.html" class="nav__item">
+            <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profile</span>
+          </a>
+        </nav>
+
+        <div class="sidebar__footer">
+          <a class="btn btn--ghost" href="index.html">Logout</a>
+        </div>
+      </aside>
+
+      <div class="content">
+        <section class="panel">
+          <h2>Dashboard</h2>
+          <div class="cards">
+            <div class="stat-card">
+              <span class="stat-label">Total Tasks</span>
+              <span class="stat-value">128</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">In Progress</span>
+              <span class="stat-value">19</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Completed</span>
+              <span class="stat-value">87</span>
+            </div>
           </div>
           
-          <div class="dashboard-card">
-            <h3>Quick Stats</h3>
-            <div class="quick-stats">
-              <div class="quick-stat">
-                <span class="quick-stat-label">Current Streak</span>
-                <span class="quick-stat-value">9 days</span>
-              </div>
-              <div class="quick-stat">
-                <span class="quick-stat-label">Points This Week</span>
-                <span class="quick-stat-value">420 pts</span>
-              </div>
-              <div class="quick-stat">
-                <span class="quick-stat-label">Team Rank</span>
-                <span class="quick-stat-value">#2</span>
+          <!-- Additional dashboard content -->
+          <div class="dashboard-grid" style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="dashboard-card">
+              <h3>Recent Activity</h3>
+              <ul class="feed">
+                <li class="feed-item">
+                  <span class="dot dot--gold"></span>
+                  <div><strong>Alex</strong> completed <em>Study for Math Exam</em> — +150 pts</div>
+                  <time>2h ago</time>
+                </li>
+                <li class="feed-item">
+                  <span class="dot dot--silver"></span>
+                  <div><strong>Sarah</strong> claimed <em>Group Project Research</em></div>
+                  <time>5h ago</time>
+                </li>
+                <li class="feed-item">
+                  <span class="dot dot--bronze"></span>
+                  <div><strong>Mike</strong> redeemed <em>Lunch Voucher</em> — -250 pts</div>
+                  <time>Yesterday</time>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="dashboard-card">
+              <h3>Quick Stats</h3>
+              <div class="quick-stats">
+                <div class="quick-stat">
+                  <span class="quick-stat-label">Current Streak</span>
+                  <span class="quick-stat-value">9 days</span>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-stat-label">Points This Week</span>
+                  <span class="quick-stat-value">420 pts</span>
+                </div>
+                <div class="quick-stat">
+                  <span class="quick-stat-label">Team Rank</span>
+                  <span class="quick-stat-value">#2</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </div>
-  </section>
-</body>
-</html>
+        </section>
+      </div>
+    </section>
+    <script type="module" src="firebase.js"></script>
+    <script type="module">
+      import { db, auth, onAuthStateChanged, formatTimeAgo } from './firebase.js';
+      import { collection, getDocs, query, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    
+      // --- Main Function to Load Dashboard Data ---
+      async function loadDashboard(userId) {
+        if (!userId) return;
+    
+        // --- Load Task Stats ---
+        const tasksRef = collection(db, "tasks");
+        const q = query(tasksRef, where("assignee", "==", userId));
+        const snapshot = await getDocs(q);
+        
+        let completed = 0, inProgress = 0;
+        snapshot.forEach(doc => {
+          const task = doc.data();
+          if (task.status === "completed") completed++;
+          else if (task.status === "in-progress") inProgress++;
+        });
+    
+        document.querySelector('.stat-card:nth-child(1) .stat-value').textContent = snapshot.size;
+        document.querySelector('.stat-card:nth-child(2) .stat-value').textContent = inProgress;
+        document.querySelector('.stat-card:nth-child(3) .stat-value').textContent = completed;
+    
+        // --- Load Recent Activity ---
+        const feedList = document.querySelector(".feed");
+        const activitiesRef = query(collection(db, "activities"), orderBy("createdAt", "desc"), limit(5));
+        const activitySnap = await getDocs(activitiesRef);
+    
+        feedList.innerHTML = ""; // Clear static content
+        activitySnap.forEach(doc => {
+          const activity = doc.data();
+          const dotColor = activity.type.includes("task") ? "gold" : activity.type.includes("reward") ? "bronze" : "purple";
+          const li = document.createElement("li");
+          li.className = "feed-item";
+          li.innerHTML = `
+            <span class="dot dot--${dotColor}"></span>
+            <div><strong>${activity.userName}</strong> ${activity.details}</div>
+            <time>${formatTimeAgo(activity.createdAt)}</time>
+          `;
+          feedList.appendChild(li);
+        });
+      }
+    
+      // --- Initialize Page ---
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          loadDashboard(user.uid);
+        }
+      });
+    </script>
+      
+  </body>
+  </html>
