@@ -2,6 +2,7 @@
   "name": "tt",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
@@ -9,8 +10,13 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "firebase": "^12.3.0",
+    "ai": "^5.0.71",
+    "dotenv": "^17.2.3",
+    "firebase": "^12.4.0",
+    "firebase-admin": "^13.5.0",
     "next": "15.5.4",
+    "node-fetch": "^3.3.2",
+    "openai": "^6.3.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
@@ -24,5 +30,21 @@
     "eslint-config-next": "15.5.4",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+  },
+  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seaners7/Group-2-TaskTrek.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/seaners7/Group-2-TaskTrek/issues"
+  },
+  "homepage": "https://github.com/seaners7/Group-2-TaskTrek#readme"
 }

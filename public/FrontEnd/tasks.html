@@ -10,6 +10,11 @@
     <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+
+   
+
+
+
     <section class="app">
         <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
         <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
@@ -64,6 +69,43 @@
                     <button class="btn btn--ghost" onclick="closeModal('addTaskModal')">&times;</button>
                 </div>
                 <form id="addTaskForm" class="modal-form">
+
+<!--AI Frontend-->
+<div class="form-field">
+  <h3 style="margin-top:0px; margin-bottom: 8px;">AI Suggested Tasks:</h3>
+  <ul id="ai-suggestions" style="
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      list-style: none;
+      padding: 0;
+      margin: 0;">
+    <li style="color: gray;">No current AI Suggestions...</li>
+  </ul>
+</div>
+<style>
+  /* ✅ Optional: consistent with your theme */
+  #ai-suggestions button {
+    background: var(--bg-elev);
+    border: 1px solid var(--outline);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+
+  #ai-suggestions button:hover {
+    background: var(--btn-hover, #7c3aed);
+    transform: scale(1.05);
+  }
+
+  #ai-suggestions button:active {
+    transform: scale(0.95);
+  }
+</style>
+
                     <div class="form-field"><label for="taskTitle">Task Title</label><input type="text" id="taskTitle" class="input" required></div>
                     <div class="form-field"><label for="taskDescription">Description</label><textarea id="taskDescription" class="input" rows="3" required></textarea></div>
                     <div class="form-field">
@@ -192,7 +234,8 @@
                 await updateDoc(taskRef, {
                     status: "in-progress",
                     assignee: currentUser.uid,
-                    assigneeName: currentUser.displayName || "Anonymous",
+                    //assigneeName: currentUser.displayName || "Anonymous",
+                    assigneeName: (currentUser.displayName || "Anonymous").replace(/\s+/g, ""),
                     claimedAt: serverTimestamp() // ✅ ADDED: Track claim date
                 });
                 await addDoc(collection(db, "activities"), {
@@ -255,5 +298,65 @@
             }
         });
     </script>
+
+<!--AI suggestions-->
+    <script type="module">
+import { auth } from "./firebase.js";
+
+async function getAISuggestions() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  try {
+    // Remove spaces from display name before sending to API
+    const cleanName = user.displayName.replace(/\s+/g, "");
+    console.log("➡️ Fetching AI suggestions for:", cleanName);
+
+    const response = await fetch(`/api/aiSuggest?assigneeName=${encodeURIComponent(cleanName)}`);
+    const data = await response.json();
+
+    const suggestDiv = document.getElementById("ai-suggestions");
+    suggestDiv.innerHTML = ""; // clear previous
+
+    if (!response.ok || !data.suggestions || data.suggestions.length === 0) {
+      suggestDiv.innerHTML = "<li style='color:gray;'>No AI suggestions available.</li>";
+      return;
+    }
+
+    // ✅ Create clickable buttons
+    data.suggestions.forEach((task) => {
+      const li = document.createElement("li");
+      const btn = document.createElement("button");
+      btn.textContent = task;
+      btn.className = "btn btn--ghost";
+      btn.style.marginRight = "8px";
+
+      // Autofill Task Title input on click
+      btn.addEventListener("click", () => {
+        document.getElementById("taskTitle").value = task;
+      });
+
+      li.appendChild(btn);
+      suggestDiv.appendChild(li);
+    });
+
+    console.log("✅ AI Suggestions:", data.suggestions);
+  } catch (err) {
+    console.error("❌ Request failed:", err);
+  }
+}
+
+// 🧠 Load suggestions whenever the Add Task modal opens
+window.openModal = (modalId) => {
+  document.getElementById(modalId).style.display = "flex";
+  if (modalId === "addTaskModal") getAISuggestions();
+};
+
+window.closeModal = (modalId) => {
+  document.getElementById(modalId).style.display = "none";
+};
+</script>
+
+    
 </body>
 </html>
