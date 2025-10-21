@@ -81,9 +81,10 @@ Return each suggestion on a new line only, no need to format it like a list (exa
     const suggestions = aiResponse.split("\n").filter((line) => line.trim());
 
     res.status(200).json({ suggestions });
-  } catch (error) {
-  console.error("AI Suggestion Error:", error.message);
-  res.status(500).json({ error: `Server Error: ${error.message}` });
+} catch (error) {
+    console.error("Error fetching AI suggestions:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 }
 
 
