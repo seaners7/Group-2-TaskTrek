@@ -82,13 +82,8 @@ Return each suggestion on a new line only, no need to format it like a list (exa
 
     res.status(200).json({ suggestions });
   } catch (error) {
-  console.error("❌ Error fetching AI suggestions:", error);
-
-  // ✅ Return detailed error info in JSON for debugging (only for development)
-  res.status(500).json({
-    error: "Internal Server Error",
-    message: error.message || "Unknown error",
-    stack: error.stack || "No stack trace",
-  });
+  console.error("AI Suggestion Error:", error.message);
+  res.status(500).json({ error: `Server Error: ${error.message}` });
 }
+
 
