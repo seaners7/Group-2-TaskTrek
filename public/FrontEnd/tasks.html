@@ -300,7 +300,7 @@
     </script>
 
 <!--AI suggestions-->
-<script type="module">
+    <script type="module">
 import { auth } from "./firebase.js";
 
 async function getAISuggestions() {
@@ -313,30 +313,18 @@ async function getAISuggestions() {
     console.log("➡️ Fetching AI suggestions for:", cleanName);
 
     const response = await fetch(`/api/aiSuggest?assigneeName=${encodeURIComponent(cleanName)}`);
-
-    // Check if response is OK
-    if (!response.ok) {
-      const text = await response.text(); // Could be HTML or error text
-      console.error("❌ API returned non-OK response:", response.status, text);
-      const suggestDiv = document.getElementById("ai-suggestions");
-      suggestDiv.innerHTML = `<li style='color:red;'>Error fetching AI suggestions. See console.</li>`;
-      return;
-    }
-
-    // Parse JSON safely
     const data = await response.json();
 
     const suggestDiv = document.getElementById("ai-suggestions");
-    suggestDiv.innerHTML = ""; // clear previous suggestions
+    suggestDiv.innerHTML = ""; // clear previous
 
-    if (!data.result || data.result.length === 0) {
+    if (!response.ok || !data.suggestions || data.suggestions.length === 0) {
       suggestDiv.innerHTML = "<li style='color:gray;'>No AI suggestions available.</li>";
       return;
     }
 
     // ✅ Create clickable buttons
-    const tasks = Array.isArray(data.result) ? data.result : [data.result];
-    tasks.forEach((task) => {
+    data.suggestions.forEach((task) => {
       const li = document.createElement("li");
       const btn = document.createElement("button");
       btn.textContent = task;
@@ -352,12 +340,9 @@ async function getAISuggestions() {
       suggestDiv.appendChild(li);
     });
 
-    console.log("✅ AI Suggestions:", tasks);
-
+    console.log("✅ AI Suggestions:", data.suggestions);
   } catch (err) {
     console.error("❌ Request failed:", err);
-    const suggestDiv = document.getElementById("ai-suggestions");
-    suggestDiv.innerHTML = `<li style='color:red;'>Request failed. See console.</li>`;
   }
 }
 
@@ -371,7 +356,6 @@ window.closeModal = (modalId) => {
   document.getElementById(modalId).style.display = "none";
 };
 </script>
-
 
     
 </body>
