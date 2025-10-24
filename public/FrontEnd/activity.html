@@ -7,7 +7,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script>!function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}}();</script>
     <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* Optional: Theme icon color adaptation */
+        [data-theme="light"] .nav__icon { stroke: var(--text-muted); }
+        [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
+        .theme-toggle-btn .theme-icon--sun { stroke: white; }
+        [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); }
+    </style>
 </head>
 <body>
     <section class="app">
@@ -19,16 +27,24 @@
         <aside class="sidebar">
             <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
             <nav class="sidebar__nav">
-                <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
-                <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
-                <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
-                <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
-                <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
-                <a href="activity.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
-                <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
-                <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
+                 <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
+                 <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
+                 <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
+                 <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
+                 <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
+                 <a href="activity.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
+                 <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
+                 <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
             </nav>
-            <div class="sidebar__footer"><a class="btn btn--ghost" id="logout-btn" href="#">Logout</a></div>
+            <div class="sidebar__footer">
+                <div class="theme-toggle">
+                    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
+                        <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
+                </div>
+                <a class="btn btn--ghost" id="logout-btn" href="#">Logout</a>
+            </div>
         </aside>
 
         <div class="content">
@@ -37,10 +53,10 @@
                     <h2>Activity Feed</h2>
                     <div class="panel__actions">
                         <select class="input" style="width: auto;" onchange="filterActivity(this.value)">
-                            <option value="all">All Activities</option>
-                            <option value="task-completed">Tasks Completed</option>
-                            <option value="task-claimed">Tasks Claimed</option>
-                            <option value="reward-redeemed">Rewards Redeemed</option>
+                            <option value="all">All My Groups</option>
+                            <option value="current-group">Current Group Only</option>
+                            <option value="tasks">Tasks Only</option>
+                            <option value="rewards">Rewards Only</option>
                         </select>
                     </div>
                 </div>
@@ -67,10 +83,12 @@
         </div>
     </section>
 
+    <script src="theme.js"></script>
+
     <script type="module">
-        import { db, auth, onAuthStateChanged, formatTimeAgo } from './firebase.js';
+        import { db, auth, onAuthStateChanged, formatTimeAgo, doc } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { collection, query, orderBy, limit, onSnapshot, where, Timestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { collection, query, where, orderBy, limit, onSnapshot, Timestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // UI Elements
         const feedList = document.getElementById("activity-feed");
@@ -81,81 +99,139 @@
             rewards: document.getElementById('stat-rewards'),
         };
 
-        window.filterActivity = (type) => {
+        // Global State
+        let currentUser = null;
+        let activeGroupId = null;
+        let joinedGroupIds = []; // Stores IDs of groups the user is in
+        let unsubscribeActivityListener = null; // To stop the old listener
+
+        // ✅ Updated filter function
+        window.filterActivity = (category) => {
             const feedItems = document.querySelectorAll('.feed-item');
             feedItems.forEach(item => {
-                item.style.display = (type === 'all' || item.dataset.type === type) ? 'grid' : 'none';
+                let show = false;
+                const itemType = item.dataset.type || '';
+                const itemGroupId = item.dataset.groupId || '';
+
+                switch (category) {
+                    case 'all':
+                        // The main query already filters by joinedGroupIds
+                        show = true;
+                        break;
+                    case 'current-group':
+                        // Show only if item's groupID matches the active group ID
+                        show = itemGroupId === activeGroupId;
+                        break;
+                    case 'tasks':
+                        show = itemType.startsWith('task-');
+                        break;
+                    case 'rewards':
+                        show = itemType === 'reward-redeemed';
+                        break;
+                }
+                item.style.display = show ? 'grid' : 'none';
             });
         };
 
-        function listenForActivities() {
-            const q = query(collection(db, "activities"), orderBy("createdAt", "desc"), limit(50));
-            
-            onSnapshot(q, (snapshot) => {
-                feedList.innerHTML = "";
-                if (snapshot.empty) {
-                    feedList.innerHTML = "<li>No activity yet. Go complete a task!</li>";
+        // --- Fetch Joined Groups and Listen for Activities ---
+        async function initializeActivityFeed(userId) {
+            // 1. Get user's active group ID
+            try {
+                const userDoc = await getDocs(doc(db, "users", userId));
+                if (userDoc.exists()) {
+                    activeGroupId = userDoc.data().activeGroupId;
                 }
+            } catch (e) {
+                console.error("Error getting user doc:", e);
+            }
+            
+            // 2. Get all groups the user is a member of
+            try {
+                const groupsQuery = query(collection(db, "groups"), where("members", "array-contains", userId));
+                const groupsSnapshot = await getDocs(groupsQuery);
+                joinedGroupIds = groupsSnapshot.docs.map(doc => doc.id); // Store the IDs
                 
-                // For calculating stats
-                let todayCount = 0;
-                let tasksCount = 0;
-                let rewardsCount = 0;
-                const today = new Date();
-                today.setHours(0, 0, 0, 0); // Start of today
-                const todayTimestamp = Timestamp.fromDate(today);
+                if (joinedGroupIds.length > 0) {
+                    // 3. Now listen for activities *only* from those groups
+                    listenForActivities();
+                } else {
+                    feedList.innerHTML = "<li>You are not a member of any groups. Join one to see activity.</li>";
+                }
+            } catch (e) {
+                 console.error("Error fetching user's groups:", e);
+                 feedList.innerHTML = "<li>Error loading group data.</li>";
+            }
+        }
+
+        function listenForActivities() {
+            // Stop any previous listener
+            if (unsubscribeActivityListener) unsubscribeActivityListener();
+
+            if (!joinedGroupIds || joinedGroupIds.length === 0) {
+                 feedList.innerHTML = "<li>No groups found.</li>";
+                 return;
+            }
+
+            // ✅ Query: Where 'groupId' is IN the list of joined groups
+            // ✅ Limit: to 15
+            const q = query(
+                collection(db, "activities"),
+                where("groupId", "in", joinedGroupIds),
+                orderBy("createdAt", "desc"),
+                limit(15) 
+            );
+            
+            unsubscribeActivityListener = onSnapshot(q, (snapshot) => {
+                feedList.innerHTML = "";
+                if (snapshot.empty) feedList.innerHTML = "<li>No activity yet.</li>";
+                
+                let todayCount = 0, tasksCount = 0, rewardsCount = 0;
+                const todayStart = Timestamp.fromDate(new Date());
+                todayStart._seconds -= todayStart._seconds % 86400;
 
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     renderActivityItem(data);
 
-                    // Calculate stats
-                    if (data.createdAt >= todayTimestamp) {
-                        todayCount++;
-                    }
-                    if (data.type === 'task-completed') {
-                        tasksCount++;
-                    }
-                    if (data.type === 'reward-redeemed') {
-                        rewardsCount++;
-                    }
+                    // Calculate stats from the 15 fetched items
+                    if (data.createdAt >= todayStart) todayCount++;
+                    if (data.type === 'task-completed') tasksCount++;
+                    if (data.type === 'reward-redeemed') rewardsCount++;
                 });
 
-                // Update stat cards
                 stats.today.textContent = todayCount;
                 stats.tasks.textContent = tasksCount;
                 stats.rewards.textContent = rewardsCount;
+            }, (error) => {
+                 console.error("Activity listener failed (Index required?):", error.message);
+                 feedList.innerHTML = "<li>Error loading feed. Check console.</li>";
             });
         }
         
         function renderActivityItem(data) {
             const li = document.createElement("li");
             li.className = "feed-item";
-            li.dataset.type = data.type; 
+            li.dataset.type = data.type; // Needed for filtering
+            li.dataset.groupId = data.groupId; // ✅ Added groupId for filtering
 
             let dotColor = "gray";
             if (data.type?.includes("task")) dotColor = "gold";
             if (data.type?.includes("reward")) dotColor = "bronze";
             if (data.type?.includes("member")) dotColor = "purple";
 
-            li.innerHTML = `
-                <span class="dot dot--${dotColor}"></span>
-                <div><strong>${data.userName || "Someone"}</strong> ${data.details || ''}</div>
-                <time>${formatTimeAgo(data.createdAt)}</time>
-            `;
+            li.innerHTML = `<span class="dot dot--${dotColor}"></span><div><strong>${data.userName || "Someone"}</strong> ${data.details || ''}</div><time>${formatTimeAgo(data.createdAt)}</time>`;
             feedList.appendChild(li);
         }
 
-        logoutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            signOut(auth);
-        });
+        logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
 
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                listenForActivities();
+                currentUser = user;
+                initializeActivityFeed(user.uid); // Start the process
             } else {
                 window.location.href = 'auth.html';
+                if (unsubscribeActivityListener) unsubscribeActivityListener(); // Clean up on logout
             }
         });
     </script>

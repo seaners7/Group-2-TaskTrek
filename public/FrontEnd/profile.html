@@ -7,14 +7,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script>!function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}}();</script>
     <link rel="stylesheet" href="styles.css" />
     <style>
         /* Small style tweaks for dynamic content */
         .profile__left { text-align: center; }
         .profile__left .avatar { margin-left: auto; margin-right: auto; }
+        /* Style unlocked achievements/badges */
         .achievement-card:not(.unlocked) { opacity: 0.4; filter: grayscale(80%); }
-        .badges .pill { display: none; }
-        .badges .pill.unlocked { display: inline-block; }
+        .badges .pill { display: none; } /* Hide pills by default */
+        .badges .pill.unlocked { display: inline-block; } /* Show unlocked pills */
+        /* Optional: Theme icon color adaptation */
+        [data-theme="light"] .nav__icon { stroke: var(--text-muted); }
+        [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
+        .theme-toggle-btn .theme-icon--sun { stroke: white; }
+        [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); }
     </style>
 </head>
 <body>
@@ -27,16 +34,24 @@
         <aside class="sidebar">
             <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
             <nav class="sidebar__nav">
-                <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
-                <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
-                <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
-                <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
-                <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
-                <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
-                <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
-                <a href="profile.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
+                 <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
+                 <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
+                 <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
+                 <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
+                 <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
+                 <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
+                 <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
+                 <a href="profile.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
             </nav>
-            <div class="sidebar__footer"><a class="btn btn--ghost" id="logout-btn" href="#">Logout</a></div>
+            <div class="sidebar__footer">
+                 <div class="theme-toggle">
+                     <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
+                         <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                         <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                     </button>
+                 </div>
+                <a class="btn btn--ghost" id="logout-btn" href="#">Logout</a>
+            </div>
         </aside>
 
         <div class="content">
@@ -58,12 +73,15 @@
                         </div>
                         <div class="badges">
                             <span class="pill pill--gold" data-badge="gold-hunter">🥇 Gold Hunter</span>
+                            <span class="pill pill--silver" data-badge="silver-streak">🥈 Silver Streak</span>
+                            <span class="pill pill--bronze" data-badge="bronze-beginner">🥉 Bronze Beginner</span>
                             <span class="pill pill--purple" data-badge="task-master">🎯 Task Master</span>
-                            <span class="pill pill--green" data-badge="streaker">⚡ Streaker</span>
+                            <span class="pill pill--green" data-badge="early-bird">⚡ Early Bird</span>
+                            <span class="pill pill--blue" data-badge="team-player">🏆 Team Player</span>
                         </div>
                     </div>
                     <div class="profile__right">
-                        <div class="cards">
+                         <div class="cards">
                             <div class="stat-card"><span class="stat-label">Total Points</span><span id="stat-points" class="stat-value">0</span></div>
                             <div class="stat-card"><span class="stat-label">Tasks Completed</span><span id="stat-tasks-completed" class="stat-value">0</span></div>
                             <div class="stat-card"><span class="stat-label">Current Streak</span><span id="stat-streak" class="stat-value">0 days</span></div>
@@ -78,8 +96,11 @@
                             <h3>Achievements</h3>
                             <ul id="achievements-list" class="achievements__list">
                                 <li class="achievement-card" data-achievement="task-master"><div class="achievement-icon">🎯</div><div class="achievement-info"><strong>Task Master</strong><div class="muted">Complete 50 tasks</div></div></li>
+                                <li class="achievement-card" data-achievement="early-bird"><div class="achievement-icon">⚡</div><div class="achievement-info"><strong>Early Bird</strong><div class="muted">Complete 10 tasks before 9 AM</div></div></li>
+                                <li class="achievement-card" data-achievement="team-player"><div class="achievement-icon">🏆</div><div class="achievement-info"><strong>Team Player</strong><div class="muted">Help 5 team members</div></div></li>
+                                <li class="achievement-card" data-achievement="streak-master"><div class="achievement-icon">🔥</div><div class="achievement-info"><strong>Streak Master</strong><div class="muted">7-day completion streak</div></div></li>
                                 <li class="achievement-card" data-achievement="gold-hunter"><div class="achievement-icon">🥇</div><div class="achievement-info"><strong>Gold Hunter</strong><div class="muted">Complete 10 Gold tasks</div></div></li>
-                                <li class="achievement-card" data-achievement="streak-master"><div class="achievement-icon">🔥</div><div class="achievement-info"><strong>Streak Master</strong><div class="muted">Maintain a 7-day streak</div></div></li>
+                                <li class="achievement-card" data-achievement="scholar"><div class="achievement-icon">🎓</div><div class="achievement-info"><strong>Scholar</strong><div class="muted">Complete 20 academic tasks</div></div></li>
                             </ul>
                         </div>
                         
@@ -94,48 +115,70 @@
 
         <div id="editProfileModal" class="modal" style="display: none;">
             <div class="modal-content">
-              <div class="modal-header">
-                <h3>Edit Profile</h3>
-                <button class="btn btn--ghost" onclick="closeModal('editProfileModal')">&times;</button>
-              </div>
-              <form id="editProfileForm" class="modal-form">
-                <div class="form-field"><label for="profileNameInput">Full Name</label><input type="text" id="profileNameInput" class="input" required></div>
-                <div class="form-field"><label for="profileUsernameInput">Username</label><input type="text" id="profileUsernameInput" class="input" placeholder="Your unique @username"></div>
-                <div class="form-field"><label for="profileBioInput">Bio</label><textarea id="profileBioInput" class="input" rows="3" placeholder="Tell us about yourself"></textarea></div>
-                <div class="modal-actions">
-                  <button type="button" class="btn btn--ghost" onclick="closeModal('editProfileModal')">Cancel</button>
-                  <button type="submit" class="btn btn--primary">Save Changes</button>
-                </div>
-              </form>
+                <div class="modal-header"><h3>Edit Profile</h3><button class="btn btn--ghost" onclick="closeModal('editProfileModal')">&times;</button></div>
+                <form id="editProfileForm" class="modal-form">
+                    <div class="form-field"><label for="profileName">Full Name</label><input type="text" id="profileName" class="input" required></div>
+                    <div class="form-field"><label for="profileUsername">Username</label><input type="text" id="profileUsername" class="input" placeholder="@yourusername"></div>
+                    <div class="form-field"><label for="profileBio">Bio</label><textarea id="profileBio" class="input" rows="3" placeholder="Tell us about yourself"></textarea></div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn--ghost" onclick="closeModal('editProfileModal')">Cancel</button>
+                        <button type="submit" class="btn btn--primary">Save Changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </section>
+
+    <script src="theme.js"></script>
 
     <script type="module">
         import { db, auth, onAuthStateChanged, doc, updateDoc, formatTimeAgo } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { onSnapshot, collection, query, where, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // UI Elements
-        const profileNameEl = document.getElementById('profile-name'), profileUsernameEl = document.getElementById('profile-username'),
-              profileBioEl = document.getElementById('profile-bio'), profileAvatarEl = document.getElementById('profile-avatar'),
-              logoutBtn = document.getElementById('logout-btn'), activityFeedEl = document.getElementById('activity-feed');
+        // UI Elements - Using querySelector for consistency with original HTML structure
+        const profileNameEl = document.querySelector('.profile__left h3');
+        const profileUsernameEl = document.querySelector('.profile__left .muted'); // Targets the element below h3
+        const profileBioEl = document.querySelector('.profile-bio p');
+        const profileAvatarEl = document.querySelector('.profile__left .avatar');
+        const logoutBtn = document.querySelector('.sidebar__footer a#logout-btn, .sidebar__footer a[href="index.html"]'); // More robust selector
+        const activityFeedEl = document.querySelector('.recent-activity .feed');
         
-        const stats = {
-            points: document.getElementById('stat-points'), tasksCompleted: document.getElementById('stat-tasks-completed'),
-            streak: document.getElementById('stat-streak'), teamRank: document.getElementById('stat-team-rank'),
-            gold: document.getElementById('stat-gold'), silver: document.getElementById('stat-silver'),
-            bronze: document.getElementById('stat-bronze'), rewards: document.getElementById('stat-rewards'),
+        const stats = { // Target specific stat cards by index or more specific selectors if needed
+            points: document.querySelector('.cards .stat-card:nth-child(1) .stat-value'),
+            tasksCompleted: document.querySelector('.cards .stat-card:nth-child(2) .stat-value'),
+            streak: document.querySelector('.cards .stat-card:nth-child(3) .stat-value'),
+            teamRank: document.querySelector('.cards .stat-card:nth-child(4) .stat-value'),
+            gold: document.querySelector('.cards .stat-card:nth-child(5) .stat-value'),
+            silver: document.querySelector('.cards .stat-card:nth-child(6) .stat-value'),
+            bronze: document.querySelector('.cards .stat-card:nth-child(7) .stat-value'),
+            rewards: document.querySelector('.cards .stat-card:nth-child(8) .stat-value'),
         };
         
-        const editForm = document.getElementById('editProfileForm'), profileNameInput = document.getElementById('profileNameInput'),
-              profileUsernameInput = document.getElementById('profileUsernameInput'), profileBioInput = document.getElementById('profileBioInput');
+        // Modal Form Inputs - Using original IDs
+        const editForm = document.querySelector('#editProfileModal .modal-form');
+        const profileNameInput = document.getElementById('profileName');
+        const profileUsernameInput = document.getElementById('profileUsername');
+        const profileBioInput = document.getElementById('profileBio');
         
         let currentUserRef = null;
 
+        // Global Modal Functions
         window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
-        window.closeModal = (modalId) => document.getElementById(modalId).style.display = 'none';
+        window.closeModal = (modalId) => {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+            // Don't reset form here, pre-fill happens on load
+        };
+        // Close modal on outside click (from original script)
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeModal(e.target.id);
+            }
+        });
 
+
+        // --- Render Profile Data ---
         function renderProfile(userData, userAuth) {
             profileNameEl.textContent = userData.name || 'Unnamed User';
             profileUsernameEl.textContent = userData.username ? `@${userData.username}` : userAuth.email;
@@ -145,12 +188,15 @@
             stats.points.textContent = (userData.points || 0).toLocaleString();
             stats.streak.textContent = `${userData.streak || 0} days`;
             
+            // Pre-fill edit form
             profileNameInput.value = userData.name || '';
             profileUsernameInput.value = userData.username || '';
             profileBioInput.value = userData.bio || '';
         }
 
+        // --- Listen for Live Stats (Tasks, Rewards) ---
         function listenForLiveStats(userId) {
+            // Task counts by difficulty
             const tasksQuery = query(collection(db, "tasks"), where("assignee", "==", userId), where("status", "==", "completed"));
             onSnapshot(tasksQuery, (snapshot) => {
                 let gold = 0, silver = 0, bronze = 0;
@@ -160,41 +206,58 @@
                 });
                 stats.gold.textContent = gold; stats.silver.textContent = silver; stats.bronze.textContent = bronze;
                 stats.tasksCompleted.textContent = snapshot.size;
-                checkAchievements({ tasksCompleted: snapshot.size, goldTasks: gold });
+                checkAchievementsAndBadges({ tasksCompleted: snapshot.size, goldTasks: gold }); // Pass stats
             });
 
-            // This query might require an index. If stats don't update, check the console for a link.
+            // Rewards redeemed count
             const rewardsQuery = query(collection(db, "activities"), where("userId", "==", userId), where("type", "==", "reward-redeemed"));
             onSnapshot(rewardsQuery, (snapshot) => {
                 stats.rewards.textContent = snapshot.size;
-            }, (error) => {
-                console.error("Rewards stat listener failed. You might need to create a Firestore index. Check the error message for a link:", error.message);
-            });
+            }, (error) => console.error("Rewards stat listener failed (Index needed?):", error.message));
         }
         
-        function checkAchievements(userStats) {
-            const streak = parseInt(stats.streak.textContent) || 0;
-            // Achievements list
-            document.querySelector('[data-achievement="task-master"]').classList.toggle('unlocked', userStats.tasksCompleted >= 50);
-            document.querySelector('[data-achievement="gold-hunter"]').classList.toggle('unlocked', userStats.goldTasks >= 10);
-            document.querySelector('[data-achievement="streak-master"]').classList.toggle('unlocked', streak >= 7);
-            // Badges (Pills) under bio
-            document.querySelector('[data-badge="task-master"]').classList.toggle('unlocked', userStats.tasksCompleted >= 50);
-            document.querySelector('[data-badge="gold-hunter"]').classList.toggle('unlocked', userStats.goldTasks >= 10);
-            document.querySelector('[data-badge="streaker"]').classList.toggle('unlocked', streak >= 7);
+        // --- Check and Update Achievements & Badges ---
+        function checkAchievementsAndBadges(userStats) {
+             const streak = parseInt(stats.streak.textContent) || 0; // Get current streak from UI
+            
+             // --- Large Achievement Cards ---
+             document.querySelector('[data-achievement="task-master"]')?.classList.toggle('unlocked', userStats.tasksCompleted >= 50);
+             document.querySelector('[data-achievement="gold-hunter"]')?.classList.toggle('unlocked', userStats.goldTasks >= 10);
+             document.querySelector('[data-achievement="streak-master"]')?.classList.toggle('unlocked', streak >= 7);
+             // Add checks for other achievements (early-bird, team-player, scholar) based on relevant data if available
+             // document.querySelector('[data-achievement="early-bird"]')?.classList.toggle('unlocked', /* condition */);
+             // document.querySelector('[data-achievement="team-player"]')?.classList.toggle('unlocked', /* condition */);
+             // document.querySelector('[data-achievement="scholar"]')?.classList.toggle('unlocked', /* condition */);
+
+             // --- Small Badge Pills ---
+             document.querySelector('[data-badge="gold-hunter"]')?.classList.toggle('unlocked', userStats.goldTasks >= 10);
+             document.querySelector('[data-badge="task-master"]')?.classList.toggle('unlocked', userStats.tasksCompleted >= 50);
+             document.querySelector('[data-badge="streaker"]')?.classList.toggle('unlocked', streak >= 7); // Use a different badge name if needed
+             // Add toggles for other badges (silver-streak, bronze-beginner, early-bird, team-player)
+             // document.querySelector('[data-badge="silver-streak"]')?.classList.toggle('unlocked', /* condition */);
+             // document.querySelector('[data-badge="bronze-beginner"]')?.classList.toggle('unlocked', /* condition */);
+             // document.querySelector('[data-badge="early-bird"]')?.classList.toggle('unlocked', /* condition */);
+             // document.querySelector('[data-badge="team-player"]')?.classList.toggle('unlocked', /* condition */);
         }
 
+        // --- Fetch User Rank (Called once on load) ---
         async function fetchUserRank(userId) {
-            const usersQuery = query(collection(db, "users"), orderBy("points", "desc"));
-            const usersSnapshot = await getDocs(usersQuery);
-            const rank = usersSnapshot.docs.findIndex(doc => doc.id === userId) + 1;
-            stats.teamRank.textContent = rank > 0 ? `#${rank}` : '#?';
+            try {
+                const usersQuery = query(collection(db, "users"), orderBy("points", "desc"));
+                const usersSnapshot = await getDocs(usersQuery);
+                const rank = usersSnapshot.docs.findIndex(doc => doc.id === userId) + 1;
+                stats.teamRank.textContent = rank > 0 ? `#${rank}` : '#?';
+            } catch (error) {
+                 console.error("Error fetching user rank:", error); // Index needed?
+                 stats.teamRank.textContent = 'Error';
+            }
         }
         
+        // --- Listen for Recent User Activity ---
         function listenForRecentActivity(userId) {
             const q = query(collection(db, "activities"), where("userId", "==", userId), orderBy("createdAt", "desc"), limit(3));
             onSnapshot(q, (snapshot) => {
-                activityFeedEl.innerHTML = "";
+                activityFeedEl.innerHTML = ""; // Clear existing
                 if (snapshot.empty) activityFeedEl.innerHTML = "<li>No recent activity.</li>";
                 snapshot.forEach(doc => {
                     const activity = doc.data(), li = document.createElement('li'), dotColor = activity.type?.includes("task") ? "gold" : "bronze";
@@ -202,38 +265,64 @@
                     li.innerHTML = `<span class="dot dot--${dotColor}"></span><div><strong>You</strong> ${activity.details || ''}</div><time>${formatTimeAgo(activity.createdAt)}</time>`;
                     activityFeedEl.appendChild(li);
                 });
-            });
+            }, error => console.error("Error listening for recent activity (Index needed?):", error));
         }
 
+        // --- Edit Profile Form Submission ---
         editForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); if (!currentUserRef) return;
+            e.preventDefault();
+            if (!currentUserRef) return;
+            // Get values directly from the input elements
+            const newName = profileNameInput.value.trim();
+            const newUsername = profileUsernameInput.value.trim().replace('@',''); // Clean username
+            const newBio = profileBioInput.value.trim();
             try {
                 await updateDoc(currentUserRef, {
-                    name: profileNameInput.value, username: profileUsernameInput.value.replace('@',''), bio: profileBioInput.value
+                    name: newName,
+                    username: newUsername, // Save username field
+                    bio: newBio
                 });
+                // No need to manually update UI here, onSnapshot will handle it
                 closeModal('editProfileModal');
-            } catch (err) { console.error("Error updating profile:", err); }
+                alert('Profile updated successfully!');
+            } catch (err) {
+                console.error("Error updating profile:", err);
+                alert('Failed to update profile.');
+            }
         });
 
-        logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+        // --- Logout ---
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+        } else {
+             console.error("Logout button not found!");
+        }
 
+        // --- Initialize Page ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUserRef = doc(db, "users", user.uid);
+                // Listen for user document changes (updates profile info + stats)
                 onSnapshot(currentUserRef, (doc) => {
                     if (doc.exists()) {
-                        const userData = doc.data();
-                        renderProfile(userData, user);
-                        checkAchievements({
-                            tasksCompleted: parseInt(stats.tasksCompleted.textContent),
-                            goldTasks: parseInt(stats.gold.textContent)
-                        });
+                        renderProfile(doc.data(), user);
+                        // Re-check achievements when user data changes (e.g., streak)
+                         checkAchievementsAndBadges({
+                            tasksCompleted: parseInt(stats.tasksCompleted.textContent) || 0,
+                            goldTasks: parseInt(stats.gold.textContent) || 0
+                         });
+                    } else {
+                        console.error("User document not found for logged in user:", user.uid);
+                        // Handle case where user exists in Auth but not Firestore? Create doc maybe?
                     }
-                });
-                listenForLiveStats(user.uid);
-                fetchUserRank(user.uid);
-                listenForRecentActivity(user.uid);
-            } else { window.location.href = 'auth.html'; }
+                }, error => console.error("Error listening to user document:", error));
+
+                listenForLiveStats(user.uid);      // Listen for task/reward counts
+                fetchUserRank(user.uid);           // Fetch rank once
+                listenForRecentActivity(user.uid); // Listen for user's activity feed
+            } else {
+                window.location.href = 'auth.html';
+            }
         });
     </script>
 </body>

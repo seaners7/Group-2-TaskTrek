@@ -1,266 +1,405 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TaskTrek — Shop</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TaskTrek — Shop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script>!function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}}();</script>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* Optional: Theme icon color adaptation */
+        [data-theme="light"] .nav__icon { stroke: var(--text-muted); }
+        [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
+        .theme-toggle-btn .theme-icon--sun { stroke: white; }
+        [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); }
+    </style>
 </head>
 <body>
-  <section class="app">
-    <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
-    <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
-      <span></span><span></span><span></span>
-    </label>
+    <section class="app">
+        <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
+        <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </label>
 
-    <aside class="sidebar">
-      <div class="sidebar__brand">
-        <span class="logo-dot"></span>
-        <span class="brand-text">TaskTrek</span>
-      </div>
-      <nav class="sidebar__nav">
-        <a href="dashboard.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
-          <span>Dashboard</span>
-        </a>
-        <a href="tasks.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
-          <span>Tasks</span>
-        </a>
-        <a href="shop.html" class="nav__item active">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg>
-          <span>Shop</span>
-        </a>
-        <a href="groups.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Groups</span>
-        </a>
-        <a href="leaderboard.html" class="nav__item">
-           <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
-          <span>Leaderboard</span>
-        </a>
-        <a href="activity.html" class="nav__item">
-           <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <span>Activity</span>
-        </a>
-        <a href="team.html" class="nav__item">
-           <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Team</span>
-        </a>
-        <a href="profile.html" class="nav__item">
-           <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>Profile</span>
-        </a>
-      </nav>
-      <div class="sidebar__footer">
-        <a class="btn btn--ghost" href="index.html" id="logout-btn">Logout</a>
-      </div>
-    </aside>
+        <aside class="sidebar">
+            <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
+            <nav class="sidebar__nav">
+                 <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
+                 <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
+                 <a href="shop.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
+                 <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
+                 <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
+                 <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
+                 <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
+                 <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
+            </nav>
+            <div class="sidebar__footer">
+                 <div class="theme-toggle">
+                     <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
+                         <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                         <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                     </button>
+                 </div>
+                <a class="btn btn--ghost" id="logout-btn" href="#">Logout</a>
+            </div>
+        </aside>
 
-    <div class="content">
-      <section class="panel">
-        <div class="panel__header">
-          <h2>Shop</h2>
-          <div class="panel__actions">
-            <button class="btn btn--primary" onclick="openModal('addItemModal')">Add Item</button>
-          </div>
-        </div>
-        
-        <div class="shop-summary">
-          <div class="stat-card">
-            <span class="stat-label">Your Points</span>
-            <span class="stat-value" id="user-points">...</span>
-          </div>
-          </div>
-        
-        <div class="shop-grid">
-          <p>Loading shop items...</p>
-        </div>
-      </section>
-    </div>
+        <div class="content">
+            <section class="panel">
+                <div class="panel__header">
+                    <h2>Shop</h2>
+                    <div class="panel__actions">
+                        <input class="input" type="text" placeholder="Search rewards..." style="width: 200px;" oninput="searchRewards(this.value)">
+                        <select class="input" style="width: auto;" onchange="filterRewards(this.value)">
+                            <option value="all">All Items</option>
+                            <option value="affordable">I Can Afford</option>
+                            <option value="expensive">Too Expensive</option>
+                            <option value="available">Available</option>
+                        </select>
+                        <button class="btn btn--primary" onclick="openModal('addItemModal')">Add Item</button>
+                    </div>
+                </div>
 
-    <div id="addItemModal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Add Shop Item</h3>
-          <button class="btn btn--ghost" onclick="closeModal('addItemModal')">&times;</button>
+                <div class="shop-summary">
+                    <div class="stat-card">
+                        <span class="stat-label">Your Points</span>
+                        <span class="stat-value" id="user-points">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Available Items</span>
+                        <span class="stat-value" id="available-count">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">You Can Afford</span>
+                        <span class="stat-value" id="affordable-count">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Total Redeemed (You)</span>
+                        <span class="stat-value" id="redeemed-count">0</span>
+                    </div>
+                </div>
+
+                <div class="shop-grid" id="shop-grid">
+                    <p>Loading shop items...</p>
+                </div>
+            </section>
         </div>
-        <form id="addItemForm" class="modal-form">
-          <div class="form-field">
-            <label for="itemName">Item Name</label>
-            <input type="text" id="itemName" class="input" required placeholder="Enter item name">
-          </div>
-          <div class="form-field">
-            <label for="itemPrice">Price (Points)</label>
-            <input type="number" id="itemPrice" class="input" required placeholder="Points required" min="1">
-          </div>
-          <div class="form-field">
-            <label for="itemQuantity">Quantity</label>
-            <input type="number" id="itemQuantity" class="input" required placeholder="Stock quantity" min="1">
-          </div>
-          <div class="modal-actions">
-            <button type="button" class="btn btn--ghost" onclick="closeModal('addItemModal')">Cancel</button>
-            <button type="submit" class="btn btn--primary">Add Item</button>
-          </div>
-        </form>
-      </div>
-    </div>
+
+        <div id="addItemModal" class="modal" style="display: none;">
+            <div class="modal-content">
+              <div class="modal-header"><h3>Add Shop Item</h3><button class="btn btn--ghost" onclick="closeModal('addItemModal')">&times;</button></div>
+              <form id="addItemForm" class="modal-form">
+                <div class="form-field"><label for="itemName">Item Name</label><input type="text" id="itemName" class="input" required></div>
+                <div class="form-field"><label for="itemPrice">Price (Points)</label><input type="number" id="itemPrice" class="input" required min="1"></div>
+                <div class="form-field"><label for="itemQuantity">Quantity</label><input type="number" id="itemQuantity" class="input" required min="1"></div>
+                <div class="form-field"><label for="itemDescription">Description (Optional)</label><textarea id="itemDescription" class="input" rows="3"></textarea></div>
+                <div class="modal-actions"><button type="button" class="btn btn--ghost" onclick="closeModal('addItemModal')">Cancel</button><button type="submit" class="btn btn--primary">Add Item</button></div>
+              </form>
+            </div>
+        </div>
+
+        <div id="redemptionModal" class="modal" style="display: none;">
+             <div class="modal-content">
+               <div class="modal-header"><h3>Confirm Redemption</h3><button class="btn btn--ghost" onclick="closeModal('redemptionModal')">&times;</button></div>
+               <div class="modal-form">
+                 <div class="redemption-details">
+                   <div class="item-preview">
+                     <div class="shop-thumb"></div>
+                     <div class="item-info">
+                       <h4 id="confirm-item-name">Item Name</h4>
+                       <p id="confirm-item-desc">Redeem for <strong id="confirm-item-cost">X points</strong></p>
+                     </div>
+                   </div>
+                   <div class="balance-info">
+                     <div class="current-balance"><span>Current Balance:</span><span id="current-balance">0 points</span></div>
+                     <div class="after-redemption"><span>After Redemption:</span><span id="after-balance">0 points</span></div>
+                   </div>
+                 </div>
+                 <div class="modal-actions">
+                   <button class="btn btn--ghost" onclick="closeModal('redemptionModal')">Cancel</button>
+                   <button class="btn btn--primary" id="confirm-redeem-button">Confirm Redemption</button> </div>
+               </div>
+             </div>
+        </div>
+    </section>
+
+    <script src="theme.js"></script>
+
+    <script type="module">
+        import { db, auth, onAuthStateChanged, doc, updateDoc, increment, formatTimeAgo } from './firebase.js';
+        import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { collection, addDoc, query, onSnapshot, runTransaction, serverTimestamp, where, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"; // Added getDoc
     
-  </section><script type="module">
-    import { db, auth, onAuthStateChanged, doc, getDoc, updateDoc, increment } from './firebase.js';
-    import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { collection, addDoc, query, onSnapshot, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-  
-    // --- UI Elements ---
-    const shopGridEl = document.querySelector('.shop-grid');
-    const userPointsEl = document.getElementById('user-points');
-    const addItemForm = document.getElementById('addItemForm');
-    const logoutBtn = document.querySelector('.sidebar__footer a');
-  
-    // --- Global State ---
-    let currentUser = null;
-    let userPoints = 0;
-  
-    // --- MODAL FUNCTIONS (Exposed to window) ---
-    window.openModal = (modalId) => {
-        document.getElementById(modalId).style.display = 'flex';
-    };
-  
-    window.closeModal = (modalId) => {
-        document.getElementById(modalId).style.display = 'none';
-    };
-  
-    // --- RENDER FUNCTIONS ---
-    function listenForShopItems() {
-      const q = query(collection(db, "shopItems"));
-      onSnapshot(q, (snapshot) => {
-        shopGridEl.innerHTML = ''; 
-        if(snapshot.empty) {
-            shopGridEl.innerHTML = '<p>No items in the shop yet. Add one!</p>';
-            return;
-        }
-        snapshot.forEach(doc => {
-          renderShopItem(doc.id, doc.data());
-        });
-      });
-    }
-  
-    function renderShopItem(id, data) {
-      const itemEl = document.createElement('div');
-      itemEl.className = 'shop-item';
-      itemEl.dataset.id = id;
-      itemEl.dataset.price = data.price;
-      itemEl.dataset.name = data.name;
-  
-      const itemPrice = data.price || 0;
-      const canAfford = userPoints >= itemPrice;
-      const inStock = (data.stock || 0) > 0;
-  
-      let buttonHtml = `<button class="btn btn--secondary" disabled>Out of Stock</button>`;
-      if (inStock) {
-        if (canAfford) {
-          buttonHtml = `<button class="btn btn--primary" onclick="redeemItem(this)">Redeem</button>`;
-        } else {
-          const needed = itemPrice - userPoints;
-          buttonHtml = `<button class="btn btn--secondary" disabled>Need ${needed} more pts</button>`;
-        }
-      }
-  
-      itemEl.innerHTML = `
-        <div class="shop-thumb"></div>
-        <h3>${data.name || 'Unnamed Item'}</h3>
-        <div class="price">${itemPrice.toLocaleString()} pts</div>
-        <div class="quantity">Stock: ${data.stock || 0}</div>
-        ${buttonHtml}
-      `;
-      shopGridEl.appendChild(itemEl);
-    }
-  
-    // --- ACTION FUNCTIONS (Exposed to window) ---
-    window.redeemItem = async (button) => {
-      if (!currentUser) return alert('You must be logged in!');
-      
-      const itemEl = button.closest('.shop-item');
-      const itemId = itemEl.dataset.id;
-      const itemPrice = parseInt(itemEl.dataset.price);
-  
-      const itemRef = doc(db, "shopItems", itemId);
-      const userRef = doc(db, "users", currentUser.uid);
-      
-      try {
-        await runTransaction(db, async (transaction) => {
-          const itemDoc = await transaction.get(itemRef);
-          const userDoc = await transaction.get(userRef);
-  
-          if (!itemDoc.exists() || !userDoc.exists()) throw "Document does not exist!";
-          
-          const currentStock = itemDoc.data().stock;
-          const currentPoints = userDoc.data().points || 0; // Defensive check here too
-  
-          if (currentStock <= 0) throw "Sorry, this item is out of stock!";
-          if (currentPoints < itemPrice) throw "You don't have enough points for this item!";
-  
-          transaction.update(itemRef, { stock: increment(-1) });
-          transaction.update(userRef, { points: increment(-itemPrice) });
-        });
-        
-        alert(`Successfully redeemed ${itemEl.dataset.name}!`);
-      } catch (e) {
-        console.error("Redemption failed: ", e);
-        alert("Redemption failed: " + e);
-      }
-    };
+        // UI Elements
+        const shopGridEl = document.getElementById('shop-grid');
+        const userPointsEl = document.getElementById('user-points');
+        const availableCountEl = document.getElementById('available-count');
+        const affordableCountEl = document.getElementById('affordable-count');
+        const redeemedCountEl = document.getElementById('redeemed-count');
+        const addItemForm = document.getElementById('addItemForm');
+        const logoutBtn = document.getElementById('logout-btn');
+        const confirmRedeemBtn = document.getElementById('confirm-redeem-button');
     
-    // --- EVENT LISTENERS ---
-    addItemForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const newItem = {
-            name: addItemForm.itemName.value,
-            price: parseInt(addItemForm.itemPrice.value),
-            stock: parseInt(addItemForm.itemQuantity.value),
-            createdAt: serverTimestamp()
+        // Redemption Modal Elements
+        const confirmItemNameEl = document.getElementById('confirm-item-name');
+        const confirmItemCostEl = document.getElementById('confirm-item-cost');
+        const currentBalanceEl = document.getElementById('current-balance');
+        const afterBalanceEl = document.getElementById('after-balance');
+    
+        // Global State
+        let currentUser = null;
+        let userPoints = 0;
+        let activeGroupId = null; // ✅ To store the user's active group
+        let currentItemToRedeem = null;
+        let unsubscribeUserListener = null; // To stop old listeners
+        let unsubscribeShopListener = null;
+        let unsubscribeRedeemedListener = null;
+    
+        // --- Modal & Utility Functions (Exposed Globally) ---
+        window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
+        window.closeModal = (modalId) => {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+            const form = modal.querySelector('form');
+            if (form) form.reset();
+            currentItemToRedeem = null;
         };
-        try {
-            await addDoc(collection(db, "shopItems"), newItem);
-            closeModal('addItemModal');
-            addItemForm.reset();
-        } catch (error) {
-            console.error("Error adding item: ", error);
+        document.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target.id); });
+    
+    
+        // --- Search and Filter (Exposed Globally) ---
+        window.searchRewards = (searchTerm) => {
+            const term = searchTerm.toLowerCase().trim();
+            window.filterRewards.lastSearch = term; // Store last search
+            const currentFilter = document.querySelector('.panel__actions select').value;
+            filterRewards(currentFilter); // Re-run filter, which now includes search
+        };
+        window.filterRewards = (filter) => {
+            window.filterRewards.lastFilter = filter; // Store last filter
+            const currentSearch = window.filterRewards.lastSearch || '';
+            document.querySelectorAll('.shop-item').forEach(item => {
+                const price = parseInt(item.dataset.price || '0');
+                const stock = parseInt(item.dataset.stock || '0');
+                const name = (item.dataset.name || '').toLowerCase();
+                const isAffordable = price <= userPoints;
+                let show = false;
+                switch(filter) {
+                    case 'all': show = true; break;
+                    case 'affordable': show = isAffordable && stock > 0; break;
+                    case 'expensive': show = !isAffordable && stock > 0; break;
+                    case 'available': show = stock > 0; break;
+                }
+                if (show && currentSearch) {
+                    show = name.includes(currentSearch);
+                }
+                item.style.display = show ? 'grid' : 'none';
+            });
+            updateShopSummary();
+        };
+        window.filterRewards.lastFilter = 'all';
+        window.filterRewards.lastSearch = '';
+    
+        // --- Update Summary Cards ---
+        function updateShopSummary() {
+            const visibleItems = document.querySelectorAll('.shop-item[style*="display: grid"], .shop-item:not([style*="display: none"])');
+            let affordable = 0, available = 0;
+            visibleItems.forEach(item => {
+                const price = parseInt(item.dataset.price || '0');
+                const stock = parseInt(item.dataset.stock || '0');
+                if (stock > 0) available++;
+                if (price <= userPoints && stock > 0) affordable++;
+            });
+            availableCountEl.textContent = available;
+            affordableCountEl.textContent = affordable;
         }
-    });
-  
-    logoutBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        signOut(auth).catch(err => console.error("Logout error:", err));
-    });
-  
-    // --- INITIALIZE PAGE ---
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        currentUser = user;
-        const userRef = doc(db, "users", user.uid);
+    
+        // --- Render Functions ---
+        function listenForShopItems() {
+            if (unsubscribeShopListener) unsubscribeShopListener(); // Stop old listener
+            if (!activeGroupId) {
+                 shopGridEl.innerHTML = '<p>Please select an active group on the "Groups" page to see the shop.</p>';
+                 updateShopSummary(); // Reset summary
+                 return;
+            }
+            
+            // ✅ Query shop items *only* for the active group
+            const q = query(collection(db, "shopItems"), where("groupId", "==", activeGroupId), orderBy("createdAt", "desc"));
+            unsubscribeShopListener = onSnapshot(q, (snapshot) => {
+                shopGridEl.innerHTML = ''; 
+                if (snapshot.empty) shopGridEl.innerHTML = '<p>No items for this group yet.</p>';
+                snapshot.forEach(doc => renderShopItem(doc.id, doc.data()));
+                // Re-apply filter/search after render
+                filterRewards(window.filterRewards.lastFilter);
+                if (window.filterRewards.lastSearch) searchRewards(window.filterRewards.lastSearch);
+            }, (error) => {
+                console.error("Error listening for shop items (Index needed?):", error.message);
+                shopGridEl.innerHTML = "<p>Error loading shop items. Check console.</p>";
+            });
+        }
+    
+        function renderShopItem(id, data) {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'shop-item';
+            itemEl.dataset.id = id;
+            itemEl.dataset.price = data.price || 0;
+            itemEl.dataset.stock = data.stock || 0;
+            itemEl.dataset.name = data.name || 'Unnamed Item';
+            itemEl.dataset.description = data.description || '';
+            const itemPrice = parseInt(itemEl.dataset.price);
+            const itemStock = parseInt(itemEl.dataset.stock);
+            const canAfford = userPoints >= itemPrice;
+            const inStock = itemStock > 0;
+            let buttonHtml = `<button class="btn btn--secondary" disabled>Out of Stock</button>`;
+            if (inStock) {
+                if (canAfford) {
+                    buttonHtml = `<button class="btn btn--primary" onclick="openRedeemModal('${id}', '${data.name || 'Item'}', ${itemPrice})">Redeem</button>`;
+                } else {
+                    buttonHtml = `<button class="btn btn--secondary" disabled>Need ${itemPrice - userPoints} more pts</button>`;
+                }
+            }
+            itemEl.innerHTML = `
+                <div class="shop-thumb"></div>
+                <h3>${itemEl.dataset.name}</h3>
+                <div class="price">${itemPrice.toLocaleString()} pts</div>
+                <div class="quantity">Stock: ${itemStock}</div>
+                ${buttonHtml}
+            `;
+            shopGridEl.appendChild(itemEl);
+        }
+    
+        // --- Actions (Exposed Globally) ---
+        window.openRedeemModal = (itemId, itemName, itemPrice) => {
+            if (!currentUser) return alert('You must be logged in!');
+            currentItemToRedeem = { id: itemId, name: itemName, price: itemPrice };
+            confirmItemNameEl.textContent = itemName;
+            confirmItemCostEl.textContent = `${itemPrice.toLocaleString()} points`;
+            currentBalanceEl.textContent = `${userPoints.toLocaleString()} points`;
+            afterBalanceEl.textContent = `${(userPoints - itemPrice).toLocaleString()} points`;
+            openModal('redemptionModal');
+        };
+    
+        async function confirmRedemption() {
+            if (!currentItemToRedeem || !currentUser || !activeGroupId) {
+                 return alert("Cannot redeem item. User or group not identified.");
+            }
+            const { id: itemId, name: itemName, price: itemPrice } = currentItemToRedeem;
+            const itemRef = doc(db, "shopItems", itemId);
+            const userRef = doc(db, "users", currentUser.uid);
+            
+            confirmRedeemBtn.disabled = true;
+            try {
+                await runTransaction(db, async (transaction) => {
+                    const itemDoc = await transaction.get(itemRef);
+                    const userDoc = await transaction.get(userRef);
+                    if (!itemDoc.exists() || !userDoc.exists()) throw new Error("Data missing");
+                    const currentStock = itemDoc.data().stock || 0;
+                    const currentPoints = userDoc.data().points || 0;
+                    if (currentStock <= 0) throw new Error("Item is out of stock!");
+                    if (currentPoints < itemPrice) throw new Error("Not enough points!");
+                    transaction.update(itemRef, { stock: increment(-1) });
+                    transaction.update(userRef, { points: increment(-itemPrice) });
+                    transaction.set(doc(collection(db, "activities")), {
+                        userId: currentUser.uid, userName: currentUser.displayName || 'User',
+                        type: 'reward-redeemed', details: `redeemed ${itemName} for -${itemPrice} pts`,
+                        createdAt: serverTimestamp(),
+                        groupId: activeGroupId // ✅ ADDED groupId
+                    });
+                });
+                alert(`Successfully redeemed ${itemName}!`);
+            } catch (e) {
+                console.error("Redemption failed: ", e);
+                alert("Redemption failed: " + (e.message || e));
+            } finally {
+                 confirmRedeemBtn.disabled = false;
+                 closeModal('redemptionModal'); // Close regardless of success/fail
+            }
+        }
+        confirmRedeemBtn.addEventListener('click', confirmRedemption);
+    
+        // Add Item Form Submission
+        addItemForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!activeGroupId) return alert("You must have an active group selected to add an item.");
+            const newItem = {
+                name: addItemForm.itemName.value.trim(),
+                price: parseInt(addItemForm.itemPrice.value),
+                stock: parseInt(addItemForm.itemQuantity.value),
+                description: addItemForm.itemDescription.value.trim(),
+                createdAt: serverTimestamp(),
+                groupId: activeGroupId // ✅ ADDED groupId
+            };
+             if (!newItem.name || isNaN(newItem.price) || isNaN(newItem.stock) || newItem.price <= 0 || newItem.stock < 0) {
+                 return alert("Please enter valid item details.");
+             }
+            try {
+                await addDoc(collection(db, "shopItems"), newItem);
+                closeModal('addItemModal');
+            } catch (error) { console.error("Error adding item: ", error); alert("Failed to add item.") }
+        });
+    
+        // --- Listen for User's Redeemed Count (per group) ---
+        function listenForRedeemedCount(userId) {
+            if (unsubscribeRedeemedListener) unsubscribeRedeemedListener(); // Stop old listener
+            if (!activeGroupId) {
+                 redeemedCountEl.textContent = '0';
+                 return; // Don't query if no group
+            }
+             // ✅ Query *only* for the active group
+             const rewardsQuery = query(
+                 collection(db, "activities"), 
+                 where("userId", "==", userId), 
+                 where("type", "==", "reward-redeemed"), 
+                 where("groupId", "==", activeGroupId)
+             );
+             unsubscribeRedeemedListener = onSnapshot(rewardsQuery, (snapshot) => {
+                 redeemedCountEl.textContent = snapshot.size;
+             }, (error) => {
+                 console.error("Error fetching redeemed count (Index needed?):", error.message);
+                 redeemedCountEl.textContent = '?';
+             });
+        }
         
-        onSnapshot(userRef, (doc) => {
-            if (doc.exists()) {
-                // ✅ THE FIX IS HERE: Use a default of 0 if points field is missing
-                userPoints = doc.data().points || 0;
-                userPointsEl.textContent = userPoints.toLocaleString();
-                // Re-render the shop items in case the user's new point total allows them to buy something
-                listenForShopItems(); 
-            } else {
-              // Handle case where user exists in Auth but not in 'users' collection yet
-              userPointsEl.textContent = "0";
-              listenForShopItems();
+        // --- Logout & Initialize ---
+        logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+    
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                if (unsubscribeUserListener) unsubscribeUserListener(); // Clean up
+                const userRef = doc(db, "users", user.uid);
+                
+                unsubscribeUserListener = onSnapshot(userRef, (doc) => {
+                    if (doc.exists()) {
+                        const userData = doc.data();
+                        userPoints = userData.points || 0;
+                        userPointsEl.textContent = userPoints.toLocaleString();
+                        const newActiveGroupId = userData.activeGroupId;
+                        
+                        if (newActiveGroupId !== activeGroupId) { // If group changed
+                            activeGroupId = newActiveGroupId;
+                            listenForShopItems(); // Reload items for new group
+                            listenForRedeemedCount(user.uid); // Reload redeemed count for new group
+                        }
+                        // Always re-filter/re-search when points change
+                        filterRewards(window.filterRewards.lastFilter);
+                        if(window.filterRewards.lastSearch) searchRewards(window.filterRewards.lastSearch);
+                    } else { 
+                        userPoints = 0; userPointsEl.textContent = '0'; 
+                        activeGroupId = null;
+                        listenForShopItems(); // This will show the "select group" message
+                        listenForRedeemedCount(user.uid); // This will reset count to 0
+                    }
+                });
+            } else { 
+                window.location.href = 'auth.html'; 
+                if (unsubscribeUserListener) unsubscribeUserListener();
+                if (unsubscribeShopListener) unsubscribeShopListener();
+                if (unsubscribeRedeemedListener) unsubscribeRedeemedListener();
             }
         });
-      } else {
-        window.location.href = 'auth.html';
-      }
-    });
-  </script>
-
+    </script>
 </body>
 </html>

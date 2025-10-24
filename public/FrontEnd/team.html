@@ -1,343 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TaskTrek — Team</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TaskTrek — Team</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+    <script>!function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}}();</script>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+        /* Optional: Ensure icon colors adapt in light mode */
+        [data-theme="light"] .nav__icon { stroke: var(--text-muted); }
+        [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
+        .theme-toggle-btn .theme-icon--sun { stroke: white; }
+        [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); }
+        /* Style for invite code display */
+        #invite-code-display { font-family: monospace; }
+        .invite-code-section { display: none; /* Hidden by default */ }
+    </style>
 </head>
 <body>
-  <section class="app">
-    <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
-    <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
-      <span></span><span></span><span></span>
-    </label>
+    <section class="app">
+        <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
+        <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
+            <span></span><span></span><span></span>
+        </label>
 
-    <aside class="sidebar">
-      <div class="sidebar__brand">
-        <span class="logo-dot"></span>
-        <span class="brand-text">TaskTrek</span>
-      </div>
+        <aside class="sidebar">
+            <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
+            <nav class="sidebar__nav">
+                 <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
+                 <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
+                 <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
+                 <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
+                 <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
+                 <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
+                 <a href="team.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
+                 <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
+            </nav>
+            <div class="sidebar__footer">
+                <div class="theme-toggle">
+                    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
+                        <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
+                </div>
+                <a class="btn btn--ghost" id="logout-btn" href="#">Logout</a>
+            </div>
+        </aside>
 
-      <nav class="sidebar__nav">
-        <a href="dashboard.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
-          <span>Dashboard</span>
-        </a>
-        <a href="tasks.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
-          <span>Tasks</span>
-        </a>
-        <a href="shop.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg>
-          <span>Shop</span>
-        </a>
-        <a href="groups.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Groups</span>
-        </a>
-        <a href="leaderboard.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg>
-          <span>Leaderboard</span>
-        </a>
-        <a href="activity.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          <span>Activity</span>
-        </a>
-        <a href="team.html" class="nav__item active">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          <span>Team</span>
-        </a>
-        <a href="profile.html" class="nav__item">
-          <svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg>
-          <span>Profile</span>
-        </a>
-      </nav>
+        <div class="content">
+            <section class="panel">
+                <div class="panel__header">
+                    <h2 id="team-name">Team Management</h2> <div class="panel__actions invite-code-section" id="invite-section"> <input type="text" class="input" readonly id="invite-code-display" value="Invite Code: ..." style="width: auto;">
+                         <button class="btn btn--primary" onclick="copyInviteCode()">Copy Code</button>
+                    </div>
+                     <button class="btn btn--primary" onclick="openModal('addMemberModal')">Invite Member</button>
+                </div>
+                
+                <div class="team-stats">
+                    <div class="stat-card">
+                        <span class="stat-label">Total Members</span>
+                        <span class="stat-value" id="stat-total-members">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">Active Today</span>
+                        <span class="stat-value" id="stat-active-today">?</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">New This Week</span>
+                        <span class="stat-value" id="stat-new-this-week">?</span>
+                    </div>
+                </div>
 
-      <div class="sidebar__footer">
-        <a class="btn btn--ghost" href="index.html">Logout</a>
-      </div>
-    </aside>
+                <div class="team-filters">
+                    <select class="input" onchange="filterMembers(this.value)">
+                        <option value="all">All Members</option>
+                        <option value="admin">Admins Only</option>
+                        <option value="member">Members Only</option>
+                        </select>
+                </div>
 
-    <div class="content">
-      <section class="panel">
-        <div class="panel__header">
-          <h2>Team Management</h2>
-          <div class="panel__actions">
-            <button class="btn btn--primary" onclick="openModal('addMemberModal')">Invite Member</button>
-          </div>
-        </div>
-        
-        <div class="team-stats">
-          <div class="stat-card">
-            <span class="stat-label">Total Members</span>
-            <span class="stat-value">24</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">Active Today</span>
-            <span class="stat-value">18</span>
-          </div>
-          <div class="stat-card">
-            <span class="stat-label">New This Week</span>
-            <span class="stat-value">3</span>
-          </div>
+                <ul class="list list--team" id="team-list">
+                    <li>Select an active group to see members.</li>
+                </ul>
+            </section>
         </div>
 
-        <div class="team-filters">
-          <select class="input" onchange="filterMembers(this.value)">
-            <option value="all">All Members</option>
-            <option value="admin">Admins</option>
-            <option value="member">Members</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+        <div id="addMemberModal" class="modal" style="display: none;">
+             <div class="modal-content">
+               <div class="modal-header"><h3>Invite New Member</h3><button class="btn btn--ghost" onclick="closeModal('addMemberModal')">&times;</button></div>
+               <form id="inviteMemberForm" class="modal-form">
+                 <div class="form-field"><label for="memberEmail">Email Address</label><input type="email" id="memberEmail" class="input" required placeholder="member@example.com"></div>
+                 <div class="form-field"><label for="memberMessage">Welcome Message (Optional)</label><textarea id="memberMessage" class="input" rows="3" placeholder="Personal message (optional)"></textarea></div>
+                 <div class="modal-actions"><button type="button" class="btn btn--ghost" onclick="closeModal('addMemberModal')">Cancel</button><button type="submit" class="btn btn--primary">Send Invitation</button></div>
+               </form>
+             </div>
         </div>
 
-        <ul class="list list--team">
-          <li class="list-card team-member admin">
-            <div class="avatar"></div>
-            <div class="who">
-              <strong>Alex</strong>
-              <div class="muted">Admin • @alexj</div>
-              <div class="member-stats">1,540 pts • 72 tasks</div>
-            </div>
-            <div class="member-actions">
-              <button class="btn btn--ghost" onclick="viewProfile('Alex')">View</button>
-              <button class="btn btn--danger btn--ghostlike" onclick="removeMember('Alex', true)">Remove</button>
-            </div>
-          </li>
-          <li class="list-card team-member current-user">
-            <div class="avatar"></div>
-            <div class="who">
-              <strong>You</strong>
-              <div class="muted">Admin • @yourusername</div>
-              <div class="member-stats">1,430 pts • 69 tasks</div>
-            </div>
-            <div class="member-actions">
-              <button class="btn btn--ghost" onclick="viewProfile('You')">View</button>
-              <button class="btn btn--secondary" disabled>Current User</button>
-            </div>
-          </li>
-          <li class="list-card team-member member">
-            <div class="avatar"></div>
-            <div class="who">
-              <strong>Sam</strong>
-              <div class="muted">Member • @samw</div>
-              <div class="member-stats">1,200 pts • 55 tasks</div>
-            </div>
-            <div class="member-actions">
-              <button class="btn btn--ghost" onclick="viewProfile('Sam')">View</button>
-              <button class="btn btn--danger btn--ghostlike" onclick="removeMember('Sam', false)">Remove</button>
-            </div>
-          </li>
-          <li class="list-card team-member member">
-            <div class="avatar"></div>
-            <div class="who">
-              <strong>Morgan</strong>
-              <div class="muted">Member • @morgank</div>
-              <div class="member-stats">980 pts • 42 tasks</div>
-            </div>
-            <div class="member-actions">
-              <button class="btn btn--ghost" onclick="viewProfile('Morgan')">View</button>
-              <button class="btn btn--danger btn--ghostlike" onclick="removeMember('Morgan', false)">Remove</button>
-            </div>
-          </li>
-          <li class="list-card team-member member">
-            <div class="avatar"></div>
-            <div class="who">
-              <strong>Sarah</strong>
-              <div class="muted">Member • @sarahm</div>
-              <div class="member-stats">890 pts • 38 tasks</div>
-            </div>
-            <div class="member-actions">
-              <button class="btn btn--ghost" onclick="viewProfile('Sarah')">View</button>
-              <button class="btn btn--danger btn--ghostlike" onclick="removeMember('Sarah', false)">Remove</button>
-            </div>
-          </li>
-          <li class="list-card team-member member">
-            <div class="avatar"></div>
-            <div class="who">
-              <strong>Mike</strong>
-              <div class="muted">Member • @mikeb</div>
-              <div class="member-stats">720 pts • 32 tasks</div>
-            </div>
-            <div class="member-actions">
-              <button class="btn btn--ghost" onclick="viewProfile('Mike')">View</button>
-              <button class="btn btn--danger btn--ghostlike" onclick="removeMember('Mike', false)">Remove</button>
-            </div>
-          </li>
-          <li class="list-card team-member member">
-            <div class="avatar"></div>
-            <div class="who">
-              <strong>Emma</strong>
-              <div class="muted">Member • @emmal</div>
-              <div class="member-stats">650 pts • 28 tasks</div>
-            </div>
-            <div class="member-actions">
-              <button class="btn btn--ghost" onclick="viewProfile('Emma')">View</button>
-              <button class="btn btn--danger btn--ghostlike" onclick="removeMember('Emma', false)">Remove</button>
-            </div>
-          </li>
-          <li class="list-card team-member member">
-            <div class="avatar"></div>
-            <div class="who">
-              <strong>David</strong>
-              <div class="muted">Member • @davidc</div>
-              <div class="member-stats">580 pts • 25 tasks</div>
-            </div>
-            <div class="member-actions">
-              <button class="btn btn--ghost" onclick="viewProfile('David')">View</button>
-              <button class="btn btn--danger btn--ghostlike" onclick="removeMember('David', false)">Remove</button>
-            </div>
-          </li>
-        </ul>
-      </section>
-    </div>
+        <div id="removeMemberModal" class="modal" style="display: none;">
+             <div class="modal-content">
+               <div class="modal-header"><h3>Remove Member</h3><button class="btn btn--ghost" onclick="closeModal('removeMemberModal')">&times;</button></div>
+               <div class="modal-form">
+                 <p>Are you sure you want to remove <strong id="memberToRemoveName"></strong> from the team?</p>
+                 <p class="muted">This action cannot be undone.</p>
+                 <input type="hidden" id="memberToRemoveId"> <div class="modal-actions">
+                   <button type="button" class="btn btn--ghost" onclick="closeModal('removeMemberModal')">Cancel</button>
+                   <button type="button" class="btn btn--danger" onclick="confirmRemoveMember()">Remove Member</button>
+                 </div>
+               </div>
+             </div>
+        </div>
+    </section>
 
-    <!-- Add Member Modal -->
-    <div id="addMemberModal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Invite New Member</h3>
-          <button class="btn btn--ghost" onclick="closeModal('addMemberModal')">&times;</button>
-        </div>
-        <form class="modal-form" onsubmit="inviteMember(event)">
-          <div class="form-field">
-            <label for="memberEmail">Email Address</label>
-            <input type="email" id="memberEmail" class="input" required placeholder="member@example.com">
-          </div>
-          <div class="form-field">
-            <label for="memberRole">Role</label>
-            <select id="memberRole" class="input" required>
-              <option value="member">Member</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-          <div class="form-field">
-            <label for="memberMessage">Welcome Message (Optional)</label>
-            <textarea id="memberMessage" class="input" rows="3" placeholder="Personal message to include with the invitation"></textarea>
-          </div>
-          <div class="modal-actions">
-            <button type="button" class="btn btn--ghost" onclick="closeModal('addMemberModal')">Cancel</button>
-            <button type="submit" class="btn btn--primary">Send Invitation</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Remove Member Confirmation Modal -->
-    <div id="removeMemberModal" class="modal" style="display: none;">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Remove Member</h3>
-          <button class="btn btn--ghost" onclick="closeModal('removeMemberModal')">&times;</button>
-        </div>
-        <div class="modal-form">
-          <p>Are you sure you want to remove <strong id="memberToRemove"></strong> from the team?</p>
-          <p class="muted">This action cannot be undone. The member will lose access to all team resources.</p>
-          <div class="modal-actions">
-            <button type="button" class="btn btn--ghost" onclick="closeModal('removeMemberModal')">Cancel</button>
-            <button type="button" class="btn btn--danger" onclick="confirmRemoveMember()">Remove Member</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <script type="module">
-    import { db, auth, onAuthStateChanged, doc, getDoc } from './firebase.js';
-    import { collection, query, where, getDocs, updateDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    <script src="theme.js"></script>
+    <script type="module">
+      // ✅ Imports - Including Firestore, Auth, Functions SDK
+      import { db, auth, onAuthStateChanged, doc, updateDoc } from './firebase.js';
+      import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+      import { collection, query, where, getDocs, onSnapshot, arrayRemove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+      import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-functions.js";
   
-    const teamListEl = document.querySelector('.list--team');
-    const totalMembersEl = document.querySelector('.team-stats .stat-card:first-child .stat-value');
-    
-    let currentUser = null;
-    let activeGroupId = null;
-    let groupData = null;
+      // ✅ UI Elements
+      const teamListEl = document.getElementById('team-list');
+      const teamNameEl = document.getElementById('team-name');
+      const totalMembersEl = document.getElementById('stat-total-members');
+      const activeTodayEl = document.getElementById('stat-active-today'); // Stat card value
+      const newThisWeekEl = document.getElementById('stat-new-this-week'); // Stat card value
+      const inviteCodeDisplay = document.getElementById('invite-code-display');
+      const inviteSection = document.getElementById('invite-section'); // Section containing invite code
+      const logoutBtn = document.getElementById('logout-btn');
+      const memberToRemoveNameEl = document.getElementById('memberToRemoveName');
+      const memberToRemoveIdInput = document.getElementById('memberToRemoveId');
+      const inviteMemberForm = document.getElementById('inviteMemberForm'); // The form in the "Invite Member" modal
   
-    // --- Load Team Members for the Active Group ---
-    async function loadTeamMembers() {
-      if (!currentUser) return;
+      // ✅ Global State
+      let currentUser = null;
+      let activeGroupId = null;
+      let activeGroupData = null; // Store full group data for owner checks and invite code
   
-      // 1. Get active group ID from user document
-      const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-      if (!userDoc.exists() || !userDoc.data().activeGroupId) {
-        teamListEl.innerHTML = "<li>Please select an active group first.</li>";
-        return;
+      // ✅ Get Functions instance and references
+      const functions = getFunctions();
+      const inviteMemberToGroup = httpsCallable(functions, 'inviteMemberToGroup');
+      const getGroupStats = httpsCallable(functions, 'getGroupStats'); // Reference the stats function
+  
+      // ✅ Global Modal Functions
+      window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
+      window.closeModal = (modalId) => {
+          const modal = document.getElementById(modalId);
+          if (modal) modal.style.display = 'none';
+          const form = modal.querySelector('form');
+          if (form) form.reset();
+      };
+  
+      // --- Core Logic: Listen for Active Group Change ---
+      function listenForActiveGroup() {
+          if (!currentUser) return;
+          const userRef = doc(db, "users", currentUser.uid);
+  
+          // Listen for changes in user's activeGroupId
+          onSnapshot(userRef, (userDoc) => {
+              const newActiveGroupId = userDoc.data()?.activeGroupId;
+  
+              // Handle case where no group is selected
+              if (!newActiveGroupId) {
+                  teamNameEl.textContent = "No Active Group Selected";
+                  teamListEl.innerHTML = "<li>Go to 'Groups' page to select or create a group.</li>";
+                  totalMembersEl.textContent = '0';
+                  activeTodayEl.textContent = '0'; // Reset stats
+                  newThisWeekEl.textContent = '0'; // Reset stats
+                  inviteSection.style.display = 'none'; // Hide invite code section
+                  activeGroupId = null; activeGroupData = null; return;
+              }
+  
+              // If the active group has changed OR if we don't have group data yet
+              if (newActiveGroupId !== activeGroupId || !activeGroupData) {
+                  activeGroupId = newActiveGroupId; // Update global state
+                  const groupRef = doc(db, "groups", activeGroupId);
+  
+                  // Listen for changes to the active group itself (e.g., name, members array)
+                  onSnapshot(groupRef, (groupDoc) => {
+                      if (groupDoc.exists()) {
+                          activeGroupData = groupDoc.data(); // Store group data globally
+                          teamNameEl.textContent = activeGroupData.name || 'Unnamed Group';
+                          inviteCodeDisplay.value = `Code: ${activeGroupData.inviteCode || 'N/A'}`;
+                          inviteSection.style.display = currentUser.uid === activeGroupData.ownerId ? 'flex' : 'none'; // Show invite only to owner
+  
+                          // Load/Reload members list whenever group data changes
+                          loadTeamMembers(activeGroupData.members);
+                          // Fetch/Refetch calculated stats whenever group data changes
+                          fetchAndDisplayGroupStats(activeGroupId);
+  
+                      } else {
+                          // Handle case where active group ID exists but document is not found
+                          teamNameEl.textContent = "Group Not Found";
+                          teamListEl.innerHTML = "<li>Error: Could not load the active group.</li>";
+                          totalMembersEl.textContent = '0';
+                          activeTodayEl.textContent = '0'; newThisWeekEl.textContent = '0';
+                          inviteSection.style.display = 'none';
+                          activeGroupId = null; activeGroupData = null;
+                      }
+                  }, (error) => {
+                      console.error("Error listening to group doc:", error);
+                      // Handle error loading group doc
+                      teamNameEl.textContent = "Error Loading Group";
+                      teamListEl.innerHTML = "<li>Could not load group data.</li>";
+                  });
+              }
+          }, (error) => {
+              console.error("Error listening to user doc:", error);
+              // Handle error loading user doc
+              teamNameEl.textContent = "Error Loading User";
+          });
       }
-      activeGroupId = userDoc.data().activeGroupId;
   
-      // 2. Get the active group's document
-      const groupDoc = await getDoc(doc(db, "groups", activeGroupId));
-      if (!groupDoc.exists()) {
-        teamListEl.innerHTML = "<li>Could not find the active group.</li>";
-        return;
-      }
-      groupData = groupDoc.data();
-      
-      // 3. Fetch all member documents based on the 'members' array
-      const membersQuery = query(collection(db, "users"), where("__name__", "in", groupData.members));
-      const membersSnapshot = await getDocs(membersQuery);
-      
-      teamListEl.innerHTML = "";
-      totalMembersEl.textContent = membersSnapshot.size;
-  
-      membersSnapshot.forEach(memberDoc => {
-        renderMember(memberDoc.data(), memberDoc.id);
-      });
-    }
-  
-    // --- Render a Single Team Member ---
-    function renderMember(memberData, memberId) {
-      const isCurrentUser = memberId === currentUser.uid;
-      const isOwner = memberId === groupData.ownerId;
-      const currentUserIsOwner = currentUser.uid === groupData.ownerId;
-  
-      const li = document.createElement('li');
-      li.className = 'list-card team-member';
-      if(isCurrentUser) li.classList.add('current-user');
-  
-      li.innerHTML = `
-        <div class="avatar" style="background-image:url(${memberData.photoURL || ''})"></div>
-        <div class="who">
-          <strong>${memberData.name} ${isCurrentUser ? '(You)' : ''}</strong>
-          <div class="muted">${isOwner ? 'Admin' : 'Member'} • ${memberData.email}</div>
-          <div class="member-stats">${memberData.points || 0} pts • ${memberData.tasksCompleted || 0} tasks</div>
-        </div>
-        <div class="member-actions">
-          ${!isCurrentUser && currentUserIsOwner ? 
-              `<button class="btn btn--danger btn--ghostlike" onclick="removeMember('${memberId}', '${memberData.name}')">Remove</button>` : 
-              `<button class="btn btn--secondary" disabled>${isCurrentUser ? 'Current User' : 'View'}</button>`
+      // --- Fetch and Display Calculated Group Stats ---
+      async function fetchAndDisplayGroupStats(groupId) {
+          if (!groupId) return;
+          activeTodayEl.textContent = '?'; // Indicate loading
+          newThisWeekEl.textContent = '?'; // Indicate loading
+          try {
+              console.log(`Calling getGroupStats for groupId: ${groupId}`);
+              const result = await getGroupStats({ groupId: groupId });
+              const data = result.data; // { activeToday: X, newThisWeek: Y }
+              console.log("Received group stats:", data);
+              // Update the stat card elements
+              activeTodayEl.textContent = data.activeToday ?? '0'; // Use ?? '0' to show 0 if undefined/null
+              newThisWeekEl.textContent = data.newThisWeek ?? '0'; // Use ?? '0'
+          } catch (error) {
+              console.error("Error fetching group stats:", error);
+              activeTodayEl.textContent = 'Error';
+              newThisWeekEl.textContent = 'Error';
           }
-        </div>
-      `;
-      teamListEl.appendChild(li);
-    }
-    
-    // --- Remove a member (Admin function) ---
-    window.removeMember = async (memberId, memberName) => {
-      if (!confirm(`Are you sure you want to remove ${memberName}?`)) return;
-      
-      const groupRef = doc(db, "groups", activeGroupId);
-      await updateDoc(groupRef, {
-          members: arrayRemove(memberId)
+      }
+  
+      // --- Load and Render Team Members ---
+      async function loadTeamMembers(memberIds) {
+          if (!memberIds || memberIds.length === 0) {
+               teamListEl.innerHTML = "<li>This group has no members yet.</li>";
+               totalMembersEl.textContent = '0'; return;
+          }
+  
+          // Fetch user documents for members
+          // Handle 'in' query limit (max 30) - simple slice for now
+          const idsToFetch = memberIds.slice(0, 30);
+          if (memberIds.length > 30) {
+              console.warn(`Showing first 30 out of ${memberIds.length} members due to query limits.`);
+          }
+          const membersQuery = query(collection(db, "users"), where("__name__", "in", idsToFetch));
+  
+          try {
+              const membersSnapshot = await getDocs(membersQuery);
+              teamListEl.innerHTML = ""; // Clear list
+              totalMembersEl.textContent = memberIds.length; // Use actual member count
+  
+              const memberDataMap = new Map();
+              membersSnapshot.forEach(doc => memberDataMap.set(doc.id, doc.data()));
+  
+              // Render members in the order they appear in the group's array
+              memberIds.forEach(memberId => {
+                  const memberData = memberDataMap.get(memberId);
+                  if (memberData) {
+                      renderMember(memberData, memberId);
+                  } else if (idsToFetch.includes(memberId)) {
+                      // Only log/handle if we expected to fetch this ID but didn't find it
+                      console.warn(`User data not found for ID: ${memberId}`);
+                      // Optionally render a placeholder for missing fetched members
+                  }
+              });
+              // Re-apply filter if needed after rendering
+              const currentFilter = document.querySelector('.team-filters select').value;
+              filterMembers(currentFilter);
+  
+          } catch (error) {
+              console.error("Error loading team members:", error);
+              teamListEl.innerHTML = "<li>Error loading members.</li>";
+          }
+      }
+  
+      function renderMember(memberData, memberId) {
+          const isCurrentUser = memberId === currentUser.uid;
+          const isOwner = memberId === activeGroupData?.ownerId;
+          const currentUserIsOwner = currentUser.uid === activeGroupData?.ownerId;
+  
+          const li = document.createElement('li');
+          li.className = `list-card team-member ${isCurrentUser ? 'current-user' : ''} ${isOwner ? 'admin' : 'member'}`;
+          li.dataset.role = isOwner ? 'admin' : 'member'; // For filtering
+  
+          li.innerHTML = `
+              <div class="avatar" style="background-image:url(${memberData.photoURL || ''})"></div>
+              <div class="who">
+                  <strong>${memberData.name || 'Unnamed User'} ${isCurrentUser ? '(You)' : ''}</strong>
+                  <div class="muted">${isOwner ? 'Admin' : 'Member'} • @${memberData.username || memberData.email}</div>
+                  <div class="member-stats">${(memberData.points || 0).toLocaleString()} pts</div>
+              </div>
+              <div class="member-actions">
+                  ${!isCurrentUser && currentUserIsOwner ? `<button class="btn btn--danger btn--ghostlike" onclick="openRemoveMemberModal('${memberId}', '${memberData.name || 'this member'}')">Remove</button>` : ''}
+                  ${isCurrentUser ? '<button class="btn btn--secondary" disabled>You</button>' : ''}
+              </div>`;
+          teamListEl.appendChild(li);
+      }
+  
+      // --- Actions (Exposed Globally) ---
+      window.copyInviteCode = () => {
+          if (activeGroupData?.inviteCode) {
+              navigator.clipboard.writeText(activeGroupData.inviteCode)
+                  .then(() => alert('Invite code copied!'))
+                  .catch(err => alert('Failed to copy code.'));
+          }
+      };
+      window.openRemoveMemberModal = (memberId, memberName) => {
+           memberToRemoveNameEl.textContent = memberName;
+           memberToRemoveIdInput.value = memberId;
+           openModal('removeMemberModal');
+      };
+      window.confirmRemoveMember = async () => {
+           const memberIdToRemove = memberToRemoveIdInput.value;
+           if (!memberIdToRemove || !activeGroupId || !currentUser || currentUser.uid !== activeGroupData?.ownerId) {
+               return alert("Cannot remove member.");
+           }
+           const memberName = memberToRemoveNameEl.textContent;
+           try {
+               const groupRef = doc(db, "groups", activeGroupId);
+               await updateDoc(groupRef, { members: arrayRemove(memberIdToRemove) });
+               // onSnapshot will handle list refresh
+               closeModal('removeMemberModal');
+               alert(`${memberName} has been removed.`);
+           } catch (err) {
+               console.error("Error removing member:", err);
+               alert(`Failed to remove ${memberName}.`);
+           }
+      };
+      window.filterMembers = (role) => {
+          document.querySelectorAll('.list--team .team-member').forEach(member => {
+               member.style.display = (role === 'all' || member.dataset.role === role) ? 'flex' : 'none';
+          });
+      };
+  
+      // --- Invite Member Form Submission ---
+      inviteMemberForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = inviteMemberForm.memberEmail.value.trim();
+          const inviteButton = inviteMemberForm.querySelector('button[type="submit"]');
+  
+          if (!email || !activeGroupId || !currentUser) { return alert("Cannot invite member. Ensure you have an active group."); }
+          if (currentUser.uid !== activeGroupData?.ownerId) { return alert("Only the group owner can invite members."); }
+  
+          inviteButton.disabled = true; inviteButton.textContent = 'Inviting...';
+          try {
+              const result = await inviteMemberToGroup({ email: email, groupId: activeGroupId });
+              alert(result.data.message); // Show success/already member/error message from function
+              closeModal('addMemberModal');
+          } catch (error) {
+              console.error("Error inviting member via Cloud Function:", error);
+              alert(`Failed to invite member: ${error.message || 'Please try again.'}`);
+          } finally {
+              inviteButton.disabled = false; inviteButton.textContent = 'Send Invitation';
+          }
       });
       
-      alert(`${memberName} has been removed.`);
-      loadTeamMembers(); // Refresh the list
-    }
-    
-    // --- Initialize Page ---
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        currentUser = user;
-        loadTeamMembers();
-      }
-    });
-  
+      // --- Logout & Initialize ---
+      logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+      onAuthStateChanged(auth, (user) => {
+          currentUser = user;
+          if (user) listenForActiveGroup(); else window.location.href = 'auth.html';
+      });
   </script>
-
+</body>
+</html>
 </body>
 </html>
