@@ -86,3 +86,6 @@ Return each suggestion on a new line only, no need to format it like a list (exa
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+console.log("FIREBASE_PROJECT_ID:", process.env.FIREBASE_PROJECT_ID);
+console.log("FIREBASE_CLIENT_EMAIL:", process.env.FIREBASE_CLIENT_EMAIL);
+console.log("FIREBASE_PRIVATE_KEY exists?", !!process.env.FIREBASE_PRIVATE_KEY);
