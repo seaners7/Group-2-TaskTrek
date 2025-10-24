@@ -31,7 +31,7 @@ try {
     }
     const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
     // Specify the model name - ensure "gemini-2.5-flash" is valid or use "gemini-1.5-flash-latest"
-    model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
     console.log("Google AI Model Initialized Successfully.");
 } catch (error) {
     console.error("Google AI Initialization Failed:", error);
