@@ -311,9 +311,7 @@ async function getAISuggestions() {
     // Remove spaces from display name before sending to API
     const cleanName = user.displayName.replace(/\s+/g, "");
     console.log("➡️ Fetching AI suggestions for:", cleanName);
-      console.log("FIREBASE_PROJECT_ID:", process.env.FIREBASE_PROJECT_ID);
-console.log("FIREBASE_CLIENT_EMAIL:", process.env.FIREBASE_CLIENT_EMAIL);
-console.log("FIREBASE_PRIVATE_KEY exists?", !!process.env.FIREBASE_PRIVATE_KEY);
+
 
     const response = await fetch(`/api/aiSuggest?assigneeName=${encodeURIComponent(cleanName)}`);
     const data = await response.json();
