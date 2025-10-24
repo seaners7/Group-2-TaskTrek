@@ -10,24 +10,17 @@
     <script>!function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}}();</script>
     <link rel="stylesheet" href="styles.css" />
     <style>
-        /* Optional: Ensure chart text color adapts to theme */
-        [data-theme="light"] .chart-card { color: var(--text); }
-        [data-theme="light"] .chart-header h3 { color: var(--text); }
-        [data-theme="light"] .chart-legend .legend-item { color: var(--text-muted); }
-        .theme-toggle-btn .theme-icon--sun { stroke: white; } /* Keep sun icon white */
-        [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); } /* Sun icon color in light mode */
+        [data-theme="light"] .nav__icon { stroke: var(--text-muted); }
+        [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
+        .theme-toggle-btn .theme-icon--sun { stroke: white; }
+        [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); }
     </style>
 </head>
 <body>
     <section class="app">
-        <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
-        <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
-            <span></span><span></span><span></span>
-        </label>
-
         <aside class="sidebar">
-            <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
-            <nav class="sidebar__nav">
+             <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
+             <nav class="sidebar__nav">
                  <a href="dashboard.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
                  <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
                  <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
@@ -38,12 +31,7 @@
                  <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
             </nav>
             <div class="sidebar__footer">
-                <div class="theme-toggle">
-                    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
-                        <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                        <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    </button>
-                </div>
+                <div class="theme-toggle"><button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme"><svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button></div>
                 <a class="btn btn--ghost" id="logout-btn" href="#">Logout</a>
             </div>
         </aside>
@@ -52,76 +40,56 @@
             <section class="panel">
                 <h2>Dashboard</h2>
                 <div class="cards">
-                    <div class="stat-card">
-                        <span class="stat-label">Total Tasks (Assigned)</span>
-                        <span class="stat-value" id="stat-total-tasks">0</span>
-                        <div class="stat-trend" id="stat-total-trend">(Placeholder)</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">In Progress</span>
-                        <span class="stat-value" id="stat-in-progress">0</span>
-                        <div class="stat-trend" id="stat-due-today">(Placeholder)</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Completed (by You)</span>
-                        <span class="stat-value" id="stat-completed">0</span>
-                        <div class="stat-trend" id="stat-completion-rate">(Placeholder)</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Your Points</span>
-                        <span class="stat-value" id="stat-points">0</span>
-                        <div class="stat-trend" id="stat-rank">Rank #?</div>
-                    </div>
+                    <div class="stat-card"><span class="stat-label">Total Tasks (Assigned)</span><span class="stat-value" id="stat-total-tasks">0</span><div class="stat-trend" id="stat-total-trend">...</div></div>
+                    <div class="stat-card"><span class="stat-label">In Progress</span><span class="stat-value" id="stat-in-progress">0</span><div class="stat-trend" id="stat-due-today">...</div></div>
+                    <div class="stat-card"><span class="stat-label">Completed (by You)</span><span class="stat-value" id="stat-completed">0</span><div class="stat-trend" id="stat-completion-rate">...</div></div>
+                    <div class="stat-card"><span class="stat-label">Your Points</span><span class="stat-value" id="stat-points">0</span><div class="stat-trend" id="stat-rank">...</div></div>
                 </div>
                 
                 <div class="dashboard-charts">
                     <div class="chart-card">
-                        <div class="chart-header"><h3>Task Completion Trends</h3><div class="chart-period"><select class="chart-select" onchange="window.updateChart('taskChart', this.value)"><option value="week">This Week</option><option value="month" selected>This Month</option></select></div></div>
+                        <div class="chart-header">
+                            <h3>Task Completion Trends</h3>
+                            <div class="chart-period">
+                                <select class="chart-select" onchange="window.updateChart('taskChart', this.value)">
+                                    <option value="week">This Week</option>
+                                    <option value="month" selected>This Month</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="chart-container"><canvas id="taskChart" width="400" height="200"></canvas></div>
                     </div>
                     <div class="chart-card">
-                        <div class="chart-header"><h3>Points Distribution</h3></div>
+                        <div class="chart-header"><h3>Group Points Distribution</h3></div>
                         <div class="chart-container"><canvas id="pointsChart" width="300" height="300"></canvas></div>
                     </div>
                 </div>
 
-                <div class="dashboard-heatmap">
-                     <div class="chart-card">
-                         <div class="chart-header"><h3>Activity Heatmap (Placeholder)</h3><div class="heatmap-legend"><span>Less</span><div class="heatmap-legend-colors"><div class="heatmap-legend-item" style="background: #1f2937;"></div><div class="heatmap-legend-item" style="background: #374151;"></div><div class="heatmap-legend-item" style="background: #4b5563;"></div><div class="heatmap-legend-item" style="background: #6b7280;"></div><div class="heatmap-legend-item" style="background: #8b5cf6;"></div></div><span>More</span></div></div>
-                         <div class="heatmap-container"><div id="activityHeatmap"></div></div>
-                     </div>
-                 </div>
-
                 <div class="dashboard-grid" style="margin-top: 20px;">
                     <div class="dashboard-card">
-                         <h3>Weekly Goals (Placeholder)</h3>
-                         <div class="progress-item"><div class="progress-label"><span>Complete 5 Tasks</span><span id="goal-tasks-progress">0/5</span></div><div class="progress-bar"><div id="goal-tasks-fill" class="progress-fill" style="width: 0%;"></div></div></div>
-                         <div class="progress-item"><div class="progress-label"><span>Earn 500 Points</span><span id="goal-points-progress">0/500</span></div><div class="progress-bar"><div id="goal-points-fill" class="progress-fill" style="width: 0%;"></div></div></div>
+                        <h3>Weekly Goals</h3>
+                        <div class="progress-item"><div class="progress-label"><span>Complete 5 Tasks (This Week)</span><span id="goal-tasks-progress">0/5</span></div><div class="progress-bar"><div id="goal-tasks-fill" class="progress-fill" style="width: 0%;"></div></div></div>
+                        <div class="progress-item"><div class="progress-label"><span>Earn 500 Points (This Week)</span><span id="goal-points-progress">0/500</span></div><div class="progress-bar"><div id="goal-points-fill" class="progress-fill" style="width: 0%;"></div></div></div>
                     </div>
-                    
                     <div class="dashboard-card">
                         <h3>Recent Activity</h3>
                         <ul class="feed" id="recent-activity-feed"><li>Loading...</li></ul>
                     </div>
                 </div>
 
-                <div class="dashboard-performance">
-                      <div class="dashboard-card"><h3>Group Performance (Placeholder)</h3><div class="performance-metric"><div class="metric-item"><span class="metric-label">Average Completion</span><span id="group-avg-completion" class="metric-value">0%</span></div><div class="metric-item"><span class="metric-label">Active Members</span><span id="group-active-members" class="metric-value">0/0</span></div></div></div>
-                 </div>
+                <div class="dashboard-heatmap" style="display:none;">...</div>
+                <div class="dashboard-performance" style="display:none;">...</div>
             </section>
         </div>
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <script src="theme.js"></script> 
+    <script src="theme.js"></script>
     
     <script type="module">
-        // ✅ Imports - Added 'getFunctions' and 'httpsCallable'
         import { db, auth, onAuthStateChanged, formatTimeAgo, doc } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { collection, query, where, orderBy, limit, getDocs, onSnapshot, Timestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-        // ✅ Import the Functions SDK
+        import { collection, query, orderBy, limit, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
         import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-functions.js";
     
         // UI Elements
@@ -131,7 +99,7 @@
             completed: document.getElementById('stat-completed'),
             points: document.getElementById('stat-points'),
             rank: document.getElementById('stat-rank'),
-            totalTrend: document.getElementById('stat-total-trend'), // Stat trend elements
+            totalTrend: document.getElementById('stat-total-trend'), // ✅ This is the one
             dueToday: document.getElementById('stat-due-today'),
             completionRate: document.getElementById('stat-completion-rate')
         };
@@ -141,45 +109,89 @@
         const goalTasksFill = document.getElementById('goal-tasks-fill');
         const goalPointsProgress = document.getElementById('goal-points-progress');
         const goalPointsFill = document.getElementById('goal-points-fill');
+        
         let taskChart, pointsChart; // Chart instances
+        let currentUserId = null; // Store current user ID
     
-        // ✅ Get Firebase Functions instance and reference the deployed function
+        // Cloud Function Reference
         const functions = getFunctions();
-        const getDashboardStats = httpsCallable(functions, 'getDashboardStats');
+        const getDashboardData = httpsCallable(functions, 'getDashboardData');
     
-        // --- Load Basic Dynamic Data (Real-time listeners) ---
-        function loadDashboardData(userId) {
-            // Listen for user's points (updates the main points card)
-            const userRef = doc(db, "users", userId);
-            onSnapshot(userRef, (userDoc) => {
-                if (userDoc.exists()) {
-                    stats.points.textContent = (userDoc.data().points || 0).toLocaleString();
-                }
-            });
-    
-            // Listen for user's assigned tasks (updates task counts and completion rate)
-            const tasksQuery = query(collection(db, "tasks"), where("assignee", "==", userId));
-            onSnapshot(tasksQuery, (snapshot) => {
-                let completedCount = 0, inProgressCount = 0;
-                snapshot.forEach(doc => {
-                    const task = doc.data();
-                    if (task.status === "completed") completedCount++;
-                    else if (task.status === "in-progress") inProgressCount++;
+        // --- Chart.js Global Config ---
+        const getChartTextColor = () => getComputedStyle(document.body).getPropertyValue('--text-muted') || '#b6aee6';
+        const getChartGridColor = () => getComputedStyle(document.body).getPropertyValue('--outline') || '#2a244b';
+        Chart.defaults.font.color = getChartTextColor();
+        Chart.defaults.color = getChartTextColor();
+        
+        // --- Initialize Charts (Called once) ---
+        function initializeCharts() {
+            const taskCtx = document.getElementById('taskChart')?.getContext('2d');
+            if (taskCtx) {
+                taskChart = new Chart(taskCtx, { 
+                    type: 'line', data: { labels: [], datasets: [] }, 
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: getChartTextColor() }}}, scales: { x: { grid: { color: getChartGridColor() }, ticks: { color: getChartTextColor() }}, y: { grid: { color: getChartGridColor() }, ticks: { color: getChartTextColor() }}} }
                 });
-                const totalAssigned = snapshot.size;
-                stats.totalTasks.textContent = totalAssigned;
-                stats.inProgress.textContent = inProgressCount;
-                stats.completed.textContent = completedCount;
-                const completionRate = totalAssigned > 0 ? Math.round((completedCount / totalAssigned) * 100) : 0;
-                stats.completionRate.textContent = `${completionRate}% completion rate`;
+            }
+            const pointsCtx = document.getElementById('pointsChart')?.getContext('2d');
+            if (pointsCtx) {
+                pointsChart = new Chart(pointsCtx, { 
+                    type: 'doughnut', data: { labels: [], datasets: [] }, 
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: getChartTextColor() }}}} 
+                });
+            }
+        }
+        
+        // --- Function to call the Cloud Function ---
+        async function loadDynamicData(period = 'month') {
+            if (!currentUserId) return;
+            console.log(`Calling getDashboardData function for period: ${period}...`);
+            try {
+                const result = await getDashboardData({ period: period });
+                const data = result.data;
+                console.log("Stats received from function:", data);
     
-                // Update Weekly Task Goal (Based on total completed vs. goal)
-                const tasksGoal = 5; // Assuming goal is 5
-                goalTasksProgress.textContent = `${completedCount}/${tasksGoal}`;
-                goalTasksFill.style.width = `${Math.min(100, (completedCount / tasksGoal) * 100)}%`;
-            });
+                // Populate Stats Cards
+                stats.totalTasks.textContent = data.tasksTotal || 0;
+                stats.inProgress.textContent = data.tasksInProgress || 0;
+                stats.completed.textContent = data.tasksCompleted || 0;
+                stats.points.textContent = (data.userPoints || 0).toLocaleString();
+                
+                // Populate Stat Trends
+                stats.rank.textContent = data.userRank ? `Rank #${data.userRank}` : 'Rank #?';
+                stats.dueToday.textContent = `${data.tasksDueToday || 0} due today`;
+                stats.completionRate.textContent = `${data.completionRate || 0}% completion rate`;
+                
+                // ✅ FIXED: Use the dynamic trend from the function
+                stats.totalTrend.textContent = data.totalTasksTrend || "N/A";
     
-            // Listen for GLOBAL recent activity
+                // Populate Weekly Goals
+                const tasksGoal = 5; const pointsGoal = 500;
+                const tasksCompletedWeek = data.tasksCompletedThisWeek || 0;
+                const pointsEarnedWeek = data.pointsThisWeek || 0;
+                goalTasksProgress.textContent = `${tasksCompletedWeek}/${tasksGoal}`;
+                goalTasksFill.style.width = `${Math.min(100, (tasksCompletedWeek / tasksGoal) * 100)}%`;
+                goalPointsProgress.textContent = `${pointsEarnedWeek}/${pointsGoal}`;
+                goalPointsFill.style.width = `${Math.min(100, (pointsEarnedWeek / pointsGoal) * 100)}%`;
+                
+                // Update Charts
+                if (taskChart && data.taskChartData) {
+                    taskChart.data = data.taskChartData;
+                    updateChartColors(taskChart);
+                }
+                if (pointsChart && data.pointsChartData) {
+                    pointsChart.data = data.pointsChartData;
+                    updateChartColors(pointsChart);
+                }
+            } catch (error) {
+                console.error("Error calling getDashboardData function:", error);
+                stats.rank.textContent = 'Rank Error';
+                stats.dueToday.textContent = 'Error';
+                stats.totalTrend.textContent = 'Error'; // Show error
+            }
+        }
+        
+        // --- Listen for GLOBAL recent activity (Lightweight) ---
+        function listenForRecentActivity() {
             const activitiesQuery = query(collection(db, "activities"), orderBy("createdAt", "desc"), limit(3));
             onSnapshot(activitiesQuery, (snapshot) => {
                 activityFeedEl.innerHTML = "";
@@ -194,50 +206,45 @@
                 });
             });
         }
+        
+        // --- updateChart now calls loadDynamicData ---
+        window.updateChart = (chartId, period) => {
+            if (chartId === 'taskChart') {
+                loadDynamicData(period); // Reload all data for the new period
+            }
+        };
     
-        // ✅ Function to call the Cloud Function for specific stats ---
-        async function loadStatsFromFunction(userId) {
-          try {
-            console.log("Calling getDashboardStats function...");
-            // No need to pass userId, the function gets it from the authenticated context
-            const result = await getDashboardStats();
-            const data = result.data; // The data returned by your function { pointsEarnedToday, userRank, tasksDueToday, tasksCompletedThisWeek }
-    
-            console.log("Stats received from function:", data);
-    
-            // Update Rank Trend
-            stats.rank.textContent = data.userRank ? `Rank #${data.userRank}` : 'Rank #?';
-    
-            // Update Due Today Trend
-            stats.dueToday.textContent = `${data.tasksDueToday || 0} due today`;
-    
-            // Update Weekly Points Goal (using points earned today as proxy for week)
-            const pointsGoal = 500; // Assuming goal is 500
-            const pointsEarned = data.pointsEarnedToday || 0;
-            goalPointsProgress.textContent = `${pointsEarned}/${pointsGoal}`;
-            goalPointsFill.style.width = `${Math.min(100, (pointsEarned / pointsGoal) * 100)}%`;
-    
-            // Note: "+X% this week" (Total Tasks Trend) is still hardcoded
-    
-          } catch (error) {
-            console.error("Error calling getDashboardStats function:", error);
-            stats.rank.textContent = 'Rank Error';
-            stats.dueToday.textContent = 'Error';
-          }
+        // --- Helper to update chart colors on theme change ---
+        function updateChartColors(chart) {
+            if (!chart) return;
+            const textColor = getChartTextColor();
+            const gridColor = getChartGridColor();
+            if (chart.options.plugins && chart.options.plugins.legend) {
+                chart.options.plugins.legend.labels.color = textColor;
+            }
+            if (chart.options.scales && chart.options.scales.x) { 
+                chart.options.scales.x.ticks.color = textColor;
+                chart.options.scales.x.grid.color = gridColor;
+            }
+            if (chart.options.scales && chart.options.scales.y) {
+                chart.options.scales.y.ticks.color = textColor;
+                chart.options.scales.y.grid.color = gridColor;
+            }
+            chart.update();
         }
-    
-        // --- Static Chart/Heatmap Initialization (Unchanged) ---
-        function initializeStaticElements() { /* ... Chart/Heatmap init code ... */ }
-        function generateHeatmap() { /* ... Heatmap generation code ... */ }
-        window.updateChart = (chartId, period) => { /* ... Placeholder ... */ };
-    
+        
         // --- Initialize Page ---
-        document.addEventListener('DOMContentLoaded', initializeStaticElements);
+        document.addEventListener('DOMContentLoaded', initializeCharts);
+        window.addEventListener('themeChanged', () => {
+            updateChartColors(taskChart);
+            updateChartColors(pointsChart);
+        });
     
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                loadDashboardData(user.uid);      // Load real-time basic data
-                loadStatsFromFunction(user.uid); // ✅ Call the cloud function for calculated stats
+                currentUserId = user.uid;
+                loadDynamicData('month'); // Call Cloud Function on load
+                listenForRecentActivity(); // Start live listener
             } else {
                 window.location.href = 'auth.html';
             }

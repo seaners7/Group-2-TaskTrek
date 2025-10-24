@@ -59,11 +59,13 @@
           <div class="social-row">
             <button class="btn social social--google" type="button" id="googleLoginBtn" onclick="handleGoogleLogin()">
               <span class="social__icon">G</span>
-              <span>Continue with Google</span>
+              <span class="btn-text">Continue with Google</span>
+              <span class="btn-spinner" style="display: none;">⏳</span>
             </button>
             <button class="btn social social--facebook" type="button" id="facebookLoginBtn" onclick="handleFacebookLogin()">
               <span class="social__icon">f</span>
-              <span>Continue with Facebook</span>
+              <span class="btn-text">Continue with Facebook</span>
+              <span class="btn-spinner" style="display: none;">⏳</span>
             </button>
           </div>
         </form>
@@ -333,6 +335,7 @@
         }
       });
     }
+    window.validatePassword = validatePassword; // ✅ ADD THIS LINE
 
     function showForgotPassword() {
       console.log("Show forgot password clicked");

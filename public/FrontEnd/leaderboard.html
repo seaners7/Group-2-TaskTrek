@@ -10,7 +10,7 @@
     <script>!function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}}();</script>
     <link rel="stylesheet" href="styles.css" />
     <style>
-        /* Optional: Ensure icon colors adapt in light mode */
+        /* Optional: Theme icon color adaptation */
         [data-theme="light"] .nav__icon { stroke: var(--text-muted); }
         [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
         .theme-toggle-btn .theme-icon--sun { stroke: white; }
@@ -50,12 +50,13 @@
         <div class="content">
             <section class="panel">
                 <div class="panel__header">
-                    <h2 id="leaderboard-title">Leaderboard</h2> <div class="panel__actions">
+                    <h2 id="leaderboard-title">Leaderboard</h2>
+                    <div class="panel__actions">
                         <select class="input" style="width: auto;" onchange="filterLeaderboard(this.value)">
                             <option value="all">All Time</option>
                             <option value="month">This Month</option>
-                        <option value="week">This Week</option>
-                            </select>
+                            <option value="week">This Week</option>
+                        </select>
                     </div>
                 </div>
                 
@@ -101,7 +102,7 @@
     <script type="module">
         import { db, auth, onAuthStateChanged, doc } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { collection, query, where, orderBy, limit, getDocs, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { collection, query, where, orderBy, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // UI Elements
         const leaderboardTableBody = document.getElementById("leaderboard-body");
@@ -114,57 +115,54 @@
         // Global State
         let currentUser = null;
         let activeGroupId = null;
-        let unsubscribeUserListener = null; // To stop listening when user changes
-        let unsubscribeGroupListener = null; // To stop listening when group changes
+        let activeGroupData = null;
+        let unsubscribeUserListener = null;
+        let unsubscribeGroupListener = null;
 
         // --- Core Logic ---
         function listenForActiveGroupAndUser() {
             if (!currentUser) return;
-            // Stop previous listener if it exists
             if (unsubscribeUserListener) unsubscribeUserListener();
 
             const userRef = doc(db, "users", currentUser.uid);
             unsubscribeUserListener = onSnapshot(userRef, (userDoc) => {
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    yourPointsEl.textContent = (userData.points || 0).toLocaleString(); // Update user points stat
+                if (!userDoc.exists()) { console.error("Current user document not found!"); return; }
+                
+                const userData = userDoc.data();
+                yourPointsEl.textContent = (userData.points || 0).toLocaleString(); 
 
-                    const newActiveGroupId = userData.activeGroupId;
-                    if (!newActiveGroupId) {
-                        leaderboardTitleEl.textContent = "Leaderboard - No Group Selected";
-                        leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Select an active group on the Groups page.</td></tr>';
-                        yourRankEl.textContent = '#?'; yourTasksEl.textContent = '0';
-                        if (unsubscribeGroupListener) unsubscribeGroupListener(); // Stop listening to old group
-                        activeGroupId = null;
-                        return;
-                    }
+                const newActiveGroupId = userData.activeGroupId;
+                if (!newActiveGroupId) {
+                    leaderboardTitleEl.textContent = "Leaderboard - No Group Selected";
+                    leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Select an active group on the Groups page.</td></tr>';
+                    yourRankEl.textContent = '#?'; yourTasksEl.textContent = '0';
+                    if (unsubscribeGroupListener) unsubscribeGroupListener();
+                    activeGroupId = null; return;
+                }
 
-                    if (newActiveGroupId !== activeGroupId) {
-                        activeGroupId = newActiveGroupId;
-                        if (unsubscribeGroupListener) unsubscribeGroupListener(); // Stop listening to old group
-                        
-                        const groupRef = doc(db, "groups", activeGroupId);
-                        // Listen for changes in the active group (member list might change)
-                        unsubscribeGroupListener = onSnapshot(groupRef, (groupDoc) => {
-                            if (groupDoc.exists()) {
-                                const groupData = groupDoc.data();
-                                leaderboardTitleEl.textContent = `Leaderboard - ${groupData.name || 'Unnamed Group'}`;
-                                loadAndRenderLeaderboard(currentUser.uid, groupData.members);
-                            } else {
-                                leaderboardTitleEl.textContent = "Leaderboard - Group Not Found";
-                                leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Error loading group data.</td></tr>';
-                                yourRankEl.textContent = '#?'; yourTasksEl.textContent = '0';
-                                activeGroupId = null; // Reset if group not found
-                            }
-                        }, error => console.error("Error listening to group:", error));
-                    }
-                } else {
-                    // Handle case where user document doesn't exist
-                    yourPointsEl.textContent = '0';
+                if (newActiveGroupId !== activeGroupId) {
+                    activeGroupId = newActiveGroupId;
+                    if (unsubscribeGroupListener) unsubscribeGroupListener();
+                    
+                    const groupRef = doc(db, "groups", activeGroupId);
+                    unsubscribeGroupListener = onSnapshot(groupRef, (groupDoc) => {
+                        if (groupDoc.exists()) {
+                            activeGroupData = groupDoc.data();
+                            leaderboardTitleEl.textContent = `Leaderboard - ${activeGroupData.name || 'Unnamed Group'}`;
+                            // Call the function to load/render
+                            loadAndRenderLeaderboard(currentUser.uid, activeGroupData.members);
+                        } else {
+                            leaderboardTitleEl.textContent = "Leaderboard - Group Not Found";
+                            leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Error loading group data.</td></tr>';
+                            yourRankEl.textContent = '#?'; yourTasksEl.textContent = '0';
+                            activeGroupId = null;
+                        }
+                    }, error => console.error("Error listening to group:", error));
                 }
             }, error => console.error("Error listening to user:", error));
         }
 
+        // ✅ FIXED: loadAndRenderLeaderboard now fetches all data *before* rendering
         async function loadAndRenderLeaderboard(currentUserId, memberIds) {
             if (!memberIds || memberIds.length === 0) {
                 leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">This group has no members yet.</td></tr>';
@@ -174,51 +172,46 @@
 
             leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Loading...</td></tr>';
 
-            // Query only the users who are members of the active group, ordered by points
+            // Query for member user data, sorted by points
             const membersQuery = query(
                 collection(db, "users"),
-                where("__name__", "in", memberIds.slice(0, 30)), // Handle 'in' limit
+                where("__name__", "in", memberIds.slice(0, 30)), // 'in' query limit
                 orderBy("points", "desc")
-                // limit(20) // Optional: limit the number shown
             );
             
             try {
                 const snapshot = await getDocs(membersQuery);
-                leaderboardTableBody.innerHTML = ""; // Clear loading/previous data
-                let rank = 1;
-                let userTasks = 0; // To store current user's task count
+                if (snapshot.empty) {
+                     leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No members found.</td></tr>';
+                     return;
+                }
 
-                snapshot.forEach(doc => {
+                // Create a list of promises to fetch task counts for all members
+                const taskCountPromises = snapshot.docs.map(doc => fetchUserTaskCounts(doc.id));
+                // Wait for ALL task count fetches to complete
+                const allTaskCounts = await Promise.all(taskCountPromises);
+
+                // Now that we have all data, clear the table and render everything
+                leaderboardTableBody.innerHTML = ""; 
+                
+                snapshot.docs.forEach((doc, index) => {
                     const user = doc.data();
+                    const taskCounts = allTaskCounts[index]; // Get the matching task count
                     const isCurrentUser = doc.id === currentUserId;
-                    
-                    // Fetch task counts specifically for this user (could be optimized with Cloud Function)
-                    // We'll update the 'Your Tasks' card here
-                    if (isCurrentUser) {
-                        fetchUserTaskCounts(currentUserId).then(counts => {
-                            yourTasksEl.textContent = counts.total;
-                            // Render row after getting task counts
-                            renderLeaderboardRow(rank, user, doc.id, currentUserId, counts);
-                        });
-                    } else {
-                         // Render row immediately for other users (using placeholder task counts)
-                        renderLeaderboardRow(rank, user, doc.id, currentUserId, { total: 0, gold: 0, silver: 0, bronze: 0 });
-                    }
+                    const rank = index + 1; // Rank is the position in the sorted list
 
                     if (isCurrentUser) {
                         yourRankEl.textContent = `#${rank}`; // Update user's rank stat card
+                        yourTasksEl.textContent = taskCounts.total; // Update user's task stat card
                     }
-                    rank++;
+                    
+                    // Render the row for this user
+                    renderLeaderboardRow(rank, user, doc.id, isCurrentUser, taskCounts);
                 });
-
-                if (snapshot.empty) {
-                     leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No members found for this group.</td></tr>';
-                }
 
             } catch (error) {
                  console.error("Error loading leaderboard:", error);
-                 leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Error loading leaderboard data.</td></tr>';
-                 // Check console for potential index requirement errors
+                 leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Error loading leaderboard. Check console for index errors.</td></tr>';
             }
         }
 
@@ -237,10 +230,9 @@
         }
 
         // Helper to render a single row in the table
-        function renderLeaderboardRow(rank, userData, userId, currentUserId, taskCounts) {
-            const isCurrentUser = userId === currentUserId;
+        function renderLeaderboardRow(rank, userData, userId, isCurrentUser, taskCounts) {
             const row = document.createElement("tr");
-            row.className = `leaderboard-row ${isCurrentUser ? 'current-user' : ''} rank-${rank <= 3 ? rank : ''}`; // Add rank class for top 3
+            row.className = `leaderboard-row ${isCurrentUser ? 'current-user' : ''} rank-${rank <= 3 ? rank : ''}`;
             
             row.innerHTML = `
                 <td><div class="rank-badge rank-${rank <= 3 ? rank : ''}">${rank}</div></td>
@@ -262,20 +254,13 @@
             leaderboardTableBody.appendChild(row);
         }
 
-      // ✅ UPDATED: Filter function simulates period change but still uses total points
-      window.filterLeaderboard = (period) => {
+        // Filter Function (Placeholder for Month/Week)
+        window.filterLeaderboard = (period) => {
             console.log(`Filtering leaderboard by: ${period}`);
-            // In a real implementation, you'd fetch/sort data based on points earned during the 'period'.
-            // For now, we'll just reload the 'All Time' data for the current group
-            // but you could potentially change the table title or add a visual cue.
-
+            // This is a placeholder. For now, it just reloads "All Time"
             leaderboardTitleEl.textContent = `Leaderboard (${period === 'all' ? 'All Time' : period === 'month' ? 'This Month' : 'This Week'}) - ${activeGroupData?.name || 'Group'}`;
-
             if (activeGroupId && activeGroupData && currentUser) {
-                // Re-fetch and render using the existing function which sorts by total points
                 loadAndRenderLeaderboard(currentUser.uid, activeGroupData.members);
-            } else {
-                 leaderboardTableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Select an active group first.</td></tr>';
             }
         };
 
@@ -285,10 +270,10 @@
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if (user) {
-                listenForActiveGroupAndUser(); // Start listening process
+                listenForActiveGroupAndUser();
             } else {
                 window.location.href = 'auth.html';
-                if (unsubscribeUserListener) unsubscribeUserListener(); // Clean up listeners on logout
+                if (unsubscribeUserListener) unsubscribeUserListener();
                 if (unsubscribeGroupListener) unsubscribeGroupListener();
             }
         });

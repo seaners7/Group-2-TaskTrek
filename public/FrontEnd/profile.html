@@ -120,9 +120,17 @@
                     <div class="form-field"><label for="profileName">Full Name</label><input type="text" id="profileName" class="input" required></div>
                     <div class="form-field"><label for="profileUsername">Username</label><input type="text" id="profileUsername" class="input" placeholder="@yourusername"></div>
                     <div class="form-field"><label for="profileBio">Bio</label><textarea id="profileBio" class="input" rows="3" placeholder="Tell us about yourself"></textarea></div>
+                    <div class="form-field">
+                        <label for="profilePicture">Profile Picture (Optional)</label>
+                        <input type="file" id="profilePicture" class="input" accept="image/*">
+                        <img id="profilePicturePreview" src="#" alt="Profile Picture Preview" style="display: none; max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 50%; border: 1px solid var(--outline);"/>
+                    </div>
+                   
                     <div class="modal-actions">
                         <button type="button" class="btn btn--ghost" onclick="closeModal('editProfileModal')">Cancel</button>
-                        <button type="submit" class="btn btn--primary">Save Changes</button>
+                            <button type="submit" class="btn btn--primary" id="saveProfileButton">
+                            <span class="btn-text">Save Changes</span>
+                            <span class="btn-spinner" style="display: none;">⏳</span>
                     </div>
                 </form>
             </div>
@@ -132,19 +140,24 @@
     <script src="theme.js"></script>
 
     <script type="module">
-        import { db, auth, onAuthStateChanged, doc, updateDoc, formatTimeAgo } from './firebase.js';
-        import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        // --- Firebase Imports ---
+        // Firestore
+        import { db, auth, onAuthStateChanged, doc, updateDoc as updateFirestoreDoc, formatTimeAgo } from './firebase.js'; // Renamed updateDoc to avoid conflict
         import { onSnapshot, collection, query, where, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-        // UI Elements - Using querySelector for consistency with original HTML structure
+        // Auth
+        import { signOut, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"; // Added updateProfile
+        // Storage
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js"; // Added Storage imports
+    
+        // --- UI Elements ---
         const profileNameEl = document.querySelector('.profile__left h3');
-        const profileUsernameEl = document.querySelector('.profile__left .muted'); // Targets the element below h3
+        const profileUsernameEl = document.querySelector('.profile__left .muted');
         const profileBioEl = document.querySelector('.profile-bio p');
         const profileAvatarEl = document.querySelector('.profile__left .avatar');
-        const logoutBtn = document.querySelector('.sidebar__footer a#logout-btn, .sidebar__footer a[href="index.html"]'); // More robust selector
+        const logoutBtn = document.querySelector('.sidebar__footer a#logout-btn, .sidebar__footer a[href="#"]'); // Adjusted selector
         const activityFeedEl = document.querySelector('.recent-activity .feed');
-        
-        const stats = { // Target specific stat cards by index or more specific selectors if needed
+    
+        const stats = {
             points: document.querySelector('.cards .stat-card:nth-child(1) .stat-value'),
             tasksCompleted: document.querySelector('.cards .stat-card:nth-child(2) .stat-value'),
             streak: document.querySelector('.cards .stat-card:nth-child(3) .stat-value'),
@@ -154,51 +167,107 @@
             bronze: document.querySelector('.cards .stat-card:nth-child(7) .stat-value'),
             rewards: document.querySelector('.cards .stat-card:nth-child(8) .stat-value'),
         };
-        
-        // Modal Form Inputs - Using original IDs
-        const editForm = document.querySelector('#editProfileModal .modal-form');
+    
+        // Modal Form Inputs
+        const editForm = document.getElementById('editProfileForm'); // Use ID selector
         const profileNameInput = document.getElementById('profileName');
         const profileUsernameInput = document.getElementById('profileUsername');
         const profileBioInput = document.getElementById('profileBio');
-        
-        let currentUserRef = null;
-
-        // Global Modal Functions
-        window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
+        const profilePictureInput = document.getElementById('profilePicture'); // <-- ADDED
+        const profilePicturePreview = document.getElementById('profilePicturePreview'); // <-- ADDED
+        const saveProfileButton = document.getElementById('saveProfileButton'); // <-- ADDED
+    
+        // --- Global State ---
+        let currentUser = null; // Store the auth user object
+        let currentUserRef = null; // Store Firestore doc reference
+        let unsubscribeFirestoreProfile = null; // To manage Firestore listener
+    
+        // --- Firebase Storage Instance ---
+        const storage = getStorage(); // Initialize storage
+    
+        // --- Global Modal Functions ---
+        window.openModal = (modalId) => {
+            // Pre-fill form just before opening
+            if (modalId === 'editProfileModal' && auth.currentUser) { // Check auth.currentUser directly
+                 // Assuming renderProfile has already populated the inputs from Firestore data
+                 // Set the preview to the current avatar if it exists
+                 if (auth.currentUser.photoURL) {
+                     profilePicturePreview.src = auth.currentUser.photoURL;
+                     profilePicturePreview.style.display = 'block';
+                 } else {
+                     profilePicturePreview.style.display = 'none';
+                     profilePicturePreview.src = '#';
+                 }
+            }
+            document.getElementById(modalId).style.display = 'flex';
+        };
         window.closeModal = (modalId) => {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
-            // Don't reset form here, pre-fill happens on load
+             // Reset form & preview specifically for editProfileModal
+            if (modalId === 'editProfileModal') {
+                const form = document.getElementById('editProfileForm');
+                if (form) form.reset(); // Resetting clears the file input
+                profilePicturePreview.style.display = 'none';
+                profilePicturePreview.src = '#';
+            }
         };
-        // Close modal on outside click (from original script)
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('modal')) {
                 closeModal(e.target.id);
             }
         });
-
-
+    
+         // Helper for loading state on buttons
+        function setLoadingState(button, isLoading) {
+            const text = button.querySelector('.btn-text');
+            const spinner = button.querySelector('.btn-spinner');
+            if (!text || !spinner) return;
+            if (isLoading) {
+                button.disabled = true;
+                text.style.display = 'none';
+                spinner.style.display = 'inline';
+            } else {
+                button.disabled = false;
+                text.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        }
+    
+    
         // --- Render Profile Data ---
         function renderProfile(userData, userAuth) {
-            profileNameEl.textContent = userData.name || 'Unnamed User';
-            profileUsernameEl.textContent = userData.username ? `@${userData.username}` : userAuth.email;
+            // Use ?? operator for cleaner fallbacks
+            profileNameEl.textContent = userData.name ?? userAuth.displayName ?? 'Unnamed User';
+            profileUsernameEl.textContent = userData.username ? `@${userData.username}` : userAuth.email ?? 'No email';
             profileBioEl.textContent = userData.bio || 'No bio yet...';
-            if (userAuth.photoURL) profileAvatarEl.style.backgroundImage = `url(${userAuth.photoURL})`;
-            
-            stats.points.textContent = (userData.points || 0).toLocaleString();
-            stats.streak.textContent = `${userData.streak || 0} days`;
-            
-            // Pre-fill edit form
-            profileNameInput.value = userData.name || '';
-            profileUsernameInput.value = userData.username || '';
-            profileBioInput.value = userData.bio || '';
+    
+            // Use photoURL from Auth object as the primary source for display
+            if (userAuth?.photoURL) { // Check if userAuth and photoURL exist
+                profileAvatarEl.style.backgroundImage = `url(${userAuth.photoURL})`;
+                profileAvatarEl.textContent = ''; // Clear text if image exists
+            } else {
+                // Optional: Show initials or default avatar if no photoURL
+                profileAvatarEl.style.backgroundImage = 'none'; // Remove background image
+                 const initials = (userData.name ?? userAuth?.displayName ?? '?').charAt(0).toUpperCase();
+                 profileAvatarEl.textContent = initials; // Display initial
+                 // Add styles for text avatar if desired in CSS (e.g., background color, font size)
+            }
+    
+            stats.points.textContent = (userData?.points ?? 0).toLocaleString(); // Use optional chaining
+            stats.streak.textContent = `${userData?.streak ?? 0} days`;
+    
+            // Pre-fill edit form inputs
+            profileNameInput.value = userData?.name ?? userAuth?.displayName ?? '';
+            profileUsernameInput.value = userData?.username ?? '';
+            profileBioInput.value = userData?.bio ?? '';
         }
-
+    
         // --- Listen for Live Stats (Tasks, Rewards) ---
         function listenForLiveStats(userId) {
             // Task counts by difficulty
             const tasksQuery = query(collection(db, "tasks"), where("assignee", "==", userId), where("status", "==", "completed"));
-            onSnapshot(tasksQuery, (snapshot) => {
+            const unsubscribeTasks = onSnapshot(tasksQuery, (snapshot) => { // Store unsubscribe locally
                 let gold = 0, silver = 0, bronze = 0;
                 snapshot.forEach(doc => {
                     const task = doc.data();
@@ -207,39 +276,38 @@
                 stats.gold.textContent = gold; stats.silver.textContent = silver; stats.bronze.textContent = bronze;
                 stats.tasksCompleted.textContent = snapshot.size;
                 checkAchievementsAndBadges({ tasksCompleted: snapshot.size, goldTasks: gold }); // Pass stats
-            });
-
+            }, (error) => console.error("Task stats listener failed:", error)); // Add error handling
+    
             // Rewards redeemed count
             const rewardsQuery = query(collection(db, "activities"), where("userId", "==", userId), where("type", "==", "reward-redeemed"));
-            onSnapshot(rewardsQuery, (snapshot) => {
+            const unsubscribeRewards = onSnapshot(rewardsQuery, (snapshot) => { // Store unsubscribe locally
                 stats.rewards.textContent = snapshot.size;
             }, (error) => console.error("Rewards stat listener failed (Index needed?):", error.message));
+    
+            // Return a function to unsubscribe from both listeners
+            return () => {
+                unsubscribeTasks();
+                unsubscribeRewards();
+            };
         }
-        
+    
         // --- Check and Update Achievements & Badges ---
         function checkAchievementsAndBadges(userStats) {
-             const streak = parseInt(stats.streak.textContent) || 0; // Get current streak from UI
-            
+             const streak = parseInt(stats.streak.textContent) || 0;
+    
              // --- Large Achievement Cards ---
              document.querySelector('[data-achievement="task-master"]')?.classList.toggle('unlocked', userStats.tasksCompleted >= 50);
              document.querySelector('[data-achievement="gold-hunter"]')?.classList.toggle('unlocked', userStats.goldTasks >= 10);
              document.querySelector('[data-achievement="streak-master"]')?.classList.toggle('unlocked', streak >= 7);
-             // Add checks for other achievements (early-bird, team-player, scholar) based on relevant data if available
-             // document.querySelector('[data-achievement="early-bird"]')?.classList.toggle('unlocked', /* condition */);
-             // document.querySelector('[data-achievement="team-player"]')?.classList.toggle('unlocked', /* condition */);
-             // document.querySelector('[data-achievement="scholar"]')?.classList.toggle('unlocked', /* condition */);
-
+             // Add checks for others...
+    
              // --- Small Badge Pills ---
              document.querySelector('[data-badge="gold-hunter"]')?.classList.toggle('unlocked', userStats.goldTasks >= 10);
              document.querySelector('[data-badge="task-master"]')?.classList.toggle('unlocked', userStats.tasksCompleted >= 50);
-             document.querySelector('[data-badge="streaker"]')?.classList.toggle('unlocked', streak >= 7); // Use a different badge name if needed
-             // Add toggles for other badges (silver-streak, bronze-beginner, early-bird, team-player)
-             // document.querySelector('[data-badge="silver-streak"]')?.classList.toggle('unlocked', /* condition */);
-             // document.querySelector('[data-badge="bronze-beginner"]')?.classList.toggle('unlocked', /* condition */);
-             // document.querySelector('[data-badge="early-bird"]')?.classList.toggle('unlocked', /* condition */);
-             // document.querySelector('[data-badge="team-player"]')?.classList.toggle('unlocked', /* condition */);
+             document.querySelector('[data-badge="streak"]')?.classList.toggle('unlocked', streak >= 7); // Ensure badge name matches HTML
+             // Add toggles for others...
         }
-
+    
         // --- Fetch User Rank (Called once on load) ---
         async function fetchUserRank(userId) {
             try {
@@ -248,82 +316,169 @@
                 const rank = usersSnapshot.docs.findIndex(doc => doc.id === userId) + 1;
                 stats.teamRank.textContent = rank > 0 ? `#${rank}` : '#?';
             } catch (error) {
-                 console.error("Error fetching user rank:", error); // Index needed?
-                 stats.teamRank.textContent = 'Error';
+                console.error("Error fetching user rank:", error);
+                stats.teamRank.textContent = 'Error';
             }
         }
-        
+    
         // --- Listen for Recent User Activity ---
         function listenForRecentActivity(userId) {
             const q = query(collection(db, "activities"), where("userId", "==", userId), orderBy("createdAt", "desc"), limit(3));
-            onSnapshot(q, (snapshot) => {
+            const unsubscribe = onSnapshot(q, (snapshot) => { // Store unsubscribe locally
                 activityFeedEl.innerHTML = ""; // Clear existing
                 if (snapshot.empty) activityFeedEl.innerHTML = "<li>No recent activity.</li>";
                 snapshot.forEach(doc => {
-                    const activity = doc.data(), li = document.createElement('li'), dotColor = activity.type?.includes("task") ? "gold" : "bronze";
+                    const activity = doc.data(), li = document.createElement('li'), dotColor = activity.type?.includes("task") ? "gold" : activity.type?.includes("reward") ? "bronze" : "purple";
                     li.className = 'feed-item';
                     li.innerHTML = `<span class="dot dot--${dotColor}"></span><div><strong>You</strong> ${activity.details || ''}</div><time>${formatTimeAgo(activity.createdAt)}</time>`;
                     activityFeedEl.appendChild(li);
                 });
             }, error => console.error("Error listening for recent activity (Index needed?):", error));
+            return unsubscribe; // Return the unsubscribe function
         }
-
+    
+        // --- Profile Picture Preview ---
+        profilePictureInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profilePicturePreview.src = e.target.result;
+                    profilePicturePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            } else {
+                 profilePicturePreview.style.display = 'none';
+                 profilePicturePreview.src = '#';
+            }
+        });
+    
         // --- Edit Profile Form Submission ---
         editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!currentUserRef) return;
-            // Get values directly from the input elements
+            const user = auth.currentUser; // Get current auth user directly
+            if (!currentUserRef || !user) return;
+    
+            setLoadingState(saveProfileButton, true);
+    
             const newName = profileNameInput.value.trim();
-            const newUsername = profileUsernameInput.value.trim().replace('@',''); // Clean username
+            const newUsername = profileUsernameInput.value.trim().replace('@','');
             const newBio = profileBioInput.value.trim();
+            const pictureFile = profilePictureInput.files[0];
+            let newPhotoURL = user.photoURL; // Start with current Auth URL
+    
             try {
-                await updateDoc(currentUserRef, {
+                // 1. Upload new picture if selected
+                if (pictureFile) {
+                    console.log("Uploading profile picture...");
+                    const filePath = `profilePictures/${user.uid}/${Date.now()}-${pictureFile.name}`;
+                    const storageRef = ref(storage, filePath);
+                    const uploadResult = await uploadBytes(storageRef, pictureFile);
+                    newPhotoURL = await getDownloadURL(uploadResult.ref);
+                    console.log("Profile picture uploaded:", newPhotoURL);
+    
+                    // 2. Update Firebase Auth profile
+                    await updateProfile(user, { // Pass the user object directly
+                        displayName: newName,
+                        photoURL: newPhotoURL
+                    });
+                    console.log("Firebase Auth profile updated.");
+                } else {
+                     // If no new picture, still update display name in Auth if it changed
+                     if (newName !== user.displayName) {
+                         await updateProfile(user, { displayName: newName });
+                         console.log("Firebase Auth display name updated.");
+                     }
+                     // If no new picture selected, keep newPhotoURL as the existing one from user.photoURL
+                }
+    
+    
+                // 3. Update Firestore document
+                await updateFirestoreDoc(currentUserRef, {
                     name: newName,
-                    username: newUsername, // Save username field
-                    bio: newBio
+                    username: newUsername,
+                    bio: newBio,
+                    photoURL: newPhotoURL // Update Firestore photoURL to match Auth
                 });
-                // No need to manually update UI here, onSnapshot will handle it
+                console.log("Firestore profile updated.");
+    
+                // Success: onSnapshot will handle UI update
                 closeModal('editProfileModal');
                 alert('Profile updated successfully!');
+    
             } catch (err) {
                 console.error("Error updating profile:", err);
-                alert('Failed to update profile.');
+                alert(`Failed to update profile: ${err.message || 'Check console.'}`);
+            } finally {
+                setLoadingState(saveProfileButton, false);
             }
         });
-
+    
         // --- Logout ---
         if (logoutBtn) {
             logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
         } else {
-             console.error("Logout button not found!");
+            console.error("Logout button not found!");
         }
-
-        // --- Initialize Page ---
+    
+        // --- Initialize Page and Manage Listeners ---
+        let unsubscribeStats = null;
+        let unsubscribeActivity = null;
+    
         onAuthStateChanged(auth, (user) => {
+            // Clean up previous listeners whenever auth state changes
+            if (unsubscribeFirestoreProfile) {
+                unsubscribeFirestoreProfile();
+                unsubscribeFirestoreProfile = null;
+            }
+            if (unsubscribeStats) {
+                unsubscribeStats();
+                unsubscribeStats = null;
+            }
+            if (unsubscribeActivity) {
+                unsubscribeActivity();
+                unsubscribeActivity = null;
+            }
+            // Clear global refs
+            currentUser = null;
+            currentUserRef = null;
+    
+    
             if (user) {
+                currentUser = user; // Store the latest auth user object
                 currentUserRef = doc(db, "users", user.uid);
-                // Listen for user document changes (updates profile info + stats)
-                onSnapshot(currentUserRef, (doc) => {
-                    if (doc.exists()) {
-                        renderProfile(doc.data(), user);
-                        // Re-check achievements when user data changes (e.g., streak)
-                         checkAchievementsAndBadges({
+    
+                // Listen for Firestore document changes
+                unsubscribeFirestoreProfile = onSnapshot(currentUserRef, (docSnap) => {
+                    if (!auth.currentUser) return; // Check if user logged out while listener was active
+    
+                    if (docSnap.exists()) {
+                        // Pass Firestore data and the LATEST Auth user object
+                        renderProfile(docSnap.data(), auth.currentUser);
+                        checkAchievementsAndBadges({
                             tasksCompleted: parseInt(stats.tasksCompleted.textContent) || 0,
                             goldTasks: parseInt(stats.gold.textContent) || 0
-                         });
+                        });
                     } else {
                         console.error("User document not found for logged in user:", user.uid);
-                        // Handle case where user exists in Auth but not Firestore? Create doc maybe?
+                        renderProfile({}, auth.currentUser); // Render with Auth data only
                     }
-                }, error => console.error("Error listening to user document:", error));
-
-                listenForLiveStats(user.uid);      // Listen for task/reward counts
-                fetchUserRank(user.uid);           // Fetch rank once
-                listenForRecentActivity(user.uid); // Listen for user's activity feed
+                }, error => {
+                     console.error("Error listening to user document:", error);
+                     renderProfile({}, auth.currentUser); // Attempt render with auth data on error
+                });
+    
+                // Start other listeners and fetch initial data
+                unsubscribeStats = listenForLiveStats(user.uid);
+                unsubscribeActivity = listenForRecentActivity(user.uid);
+                fetchUserRank(user.uid);
+    
             } else {
+                // User is signed out
                 window.location.href = 'auth.html';
             }
         });
+    
     </script>
 </body>
 </html>

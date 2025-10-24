@@ -88,7 +88,7 @@
     <script type="module">
         import { db, auth, onAuthStateChanged, formatTimeAgo, doc } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { collection, query, where, orderBy, limit, onSnapshot, Timestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { collection, query, where, orderBy, limit, onSnapshot, Timestamp, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // UI Elements
         const feedList = document.getElementById("activity-feed");
@@ -135,33 +135,39 @@
 
         // --- Fetch Joined Groups and Listen for Activities ---
         async function initializeActivityFeed(userId) {
-            // 1. Get user's active group ID
-            try {
-                const userDoc = await getDocs(doc(db, "users", userId));
-                if (userDoc.exists()) {
-                    activeGroupId = userDoc.data().activeGroupId;
-                }
-            } catch (e) {
-                console.error("Error getting user doc:", e);
-            }
-            
-            // 2. Get all groups the user is a member of
-            try {
-                const groupsQuery = query(collection(db, "groups"), where("members", "array-contains", userId));
-                const groupsSnapshot = await getDocs(groupsQuery);
-                joinedGroupIds = groupsSnapshot.docs.map(doc => doc.id); // Store the IDs
-                
-                if (joinedGroupIds.length > 0) {
-                    // 3. Now listen for activities *only* from those groups
-                    listenForActivities();
-                } else {
-                    feedList.innerHTML = "<li>You are not a member of any groups. Join one to see activity.</li>";
-                }
-            } catch (e) {
-                 console.error("Error fetching user's groups:", e);
-                 feedList.innerHTML = "<li>Error loading group data.</li>";
-            }
+    // 1. Get user's active group ID
+    try {
+        // ✅ CORRECTED: Use getDoc for a single document
+        const userDocSnap = await getDoc(doc(db, "users", userId));
+        if (userDocSnap.exists()) { // Check existence on the DocumentSnapshot
+            activeGroupId = userDocSnap.data().activeGroupId;
+            console.log("Active Group ID set:", activeGroupId); // Add console log for debugging
+        } else {
+             console.log("User document not found."); // Debugging log
+             activeGroupId = null; // Ensure it's null if doc not found
         }
+    } catch (e) {
+        console.error("Error getting user doc:", e);
+         activeGroupId = null; // Ensure it's null on error
+    }
+
+    // 2. Get all groups the user is a member of (Keep this part as is)
+    try {
+        const groupsQuery = query(collection(db, "groups"), where("members", "array-contains", userId));
+        const groupsSnapshot = await getDocs(groupsQuery);
+        joinedGroupIds = groupsSnapshot.docs.map(doc => doc.id); // Store the IDs
+
+        if (joinedGroupIds.length > 0) {
+            // 3. Now listen for activities *only* from those groups
+            listenForActivities();
+        } else {
+            feedList.innerHTML = "<li>You are not a member of any groups. Join one to see activity.</li>";
+        }
+    } catch (e) {
+         console.error("Error fetching user's groups:", e);
+         feedList.innerHTML = "<li>Error loading group data.</li>";
+    }
+}
 
         function listenForActivities() {
             // Stop any previous listener

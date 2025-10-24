@@ -15,6 +15,11 @@
         [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
         .theme-toggle-btn .theme-icon--sun { stroke: white; }
         [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); }
+        /* Optional Style Tweak for grid layout */
+        .groups {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
     </style>
 </head>
 <body>
@@ -27,14 +32,14 @@
         <aside class="sidebar">
             <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
             <nav class="sidebar__nav">
-                 <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
-                 <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
-                 <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
-                 <a href="groups.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
-                 <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
-                 <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
-                 <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
-                 <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
+                <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
+                <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
+                <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
+                <a href="groups.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
+                <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
+                <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
+                <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
+                <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
             </nav>
             <div class="sidebar__footer">
                 <div class="theme-toggle">
@@ -52,14 +57,19 @@
                 <div class="panel__header">
                     <h2>Groups</h2>
                     <div class="panel__actions">
-                        <button class="btn btn--primary" onclick="openModal('joinGroupModal')">Join Group</button>
+                        <button class="btn btn--primary" onclick="openModal('createGroupModal')">Create New Group</button>
                     </div>
                 </div>
-                
+
                 <div class="groups">
                     <div class="groups__joined">
                         <h3>My Groups</h3>
                         <ul class="list list--groups" id="groups-list"><li>Loading...</li></ul>
+                    </div>
+
+                    <div class="groups__public">
+                        <h3>Discover Public Groups</h3>
+                        <ul class="list list--groups" id="public-groups-list"><li>Loading public groups...</li></ul>
                     </div>
                     <div class="groups__invite">
                         <h3>Join via Invite Code</h3>
@@ -68,10 +78,17 @@
                             <button class="btn btn--primary" onclick="joinGroup()">Join</button>
                         </div>
                         <div class="group-actions">
-                            <button class="btn btn--neon" onclick="openModal('createGroupModal')">Create New Group</button>
+                            </div>
+
+                        <div class="group-info invite-code-section" id="active-group-invite-section" style="display: none; margin-top: 20px;">
+                            <h4>Active Group Invite Code</h4>
+                            <div class="invite-row">
+                                <input class="input" type="text" readonly id="active-invite-code-display" value="..." style="font-family: monospace;"/>
+                                <button class="btn btn--primary" onclick="copyActiveInviteCode()">Copy</button>
+                            </div>
+                            <p class="muted">Share this code with others to invite them to your active group.</p>
                         </div>
-                        <div class="group-info">
-                            <h4 id="current-group-info">Select an active group</h4>
+                        <div class="group-info"> <h4 id="current-group-info">Select an active group</h4>
                             <p>You're currently viewing data for your active group.</p>
                         </div>
                     </div>
@@ -91,15 +108,15 @@
 
         <div id="createGroupModal" class="modal" style="display: none;">
              <div class="modal-content">
-               <div class="modal-header"><h3>Create New Group</h3><button class="btn btn--ghost" onclick="closeModal('createGroupModal')">&times;</button></div>
-               <form id="createGroupForm" class="modal-form">
-                 <div class="form-field"><label for="newGroupName">Group Name</label><input type="text" id="newGroupName" class="input" required placeholder="Enter group name"><div class="error-message" id="group-name-error"></div></div>
-                 <div class="form-field"><label for="newGroupDescription">Description (Optional)</label><textarea id="newGroupDescription" class="input" rows="3" placeholder="Describe your group's purpose"></textarea></div>
-                 <div class="form-field"><label for="newGroupType">Group Type</label><select id="newGroupType" class="input" required><option value="">Select group type</option><option value="academic">Academic</option><option value="study">Study Group</option><option value="project">Project Team</option><option value="club">Club/Organization</option><option value="other">Other</option></select></div>
-                 <div class="form-field"><label for="maxMembers">Maximum Members (Optional)</label><input type="number" id="maxMembers" class="input" placeholder="Leave empty for unlimited" min="2" max="100"></div>
-                 <div class="form-field"><label for="groupPrivacy">Privacy Settings</label><select id="groupPrivacy" class="input" required><option value="private">Private (Invite only)</option><option value="public">Public (Anyone can join)</option></select></div>
-                 <div class="modal-actions"><button type="button" class="btn btn--ghost" onclick="closeModal('createGroupModal')">Cancel</button><button type="submit" class="btn btn--primary">Create Group</button></div>
-               </form>
+                <div class="modal-header"><h3>Create New Group</h3><button class="btn btn--ghost" onclick="closeModal('createGroupModal')">&times;</button></div>
+                <form id="createGroupForm" class="modal-form">
+                    <div class="form-field"><label for="newGroupName">Group Name</label><input type="text" id="newGroupName" class="input" required placeholder="Enter group name"><div class="error-message" id="group-name-error"></div></div>
+                    <div class="form-field"><label for="newGroupDescription">Description (Optional)</label><textarea id="newGroupDescription" class="input" rows="3" placeholder="Describe your group's purpose"></textarea></div>
+                    <div class="form-field"><label for="newGroupType">Group Type</label><select id="newGroupType" class="input" required><option value="">Select group type</option><option value="academic">Academic</option><option value="study">Study Group</option><option value="project">Project Team</option><option value="club">Club/Organization</option><option value="other">Other</option></select></div>
+                    <div class="form-field"><label for="maxMembers">Maximum Members (Optional)</label><input type="number" id="maxMembers" class="input" placeholder="Leave empty for unlimited" min="2" max="100"></div>
+                    <div class="form-field"><label for="groupPrivacy">Privacy Settings</label><select id="groupPrivacy" class="input" required><option value="private">Private (Invite only)</option><option value="public">Public (Anyone can join)</option></select></div>
+                    <div class="modal-actions"><button type="button" class="btn btn--ghost" onclick="closeModal('createGroupModal')">Cancel</button><button type="submit" class="btn btn--primary">Create Group</button></div>
+                </form>
              </div>
         </div>
     </section>
@@ -109,20 +126,27 @@
     <script type="module">
         import { db, auth, onAuthStateChanged, doc, updateDoc } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { collection, addDoc, query, where, getDocs, updateDoc as updateGroupDoc, arrayUnion, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        // ADDED: getDoc for checking membership, limit for query efficiency
+        import { collection, addDoc, query, where, getDocs, updateDoc as updateGroupDoc, arrayUnion, onSnapshot, serverTimestamp, limit, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // UI Elements
         const groupsListEl = document.getElementById('groups-list');
+        const publicGroupsListEl = document.getElementById('public-groups-list');
         const currentGroupInfoEl = document.getElementById('current-group-info');
-        const inviteCodeInput = document.getElementById('inviteCodeInput');
+        const inviteCodeInput = document.getElementById('inviteCodeInput'); // For joining
         const joinGroupForm = document.getElementById('joinGroupForm');
         const groupCodeInput = document.getElementById('groupCodeInput');
         const createGroupForm = document.getElementById('createGroupForm');
         const logoutBtn = document.getElementById('logout-btn');
         const groupNameErrorEl = document.getElementById('group-name-error');
-        
+        // ADDED: Elements for the active group invite code section
+        const activeGroupInviteSection = document.getElementById('active-group-invite-section');
+        const activeInviteCodeDisplay = document.getElementById('active-invite-code-display');
+
+
         let currentUser = null;
         let activeGroupId = null;
+        let myGroupIds = new Set();
 
         // Global Modal & Helper Functions
         window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
@@ -131,50 +155,141 @@
             if (modal) modal.style.display = 'none';
             const form = modal.querySelector('form');
             if (form) form.reset();
-            groupNameErrorEl.textContent = '';
+            groupNameErrorEl.textContent = ''; // Clear create group error specifically
         };
+        // Close modal on outside click
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeModal(e.target.id);
+            }
+        });
         function generateInviteCode() { return Math.random().toString(36).substring(2, 8).toUpperCase(); }
 
-        // --- Render Group List ---
+        // --- Render Group List (My Groups) ---
         function renderGroups(snapshot) {
             groupsListEl.innerHTML = "";
-            if (snapshot.empty) groupsListEl.innerHTML = "<li>You're not in any groups yet.</li>";
+            myGroupIds.clear();
             let activeGroupName = "Select an active group";
+            let activeGroupInviteCode = null; // Store invite code for the active group
+            let isCurrentUserAdminOfActive = false; // Check admin status
+
+            if (snapshot.empty) groupsListEl.innerHTML = "<li>You're not in any groups yet.</li>";
+
             snapshot.forEach(doc => {
+                myGroupIds.add(doc.id);
                 const group = doc.data();
                 const isActive = doc.id === activeGroupId;
+
+                if (isActive) { // If this is the active group
+                    activeGroupName = `Active Group: ${group.name || 'Unnamed Group'}`;
+                    activeGroupInviteCode = group.inviteCode; // Get its invite code
+                    // Check if the current user is in the admins array
+                    isCurrentUserAdminOfActive = group.admins?.includes(currentUser.uid);
+                }
+
                 const li = document.createElement('li');
                 li.className = `list-card group-card ${isActive ? 'active' : ''}`;
                 li.innerHTML = `<div><strong>${group.name || 'Unnamed Group'}</strong><div class="muted">${group.members?.length || 0} members</div>${isActive ? '<div class="muted">Currently viewing</div>' : ''}</div>
                                 <button class="btn ${isActive ? 'btn--primary' : 'btn--ghost'}" ${isActive ? 'disabled' : ''} onclick="switchGroup('${doc.id}')">${isActive ? 'Active' : 'Switch'}</button>`;
                 groupsListEl.appendChild(li);
-                if (isActive) activeGroupName = `Active Group: ${group.name || 'Unnamed Group'}`;
             });
+
             currentGroupInfoEl.textContent = activeGroupName;
+
+            // --- Logic to show/hide the active group invite code section ---
+            if (activeGroupInviteCode && isCurrentUserAdminOfActive) { // Only show if active and user is admin
+                activeInviteCodeDisplay.value = activeGroupInviteCode;
+                activeGroupInviteSection.style.display = 'block'; // Show the section
+            } else {
+                activeGroupInviteSection.style.display = 'none'; // Hide the section
+            }
+            // --- End Logic ---
+
+            listenForPublicGroups(); // Re-run public group filter
         }
-        
+
+        // --- Render Public Group List ---
+        function renderPublicGroups(snapshot) {
+            publicGroupsListEl.innerHTML = ""; // Clear previous list
+            let count = 0;
+            snapshot.forEach(doc => {
+                // Only render if the user is NOT already a member
+                if (!myGroupIds.has(doc.id)) {
+                    count++;
+                    const group = doc.data();
+                    const li = document.createElement('li');
+                    li.className = 'list-card group-card'; // Use same styling
+                    li.innerHTML = `<div><strong>${group.name || 'Unnamed Group'}</strong><div class="muted">${group.members?.length || 0} members</div></div>
+                                    <button class="btn btn--primary" onclick="joinPublicGroup('${doc.id}')">Join</button>`;
+                    publicGroupsListEl.appendChild(li);
+                }
+            });
+            if (count === 0 && myGroupIds.size > 0) { // Check if user has groups already
+                 publicGroupsListEl.innerHTML = "<li>No other public groups found or you're already in them.</li>";
+            } else if (count === 0) {
+                 publicGroupsListEl.innerHTML = "<li>No public groups found.</li>";
+            }
+        }
+
         // --- Listen for User and Group Changes ---
         function listenForUserAndGroups() {
             if (!currentUser) return;
             const userRef = doc(db, "users", currentUser.uid);
             onSnapshot(userRef, (userDoc) => {
+                if (!userDoc.exists()) { // Handle case where user doc might not exist yet
+                    console.warn("User document not found, cannot load groups.");
+                     groupsListEl.innerHTML = "<li>Error loading your profile.</li>";
+                     publicGroupsListEl.innerHTML = "<li>Cannot load public groups.</li>";
+                     activeGroupInviteSection.style.display = 'none'; // Hide invite section
+                     return;
+                }
                 const newActiveGroupId = userDoc.data()?.activeGroupId;
                 if (newActiveGroupId !== activeGroupId) {
                     activeGroupId = newActiveGroupId; // Update global state
                 }
-                 // Always re-query groups to reflect active status change immediately
+                // Always re-query groups to reflect active status change immediately
                 const groupsQuery = query(collection(db, "groups"), where("members", "array-contains", currentUser.uid));
-                onSnapshot(groupsQuery, renderGroups, e => console.error("Error listening to groups:", e));
+                onSnapshot(groupsQuery, renderGroups, e => {
+                    console.error("Error listening to user's groups:", e);
+                    groupsListEl.innerHTML = "<li>Error loading your groups.</li>";
+                    activeGroupInviteSection.style.display = 'none'; // Hide invite section on error too
+                });
 
-            }, e => console.error("Error listening to user doc:", e));
+            }, e => {
+                console.error("Error listening to user doc:", e)
+                groupsListEl.innerHTML = "<li>Error loading your profile.</li>";
+                publicGroupsListEl.innerHTML = "<li>Cannot load public groups.</li>";
+                activeGroupInviteSection.style.display = 'none'; // Hide invite section
+            });
         }
+
+        // --- Listen for Public Groups ---
+        function listenForPublicGroups() {
+            if (!currentUser) { // Don't run if not logged in
+                publicGroupsListEl.innerHTML = "<li>Log in to see public groups.</li>";
+                return;
+            }
+            // Query for public groups, limit for performance
+            const publicGroupsQuery = query(
+                collection(db, "groups"),
+                where("privacy", "==", "public"),
+                limit(20) // Limit to avoid fetching too many initially
+            );
+            // Using onSnapshot for real-time updates
+            onSnapshot(publicGroupsQuery, renderPublicGroups, e => {
+                console.error("Error listening to public groups:", e);
+                publicGroupsListEl.innerHTML = "<li>Error loading public groups. Check console (Index needed?).</li>";
+                // Firestore might suggest creating an index in the console error message!
+            });
+        }
+
 
         // --- Actions (Exposed Globally) ---
         window.switchGroup = async (groupId) => {
             if (!currentUser || !groupId) return;
             try {
-                 await updateDoc(doc(db, "users", currentUser.uid), { activeGroupId: groupId });
-                 // Listener will handle UI update
+                await updateDoc(doc(db, "users", currentUser.uid), { activeGroupId: groupId });
+                // Listener will handle UI update including the invite code section
             } catch (err) { console.error("Error switching group:", err); }
         };
 
@@ -185,7 +300,7 @@
              const q = query(collection(db, "groups"), where("inviteCode", "==", code));
              const snapshot = await getDocs(q);
              if (snapshot.empty) return alert("Invalid invite code found.");
-             
+
              const groupDoc = snapshot.docs[0];
              if (groupDoc.data().members?.includes(currentUser.uid)) {
                  return alert(`You are already a member of ${groupDoc.data().name}.`);
@@ -194,49 +309,115 @@
              const groupRef = groupDoc.ref;
              await updateGroupDoc(groupRef, { members: arrayUnion(currentUser.uid) });
              alert(`Successfully joined ${groupDoc.data().name}!`);
+             // The 'My Groups' list will update automatically
         }
 
         window.joinGroup = () => { // Function for the inline join button
             handleJoinGroup(inviteCodeInput.value.trim())
-                .then(() => inviteCodeInput.value = '')
+                .then(() => inviteCodeInput.value = '') // Clear input on success
                 .catch(err => console.error("Error joining group:", err));
         };
 
         joinGroupForm.addEventListener('submit', (e) => { // Listener for the modal join form
             e.preventDefault();
             handleJoinGroup(groupCodeInput.value.trim())
-                .then(() => closeModal('joinGroupModal'))
+                .then(() => closeModal('joinGroupModal')) // Close modal on success
                 .catch(err => console.error("Error joining group from modal:", err));
         });
 
+        // --- Join Public Group Function ---
+        window.joinPublicGroup = async (groupId) => {
+            if (!currentUser || !groupId) return alert('Cannot join group.');
+
+            const groupRef = doc(db, "groups", groupId);
+            try {
+                // Check if already a member one last time (optional but safe)
+                const groupDoc = await getDoc(groupRef);
+                 if (groupDoc.exists() && groupDoc.data().members?.includes(currentUser.uid)) {
+                     return alert(`You are already a member of ${groupDoc.data().name}.`);
+                 }
+                // Add user to the members array
+                await updateGroupDoc(groupRef, {
+                    members: arrayUnion(currentUser.uid)
+                });
+                alert(`Successfully joined ${groupDoc.data().name}!`);
+                // The 'My Groups' list will update automatically via its listener
+            } catch (err) {
+                console.error("Error joining public group:", err);
+                alert("Failed to join group.");
+            }
+        };
+
+        // --- Copy Active Invite Code Function ---
+        window.copyActiveInviteCode = () => {
+            activeInviteCodeDisplay.select(); // Select the text
+            try {
+                // Use Clipboard API if available (more modern)
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(activeInviteCodeDisplay.value).then(() => {
+                        alert('Invite code copied to clipboard!');
+                    }, (err) => {
+                         console.error('Async: Could not copy text: ', err);
+                         alert('Could not copy code. Please copy it manually.');
+                    });
+                } else { // Fallback for older browsers
+                    if (document.execCommand('copy')) {
+                       alert('Invite code copied to clipboard!');
+                    } else {
+                       throw new Error('execCommand failed');
+                    }
+                }
+            } catch (err) {
+                console.error('Failed to copy invite code: ', err);
+                alert('Could not copy code. Please copy it manually.');
+            }
+            // Deselect text regardless of method
+             if (window.getSelection) { // Modern browsers
+               window.getSelection().removeAllRanges();
+             } else if (document.selection) { // IE <= 8
+               document.selection.empty();
+             }
+        };
+
+
         // Create Group Form Submission
         createGroupForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentUser) return;
-            const groupName = createGroupForm.newGroupName.value.trim();
-            groupNameErrorEl.textContent = '';
-            if (groupName.length < 3 || groupName.length > 50) {
+             e.preventDefault();
+             if (!currentUser) return;
+             const groupName = createGroupForm.newGroupName.value.trim();
+             groupNameErrorEl.textContent = ''; // Clear previous error
+             if (groupName.length < 3 || groupName.length > 50) {
                  groupNameErrorEl.textContent = 'Name must be 3-50 characters.'; return;
-            }
-            try {
-                const newGroupData = {
-                    name: groupName, description: createGroupForm.newGroupDescription.value.trim(),
-                    type: createGroupForm.newGroupType.value, maxMembers: parseInt(createGroupForm.maxMembers.value) || null,
-                    privacy: createGroupForm.groupPrivacy.value, ownerId: currentUser.uid, members: [currentUser.uid],
-                    inviteCode: generateInviteCode(), createdAt: serverTimestamp()
-                };
-                const newGroupRef = await addDoc(collection(db, "groups"), newGroupData);
-                await window.switchGroup(newGroupRef.id); // Auto-switch to new group
-                alert(`Group "${groupName}" created! Invite code: ${newGroupData.inviteCode}`);
-                closeModal('createGroupModal');
-            } catch (err) { console.error("Error creating group:", err); alert("Failed to create group."); }
+             }
+             try {
+                 const newGroupData = {
+                     name: groupName, description: createGroupForm.newGroupDescription.value.trim(),
+                     type: createGroupForm.newGroupType.value, maxMembers: parseInt(createGroupForm.maxMembers.value) || null,
+                     privacy: createGroupForm.groupPrivacy.value, ownerId: currentUser.uid, members: [currentUser.uid],
+                     admins: [currentUser.uid], // Creator is owner and admin
+                     inviteCode: generateInviteCode(), createdAt: serverTimestamp()
+                 };
+                 const newGroupRef = await addDoc(collection(db, "groups"), newGroupData);
+                 await window.switchGroup(newGroupRef.id); // Auto-switch to new group
+                 alert(`Group "${groupName}" created! Invite code: ${newGroupData.inviteCode}`);
+                 closeModal('createGroupModal');
+             } catch (err) { console.error("Error creating group:", err); alert("Failed to create group."); }
         });
 
         logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            if (user) listenForUserAndGroups(); else window.location.href = 'auth.html';
+            if (user) {
+                listenForUserAndGroups(); // Listen for user's own groups
+                listenForPublicGroups(); // Listen for public groups
+            } else {
+                window.location.href = 'auth.html';
+                 groupsListEl.innerHTML = "<li>Loading...</li>"; // Reset lists on logout
+                 publicGroupsListEl.innerHTML = "<li>Loading public groups...</li>";
+                 myGroupIds.clear();
+                 activeGroupInviteSection.style.display = 'none'; // Hide invite section on logout
+            }
         });
     </script>
 </body>

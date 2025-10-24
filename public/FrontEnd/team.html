@@ -28,8 +28,8 @@
         </label>
 
         <aside class="sidebar">
-            <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
-            <nav class="sidebar__nav">
+             <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
+             <nav class="sidebar__nav">
                  <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
                  <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
                  <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
@@ -38,48 +38,41 @@
                  <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
                  <a href="team.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
                  <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
-            </nav>
-            <div class="sidebar__footer">
-                <div class="theme-toggle">
-                    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
-                        <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                        <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    </button>
-                </div>
-                <a class="btn btn--ghost" id="logout-btn" href="#">Logout</a>
-            </div>
+             </nav>
+             <div class="sidebar__footer">
+                 <div class="theme-toggle"><button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme"><svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg><svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button></div>
+                 <a class="btn btn--ghost" id="logout-btn" href="#">Logout</a>
+             </div>
         </aside>
 
         <div class="content">
             <section class="panel">
                 <div class="panel__header">
-                    <h2 id="team-name">Team Management</h2> <div class="panel__actions invite-code-section" id="invite-section"> <input type="text" class="input" readonly id="invite-code-display" value="Invite Code: ..." style="width: auto;">
-                         <button class="btn btn--primary" onclick="copyInviteCode()">Copy Code</button>
+                    <h2 id="team-name">Team Management</h2>
+                    <div class="panel__actions invite-code-section" id="invite-section">
+                        <input type="text" class="input" readonly id="invite-code-display" value="Invite Code: ..." style="width: auto; font-family: monospace;">
+                        <button class="btn btn--primary" onclick="copyInviteCode()">Copy Code</button>
                     </div>
-                     <button class="btn btn--primary" onclick="openModal('addMemberModal')">Invite Member</button>
+                    <button class="btn btn--primary" id="invite-member-button" onclick="openModal('addMemberModal')" style="display: none;">Invite Member</button>
                 </div>
-                
+
                 <div class="team-stats">
                     <div class="stat-card">
                         <span class="stat-label">Total Members</span>
                         <span class="stat-value" id="stat-total-members">0</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-label">Active Today</span>
-                        <span class="stat-value" id="stat-active-today">?</span>
-                    </div>
-                    <div class="stat-card">
                         <span class="stat-label">New This Week</span>
-                        <span class="stat-value" id="stat-new-this-week">?</span>
+                        <span class="stat-value" id="stat-new-this-week">0</span>
                     </div>
-                </div>
+                    </div>
 
                 <div class="team-filters">
                     <select class="input" onchange="filterMembers(this.value)">
                         <option value="all">All Members</option>
                         <option value="admin">Admins Only</option>
                         <option value="member">Members Only</option>
-                        </select>
+                    </select>
                 </div>
 
                 <ul class="list list--team" id="team-list">
@@ -90,284 +83,410 @@
 
         <div id="addMemberModal" class="modal" style="display: none;">
              <div class="modal-content">
-               <div class="modal-header"><h3>Invite New Member</h3><button class="btn btn--ghost" onclick="closeModal('addMemberModal')">&times;</button></div>
-               <form id="inviteMemberForm" class="modal-form">
-                 <div class="form-field"><label for="memberEmail">Email Address</label><input type="email" id="memberEmail" class="input" required placeholder="member@example.com"></div>
-                 <div class="form-field"><label for="memberMessage">Welcome Message (Optional)</label><textarea id="memberMessage" class="input" rows="3" placeholder="Personal message (optional)"></textarea></div>
-                 <div class="modal-actions"><button type="button" class="btn btn--ghost" onclick="closeModal('addMemberModal')">Cancel</button><button type="submit" class="btn btn--primary">Send Invitation</button></div>
-               </form>
+                <div class="modal-header"><h3>Invite New Member</h3><button class="btn btn--ghost" onclick="closeModal('addMemberModal')">&times;</button></div>
+                <form id="inviteMemberForm" class="modal-form">
+                    <div class="form-field"><label for="memberEmail">Email Address</label><input type="email" id="memberEmail" class="input" required placeholder="member@example.com"></div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn--ghost" onclick="closeModal('addMemberModal')">Cancel</button>
+                        <button type="submit" class="btn btn--primary">Invite Member</button>
+                    </div>
+                </form>
              </div>
         </div>
 
         <div id="removeMemberModal" class="modal" style="display: none;">
              <div class="modal-content">
-               <div class="modal-header"><h3>Remove Member</h3><button class="btn btn--ghost" onclick="closeModal('removeMemberModal')">&times;</button></div>
-               <div class="modal-form">
-                 <p>Are you sure you want to remove <strong id="memberToRemoveName"></strong> from the team?</p>
-                 <p class="muted">This action cannot be undone.</p>
-                 <input type="hidden" id="memberToRemoveId"> <div class="modal-actions">
-                   <button type="button" class="btn btn--ghost" onclick="closeModal('removeMemberModal')">Cancel</button>
-                   <button type="button" class="btn btn--danger" onclick="confirmRemoveMember()">Remove Member</button>
-                 </div>
-               </div>
+                <div class="modal-header"><h3>Remove Member</h3><button class="btn btn--ghost" onclick="closeModal('removeMemberModal')">&times;</button></div>
+                <div class="modal-form">
+                    <p>Are you sure you want to remove <strong id="memberToRemoveName"></strong> from the team?</p>
+                    <p class="muted">This action cannot be undone.</p>
+                    <input type="hidden" id="memberToRemoveId">
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn--ghost" onclick="closeModal('removeMemberModal')">Cancel</button>
+                        <button type="button" class="btn btn--danger" onclick="confirmRemoveMember()">Remove Member</button>
+                    </div>
+                </div>
              </div>
         </div>
     </section>
 
     <script src="theme.js"></script>
     <script type="module">
-      // ✅ Imports - Including Firestore, Auth, Functions SDK
-      import { db, auth, onAuthStateChanged, doc, updateDoc } from './firebase.js';
-      import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-      import { collection, query, where, getDocs, onSnapshot, arrayRemove } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-      import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-functions.js";
-  
-      // ✅ UI Elements
-      const teamListEl = document.getElementById('team-list');
-      const teamNameEl = document.getElementById('team-name');
-      const totalMembersEl = document.getElementById('stat-total-members');
-      const activeTodayEl = document.getElementById('stat-active-today'); // Stat card value
-      const newThisWeekEl = document.getElementById('stat-new-this-week'); // Stat card value
-      const inviteCodeDisplay = document.getElementById('invite-code-display');
-      const inviteSection = document.getElementById('invite-section'); // Section containing invite code
-      const logoutBtn = document.getElementById('logout-btn');
-      const memberToRemoveNameEl = document.getElementById('memberToRemoveName');
-      const memberToRemoveIdInput = document.getElementById('memberToRemoveId');
-      const inviteMemberForm = document.getElementById('inviteMemberForm'); // The form in the "Invite Member" modal
-  
-      // ✅ Global State
-      let currentUser = null;
-      let activeGroupId = null;
-      let activeGroupData = null; // Store full group data for owner checks and invite code
-  
-      // ✅ Get Functions instance and references
-      const functions = getFunctions();
-      const inviteMemberToGroup = httpsCallable(functions, 'inviteMemberToGroup');
-      const getGroupStats = httpsCallable(functions, 'getGroupStats'); // Reference the stats function
-  
-      // ✅ Global Modal Functions
-      window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
-      window.closeModal = (modalId) => {
-          const modal = document.getElementById(modalId);
-          if (modal) modal.style.display = 'none';
-          const form = modal.querySelector('form');
-          if (form) form.reset();
-      };
-  
-      // --- Core Logic: Listen for Active Group Change ---
-      function listenForActiveGroup() {
-          if (!currentUser) return;
-          const userRef = doc(db, "users", currentUser.uid);
-  
-          // Listen for changes in user's activeGroupId
-          onSnapshot(userRef, (userDoc) => {
-              const newActiveGroupId = userDoc.data()?.activeGroupId;
-  
-              // Handle case where no group is selected
-              if (!newActiveGroupId) {
-                  teamNameEl.textContent = "No Active Group Selected";
-                  teamListEl.innerHTML = "<li>Go to 'Groups' page to select or create a group.</li>";
-                  totalMembersEl.textContent = '0';
-                  activeTodayEl.textContent = '0'; // Reset stats
-                  newThisWeekEl.textContent = '0'; // Reset stats
-                  inviteSection.style.display = 'none'; // Hide invite code section
-                  activeGroupId = null; activeGroupData = null; return;
-              }
-  
-              // If the active group has changed OR if we don't have group data yet
-              if (newActiveGroupId !== activeGroupId || !activeGroupData) {
-                  activeGroupId = newActiveGroupId; // Update global state
-                  const groupRef = doc(db, "groups", activeGroupId);
-  
-                  // Listen for changes to the active group itself (e.g., name, members array)
-                  onSnapshot(groupRef, (groupDoc) => {
-                      if (groupDoc.exists()) {
-                          activeGroupData = groupDoc.data(); // Store group data globally
-                          teamNameEl.textContent = activeGroupData.name || 'Unnamed Group';
-                          inviteCodeDisplay.value = `Code: ${activeGroupData.inviteCode || 'N/A'}`;
-                          inviteSection.style.display = currentUser.uid === activeGroupData.ownerId ? 'flex' : 'none'; // Show invite only to owner
-  
-                          // Load/Reload members list whenever group data changes
-                          loadTeamMembers(activeGroupData.members);
-                          // Fetch/Refetch calculated stats whenever group data changes
-                          fetchAndDisplayGroupStats(activeGroupId);
-  
-                      } else {
-                          // Handle case where active group ID exists but document is not found
-                          teamNameEl.textContent = "Group Not Found";
-                          teamListEl.innerHTML = "<li>Error: Could not load the active group.</li>";
-                          totalMembersEl.textContent = '0';
-                          activeTodayEl.textContent = '0'; newThisWeekEl.textContent = '0';
-                          inviteSection.style.display = 'none';
-                          activeGroupId = null; activeGroupData = null;
-                      }
-                  }, (error) => {
-                      console.error("Error listening to group doc:", error);
-                      // Handle error loading group doc
-                      teamNameEl.textContent = "Error Loading Group";
-                      teamListEl.innerHTML = "<li>Could not load group data.</li>";
-                  });
-              }
-          }, (error) => {
-              console.error("Error listening to user doc:", error);
-              // Handle error loading user doc
-              teamNameEl.textContent = "Error Loading User";
-          });
-      }
-  
-      // --- Fetch and Display Calculated Group Stats ---
-      async function fetchAndDisplayGroupStats(groupId) {
-          if (!groupId) return;
-          activeTodayEl.textContent = '?'; // Indicate loading
-          newThisWeekEl.textContent = '?'; // Indicate loading
-          try {
-              console.log(`Calling getGroupStats for groupId: ${groupId}`);
-              const result = await getGroupStats({ groupId: groupId });
-              const data = result.data; // { activeToday: X, newThisWeek: Y }
-              console.log("Received group stats:", data);
-              // Update the stat card elements
-              activeTodayEl.textContent = data.activeToday ?? '0'; // Use ?? '0' to show 0 if undefined/null
-              newThisWeekEl.textContent = data.newThisWeek ?? '0'; // Use ?? '0'
-          } catch (error) {
-              console.error("Error fetching group stats:", error);
-              activeTodayEl.textContent = 'Error';
-              newThisWeekEl.textContent = 'Error';
-          }
-      }
-  
-      // --- Load and Render Team Members ---
-      async function loadTeamMembers(memberIds) {
-          if (!memberIds || memberIds.length === 0) {
-               teamListEl.innerHTML = "<li>This group has no members yet.</li>";
-               totalMembersEl.textContent = '0'; return;
-          }
-  
-          // Fetch user documents for members
-          // Handle 'in' query limit (max 30) - simple slice for now
-          const idsToFetch = memberIds.slice(0, 30);
-          if (memberIds.length > 30) {
-              console.warn(`Showing first 30 out of ${memberIds.length} members due to query limits.`);
-          }
-          const membersQuery = query(collection(db, "users"), where("__name__", "in", idsToFetch));
-  
-          try {
-              const membersSnapshot = await getDocs(membersQuery);
-              teamListEl.innerHTML = ""; // Clear list
-              totalMembersEl.textContent = memberIds.length; // Use actual member count
-  
-              const memberDataMap = new Map();
-              membersSnapshot.forEach(doc => memberDataMap.set(doc.id, doc.data()));
-  
-              // Render members in the order they appear in the group's array
-              memberIds.forEach(memberId => {
-                  const memberData = memberDataMap.get(memberId);
-                  if (memberData) {
-                      renderMember(memberData, memberId);
-                  } else if (idsToFetch.includes(memberId)) {
-                      // Only log/handle if we expected to fetch this ID but didn't find it
-                      console.warn(`User data not found for ID: ${memberId}`);
-                      // Optionally render a placeholder for missing fetched members
-                  }
-              });
-              // Re-apply filter if needed after rendering
-              const currentFilter = document.querySelector('.team-filters select').value;
-              filterMembers(currentFilter);
-  
-          } catch (error) {
-              console.error("Error loading team members:", error);
-              teamListEl.innerHTML = "<li>Error loading members.</li>";
-          }
-      }
-  
-      function renderMember(memberData, memberId) {
-          const isCurrentUser = memberId === currentUser.uid;
-          const isOwner = memberId === activeGroupData?.ownerId;
-          const currentUserIsOwner = currentUser.uid === activeGroupData?.ownerId;
-  
-          const li = document.createElement('li');
-          li.className = `list-card team-member ${isCurrentUser ? 'current-user' : ''} ${isOwner ? 'admin' : 'member'}`;
-          li.dataset.role = isOwner ? 'admin' : 'member'; // For filtering
-  
-          li.innerHTML = `
-              <div class="avatar" style="background-image:url(${memberData.photoURL || ''})"></div>
-              <div class="who">
-                  <strong>${memberData.name || 'Unnamed User'} ${isCurrentUser ? '(You)' : ''}</strong>
-                  <div class="muted">${isOwner ? 'Admin' : 'Member'} • @${memberData.username || memberData.email}</div>
-                  <div class="member-stats">${(memberData.points || 0).toLocaleString()} pts</div>
-              </div>
-              <div class="member-actions">
-                  ${!isCurrentUser && currentUserIsOwner ? `<button class="btn btn--danger btn--ghostlike" onclick="openRemoveMemberModal('${memberId}', '${memberData.name || 'this member'}')">Remove</button>` : ''}
-                  ${isCurrentUser ? '<button class="btn btn--secondary" disabled>You</button>' : ''}
-              </div>`;
-          teamListEl.appendChild(li);
-      }
-  
-      // --- Actions (Exposed Globally) ---
-      window.copyInviteCode = () => {
-          if (activeGroupData?.inviteCode) {
-              navigator.clipboard.writeText(activeGroupData.inviteCode)
-                  .then(() => alert('Invite code copied!'))
-                  .catch(err => alert('Failed to copy code.'));
-          }
-      };
-      window.openRemoveMemberModal = (memberId, memberName) => {
-           memberToRemoveNameEl.textContent = memberName;
-           memberToRemoveIdInput.value = memberId;
-           openModal('removeMemberModal');
-      };
-      window.confirmRemoveMember = async () => {
-           const memberIdToRemove = memberToRemoveIdInput.value;
-           if (!memberIdToRemove || !activeGroupId || !currentUser || currentUser.uid !== activeGroupData?.ownerId) {
-               return alert("Cannot remove member.");
-           }
-           const memberName = memberToRemoveNameEl.textContent;
-           try {
-               const groupRef = doc(db, "groups", activeGroupId);
-               await updateDoc(groupRef, { members: arrayRemove(memberIdToRemove) });
-               // onSnapshot will handle list refresh
-               closeModal('removeMemberModal');
-               alert(`${memberName} has been removed.`);
-           } catch (err) {
-               console.error("Error removing member:", err);
-               alert(`Failed to remove ${memberName}.`);
-           }
-      };
-      window.filterMembers = (role) => {
-          document.querySelectorAll('.list--team .team-member').forEach(member => {
-               member.style.display = (role === 'all' || member.dataset.role === role) ? 'flex' : 'none';
-          });
-      };
-  
-      // --- Invite Member Form Submission ---
-      inviteMemberForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const email = inviteMemberForm.memberEmail.value.trim();
-          const inviteButton = inviteMemberForm.querySelector('button[type="submit"]');
-  
-          if (!email || !activeGroupId || !currentUser) { return alert("Cannot invite member. Ensure you have an active group."); }
-          if (currentUser.uid !== activeGroupData?.ownerId) { return alert("Only the group owner can invite members."); }
-  
-          inviteButton.disabled = true; inviteButton.textContent = 'Inviting...';
-          try {
-              const result = await inviteMemberToGroup({ email: email, groupId: activeGroupId });
-              alert(result.data.message); // Show success/already member/error message from function
-              closeModal('addMemberModal');
-          } catch (error) {
-              console.error("Error inviting member via Cloud Function:", error);
-              alert(`Failed to invite member: ${error.message || 'Please try again.'}`);
-          } finally {
-              inviteButton.disabled = false; inviteButton.textContent = 'Send Invitation';
-          }
-      });
-      
-      // --- Logout & Initialize ---
-      logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
-      onAuthStateChanged(auth, (user) => {
-          currentUser = user;
-          if (user) listenForActiveGroup(); else window.location.href = 'auth.html';
-      });
-  </script>
-</body>
-</html>
+        import { db, auth, onAuthStateChanged, doc, updateDoc } from './firebase.js';
+        import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        // Ensure updateDoc is imported for direct Firestore updates
+        import { collection, query, where, getDocs, onSnapshot, arrayRemove, arrayUnion, updateDoc as updateGroupDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-functions.js";
+
+        // UI Elements
+        const teamListEl = document.getElementById('team-list');
+        const teamNameEl = document.getElementById('team-name');
+        const totalMembersEl = document.getElementById('stat-total-members');
+        const newThisWeekEl = document.getElementById('stat-new-this-week');
+        const inviteCodeDisplay = document.getElementById('invite-code-display');
+        const inviteSection = document.getElementById('invite-section');
+        const inviteMemberButton = document.getElementById('invite-member-button'); // Button to invite
+        const logoutBtn = document.getElementById('logout-btn');
+        const memberToRemoveNameEl = document.getElementById('memberToRemoveName');
+        const memberToRemoveIdInput = document.getElementById('memberToRemoveId');
+        const inviteMemberForm = document.getElementById('inviteMemberForm');
+
+        // Global State
+        let currentUser = null;
+        let activeGroupId = null;
+        let activeGroupData = null;
+        let unsubscribeUserListener = null;
+        let unsubscribeGroupListener = null;
+
+        // Get Functions instance and references
+        const functions = getFunctions();
+        const inviteMemberToGroup = httpsCallable(functions, 'inviteMemberToGroup');
+        const getGroupStats = httpsCallable(functions, 'getGroupStats');
+        const toggleAdminStatus = httpsCallable(functions, 'toggleAdminStatus');
+
+        // Global Modal Functions
+        window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
+        window.closeModal = (modalId) => {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.style.display = 'none';
+            const form = modal.querySelector('form');
+            if (form) form.reset();
+        };
+        document.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target.id); });
+
+        // --- Core Logic: Listen for Active Group Change ---
+        function listenForActiveGroup() {
+            if (!currentUser) return;
+            if (unsubscribeUserListener) unsubscribeUserListener();
+
+            const userRef = doc(db, "users", currentUser.uid);
+            unsubscribeUserListener = onSnapshot(userRef, (userDoc) => {
+                 if (!userDoc.exists()) {
+                     console.warn("User document not found.");
+                     // Handle UI reset if needed
+                     teamNameEl.textContent = "Error Loading Profile";
+                     teamListEl.innerHTML = "<li>Cannot load group data.</li>";
+                     totalMembersEl.textContent = '0'; newThisWeekEl.textContent = '0';
+                     inviteSection.style.display = 'none'; inviteMemberButton.style.display = 'none';
+                     return;
+                 }
+                const newActiveGroupId = userDoc.data()?.activeGroupId;
+                if (!newActiveGroupId) {
+                    teamNameEl.textContent = "No Active Group Selected";
+                    teamListEl.innerHTML = "<li>Go to 'Groups' page to select or create a group.</li>";
+                    totalMembersEl.textContent = '0'; newThisWeekEl.textContent = '0';
+                    inviteSection.style.display = 'none'; inviteMemberButton.style.display = 'none';
+                    activeGroupId = null; activeGroupData = null;
+                    if (unsubscribeGroupListener) unsubscribeGroupListener();
+                    return;
+                }
+
+                if (newActiveGroupId !== activeGroupId) {
+                    activeGroupId = newActiveGroupId;
+                    if (unsubscribeGroupListener) unsubscribeGroupListener();
+
+                    const groupRef = doc(db, "groups", activeGroupId);
+                    unsubscribeGroupListener = onSnapshot(groupRef, (groupDoc) => {
+                        if (groupDoc.exists()) {
+                            activeGroupData = groupDoc.data();
+                            teamNameEl.textContent = activeGroupData.name || 'Unnamed Group';
+                            inviteCodeDisplay.value = `Code: ${activeGroupData.inviteCode || 'N/A'}`;
+                            const currentUserIsAdmin = activeGroupData.admins?.includes(currentUser.uid);
+
+                            // Show invite section and button only if user is admin
+                            inviteSection.style.display = currentUserIsAdmin ? 'flex' : 'none';
+                            inviteMemberButton.style.display = currentUserIsAdmin ? 'inline-block' : 'none';
+
+                            loadTeamMembers(activeGroupData.members || []); // Pass empty array if no members
+                            fetchAndDisplayGroupStats(activeGroupId);
+                        } else {
+                            teamNameEl.textContent = "Group Not Found";
+                            teamListEl.innerHTML = "<li>Error: Could not load the active group.</li>";
+                            totalMembersEl.textContent = '0'; newThisWeekEl.textContent = '0';
+                            inviteSection.style.display = 'none'; inviteMemberButton.style.display = 'none';
+                            activeGroupId = null; activeGroupData = null;
+                        }
+                    }, (error) => {
+                         console.error("Error listening to group doc:", error);
+                         teamNameEl.textContent = "Error Loading Group";
+                         teamListEl.innerHTML = "<li>Could not load group data.</li>";
+                         inviteSection.style.display = 'none'; inviteMemberButton.style.display = 'none';
+                     });
+                } else if (activeGroupData) {
+                    // If group ID hasn't changed, but maybe members/admins did - reload members
+                     loadTeamMembers(activeGroupData.members || []);
+                }
+            }, (error) => {
+                 console.error("Error listening to user doc:", error);
+                 teamNameEl.textContent = "Error Loading User";
+                 teamListEl.innerHTML = "<li>Cannot load group data.</li>";
+                 inviteSection.style.display = 'none'; inviteMemberButton.style.display = 'none';
+            });
+        }
+
+        // --- Fetch and Display Calculated Group Stats ---
+        async function fetchAndDisplayGroupStats(groupId) {
+            if (!groupId) return;
+            newThisWeekEl.textContent = '...';
+            try {
+                const result = await getGroupStats({ groupId: groupId });
+                const data = result.data;
+                newThisWeekEl.textContent = data.newThisWeek ?? '0';
+            } catch (error) {
+                console.error("Error fetching group stats:", error);
+                newThisWeekEl.textContent = 'Err';
+            }
+        }
+
+        // --- Load and Render Team Members ---
+        async function loadTeamMembers(memberIds) {
+             if (!memberIds || memberIds.length === 0) {
+                 teamListEl.innerHTML = "<li>This group has no members yet.</li>";
+                 totalMembersEl.textContent = '0'; return;
+             }
+             // Firestore 'in' query limit is 30 as of v9/v10
+             const idsToFetch = memberIds.slice(0, 30);
+             if (memberIds.length > 30) {
+                 console.warn(`Group has ${memberIds.length} members. Displaying first 30.`);
+             }
+             const membersQuery = query(collection(db, "users"), where("__name__", "in", idsToFetch));
+             try {
+                 const membersSnapshot = await getDocs(membersQuery);
+                 teamListEl.innerHTML = ""; // Clear previous list
+                 totalMembersEl.textContent = memberIds.length; // Show actual total count
+                 const memberDataMap = new Map();
+                 membersSnapshot.forEach(doc => memberDataMap.set(doc.id, doc.data()));
+
+                 // Sort memberIds based on fetched points (descending)
+                 const sortedMemberIds = [...memberIds].sort((a, b) => { // Use spread to avoid modifying original array if needed elsewhere
+                     const pointsA = memberDataMap.get(a)?.points || 0;
+                     const pointsB = memberDataMap.get(b)?.points || 0;
+                     return pointsB - pointsA; // Higher points first
+                 });
+
+                 sortedMemberIds.forEach(memberId => {
+                     const memberData = memberDataMap.get(memberId);
+                     // Render even if data wasn't fetched (maybe show ID/email), or skip
+                     if (memberData) {
+                         renderMember(memberData, memberId);
+                     } else if (idsToFetch.includes(memberId)) {
+                        console.warn(`Data for member ${memberId} not found, skipping render.`);
+                        // Optionally render a placeholder
+                     }
+                 });
+
+                 // Apply current filter after rendering
+                 const currentFilter = document.querySelector('.team-filters select').value;
+                 filterMembers(currentFilter);
+
+             } catch (error) {
+                 console.error("Error loading team members:", error);
+                 teamListEl.innerHTML = "<li>Error loading members. Check console (Index needed?).</li>";
+             }
+        }
+
+        function renderMember(memberData, memberId) {
+            const isCurrentUser = memberId === currentUser.uid;
+            const isOwner = memberId === activeGroupData?.ownerId;
+            const isAdmin = activeGroupData?.admins?.includes(memberId);
+            const currentUserIsAdmin = activeGroupData?.admins?.includes(currentUser.uid);
+            let roleLabel = 'Member';
+            if (isOwner) roleLabel = 'Owner';
+            else if (isAdmin) roleLabel = 'Admin';
+
+            const li = document.createElement('li');
+            li.className = `list-card team-member ${isCurrentUser ? 'current-user' : ''} ${isAdmin ? 'admin' : 'member'}`;
+            li.dataset.role = isAdmin ? 'admin' : 'member'; // For filtering
+
+            let actionButtonsHTML = '';
+            if (isCurrentUser) {
+                actionButtonsHTML = '<button class="btn btn--secondary" disabled>You</button>';
+            } else if (currentUserIsAdmin) { // Only show admin actions if the current user is an admin
+                if (!isOwner) { // Owner cannot be removed or demoted
+                     actionButtonsHTML += `<button class="btn btn--danger btn--ghostlike" onclick="openRemoveMemberModal('${memberId}', '${memberData.name || memberId}')">Remove</button>`;
+
+                     if (isAdmin) {
+                         actionButtonsHTML += `<button class="btn btn--ghost" onclick="toggleAdmin('${memberId}', false)">Demote</button>`;
+                     } else {
+                         actionButtonsHTML += `<button class="btn btn--primary" onclick="toggleAdmin('${memberId}', true)">Make Admin</button>`;
+                     }
+                } else {
+                    // Optionally show a disabled button or nothing for the owner
+                    actionButtonsHTML = '<button class="btn btn--secondary" disabled>Owner</button>';
+                }
+            } else {
+                // Non-admins see no action buttons for others
+            }
+
+            li.innerHTML = `
+                <div class="avatar" style="background-image:url(${memberData.photoURL || ''})"></div>
+                <div class="who">
+                    <strong>${memberData.name || 'Unnamed User'} ${isCurrentUser ? '(You)' : ''}</strong>
+                    <div class="muted">${roleLabel} • @${memberData.username || memberData.email}</div>
+                    <div class="member-stats">${(memberData.points || 0).toLocaleString()} pts</div>
+                </div>
+                <div class="member-actions">${actionButtonsHTML}</div>`;
+            teamListEl.appendChild(li);
+        }
+
+        // --- Actions (Exposed Globally) ---
+
+        // Copy Invite Code
+        window.copyInviteCode = () => {
+             inviteCodeDisplay.select();
+             try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    const codeOnly = activeGroupData?.inviteCode || '';
+                    navigator.clipboard.writeText(codeOnly).then(() => {
+                        alert('Invite code copied!');
+                    });
+                } else if (document.execCommand('copy')) {
+                   alert('Invite code copied!');
+                } else { throw new Error('Copy failed'); }
+             } catch (err) {
+                 console.error('Failed to copy code: ', err);
+                 alert('Could not copy code.');
+             }
+             if (window.getSelection) window.getSelection().removeAllRanges();
+             else if (document.selection) document.selection.empty();
+        };
+
+        // Open Remove Modal
+        window.openRemoveMemberModal = (memberId, memberName) => {
+            memberToRemoveNameEl.textContent = memberName;
+            memberToRemoveIdInput.value = memberId;
+            openModal('removeMemberModal');
+        };
+
+        // Confirm Remove Member - Uses direct Firestore update
+        window.confirmRemoveMember = async () => {
+            const memberIdToRemove = memberToRemoveIdInput.value;
+            if (!memberIdToRemove || !activeGroupId || !currentUser) return;
+            // Double check user is still admin (in case roles changed)
+            if (!activeGroupData?.admins?.includes(currentUser.uid)) {
+                 alert("You no longer have permission to remove members.");
+                 closeModal('removeMemberModal');
+                 return;
+            }
+             if (memberIdToRemove === activeGroupData?.ownerId) {
+                alert("Cannot remove the group owner.");
+                closeModal('removeMemberModal');
+                return;
+            }
+
+            const groupRef = doc(db, "groups", activeGroupId);
+            try {
+                // Remove from both members and admins arrays
+                await updateGroupDoc(groupRef, {
+                    members: arrayRemove(memberIdToRemove),
+                    admins: arrayRemove(memberIdToRemove) // Also remove admin status if they had it
+                });
+                console.log(`Member ${memberIdToRemove} removed from group ${activeGroupId}`);
+                alert('Member removed successfully.');
+                // The onSnapshot listener for the group should automatically refresh the list
+            } catch (error) {
+                console.error("Error removing member:", error);
+                alert("Failed to remove member.");
+            } finally {
+                closeModal('removeMemberModal');
+            }
+        };
+
+        // Toggle Admin Status - Uses Cloud Function
+        window.toggleAdmin = async (targetUserId, makeAdmin) => {
+             if (!activeGroupId || !currentUser) return;
+             // Optimistic UI update (optional - remove if causing issues)
+             const memberLi = teamListEl.querySelector(`.team-member [onclick*="'${targetUserId}'"]`)?.closest('.team-member');
+             if (memberLi) {
+                 memberLi.querySelector('.muted').textContent = `${makeAdmin ? 'Admin' : 'Member'} • ...`; // Update role temporarily
+             }
+
+            try {
+                const result = await toggleAdminStatus({
+                    groupId: activeGroupId,
+                    targetUserId: targetUserId,
+                    makeAdmin: makeAdmin
+                });
+                console.log(result.data.message);
+                alert(result.data.message);
+                 // Group listener will refresh the UI with correct state
+            } catch (error) {
+                console.error("Error toggling admin status:", error);
+                alert(`Failed to update role: ${error.message || 'Check console'}`);
+                // Revert optimistic UI update on error (if implemented)
+                if (memberLi) {
+                   // Force a reload to get correct state if optimistic update was done
+                   loadTeamMembers(activeGroupData.members || []);
+                }
+            }
+        };
+
+        // Filter Members List (Client-side)
+        window.filterMembers = (role) => {
+            document.querySelectorAll('.team-member').forEach(li => {
+                const memberRole = li.dataset.role; // 'admin' or 'member'
+                let show = false;
+                if (role === 'all') {
+                    show = true;
+                } else if (role === 'admin' && memberRole === 'admin') {
+                    show = true;
+                } else if (role === 'member' && memberRole === 'member') {
+                    show = true;
+                }
+                li.style.display = show ? 'flex' : 'none'; // Use 'flex' since list items are flex containers
+            });
+        };
+
+        // --- Invite Member Form Submission - Uses Cloud Function ---
+        inviteMemberForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!activeGroupId || !currentUser) return alert("No active group selected.");
+             // Check admin status again before submitting
+             if (!activeGroupData?.admins?.includes(currentUser.uid)) {
+                 alert("You do not have permission to invite members.");
+                 return;
+             }
+
+            const emailToInvite = inviteMemberForm.memberEmail.value.trim();
+            if (!emailToInvite) return;
+
+            const submitButton = inviteMemberForm.querySelector('button[type="submit"]');
+            submitButton.disabled = true; submitButton.textContent = 'Inviting...';
+
+            try {
+                const result = await inviteMemberToGroup({
+                    email: emailToInvite,
+                    groupId: activeGroupId
+                });
+                alert(result.data.message); // Show success/already member message from function
+                closeModal('addMemberModal');
+                // The group listener will update the member list
+            } catch (error) {
+                console.error("Error inviting member:", error);
+                alert(`Failed to invite member: ${error.message || 'Check console'}`);
+            } finally {
+                 submitButton.disabled = false; submitButton.textContent = 'Invite Member';
+            }
+        });
+
+        // --- Logout & Initialize ---
+        logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                listenForActiveGroup();
+            } else {
+                window.location.href = 'auth.html';
+                if (unsubscribeUserListener) unsubscribeUserListener();
+                if (unsubscribeGroupListener) unsubscribeGroupListener();
+                 // Reset UI elements on logout
+                 teamNameEl.textContent = "Team Management";
+                 teamListEl.innerHTML = "<li>Loading...</li>";
+                 totalMembersEl.textContent = '0'; newThisWeekEl.textContent = '0';
+                 inviteSection.style.display = 'none'; inviteMemberButton.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
