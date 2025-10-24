@@ -2,7 +2,7 @@
 
 import admin from "firebase-admin";
 // Import the Google AI SDK
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize Firebase Admin (server-side) - Keep this part
 if (!admin.apps.length) {
