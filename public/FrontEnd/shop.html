@@ -305,8 +305,66 @@
             openModal('redemptionModal');
         };
 
-        async function confirmRedemption() { /* ... keep existing transaction logic ... */ }
-        confirmRedeemBtn.addEventListener('click', confirmRedemption);
+        // ✅ RESTORED confirmRedemption function with console logs
+    async function confirmRedemption() {
+        console.log("confirmRedemption function started."); // <-- ADD THIS
+
+        if (!currentItemToRedeem || !currentUser || !activeGroupId) {
+            console.error("Cannot redeem: Missing item, user, or group ID.", { currentItemToRedeem, currentUser, activeGroupId }); // <-- ADD THIS
+            return alert("Cannot redeem item. User or group not identified.");
+        }
+        const { id: itemId, name: itemName, price: itemPrice } = currentItemToRedeem;
+        const itemRef = doc(db, "shopItems", itemId);
+        const userRef = doc(db, "users", currentUser.uid);
+
+        confirmRedeemBtn.disabled = true;
+        console.log("Attempting transaction for item:", itemId, "by user:", currentUser.uid); // <-- ADD THIS
+
+        try {
+            await runTransaction(db, async (transaction) => {
+                console.log("Inside runTransaction callback."); // <-- ADD THIS
+
+                const itemDoc = await transaction.get(itemRef);
+                const userDoc = await transaction.get(userRef);
+
+                console.log("Docs fetched inside transaction:", { itemExists: itemDoc.exists(), userExists: userDoc.exists() }); // <-- ADD THIS
+
+                if (!itemDoc.exists() || !userDoc.exists()) throw new Error("Data missing (item or user doc)"); // More specific error
+
+                const currentStock = itemDoc.data().stock || 0;
+                const currentPoints = userDoc.data().points || 0;
+
+                console.log("Checking conditions:", { currentStock, currentPoints, itemPrice }); // <-- ADD THIS
+
+                if (currentStock <= 0) throw new Error("Item is out of stock!");
+                if (currentPoints < itemPrice) throw new Error("Not enough points!");
+
+                console.log("Conditions met, performing updates..."); // <-- ADD THIS
+
+                transaction.update(itemRef, { stock: increment(-1) });
+                transaction.update(userRef, { points: increment(-itemPrice) });
+                transaction.set(doc(collection(db, "activities")), {
+                    userId: currentUser.uid, userName: currentUser.displayName || 'User',
+                    type: 'reward-redeemed', details: `redeemed ${itemName} for -${itemPrice} pts`,
+                    createdAt: serverTimestamp(),
+                    groupId: activeGroupId
+                });
+
+                console.log("Transaction updates queued."); // <-- ADD THIS
+            });
+            console.log("Transaction completed successfully."); // <-- ADD THIS
+            alert(`Successfully redeemed ${itemName}!`);
+        } catch (e) {
+            console.error("Redemption transaction failed: ", e); // <-- MODIFY THIS to log the error object
+            alert("Redemption failed: " + (e.message || e));
+        } finally {
+            confirmRedeemBtn.disabled = false;
+            closeModal('redemptionModal'); // Close regardless of success/fail
+            console.log("confirmRedemption function finished."); // <-- ADD THIS
+        }
+    }
+    // Make sure the event listener is attached
+    confirmRedeemBtn.addEventListener('click', confirmRedemption);
 
         // --- MODIFIED: Add Item Form Submission with Image Upload ---
         addItemForm.addEventListener('submit', async (e) => {

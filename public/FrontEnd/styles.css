@@ -649,7 +649,10 @@ button[disabled], .btn[disabled] {
   .task-summary { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
   .member-actions { justify-content: flex-start; } /* Prevent buttons pushing content */
 }
-
+/* --- Style for Date Picker Icon in Dark Mode --- */
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Inverts the color (black becomes white) */
+}
 /* Modals */
 .modal {
   position: fixed;

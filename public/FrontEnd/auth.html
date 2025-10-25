@@ -300,6 +300,7 @@
           document.getElementById('verification-email').textContent = email;
           closeModal('forgotPasswordModal');
           document.getElementById('emailVerificationModal').style.display = 'flex';
+          event.target.reset();
           setLoadingState(document.getElementById('signup-btn'), false);
           console.log("✅ Signup successful");
         })
