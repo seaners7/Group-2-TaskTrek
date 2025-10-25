@@ -82,151 +82,223 @@
         } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 
         // --- Firebase Config (Keep yours) ---
-        const firebaseConfig = { /* ... your config ... */ };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVZmortwiPrLezWCxQo53u60b4-IGgeWw", 
+            authDomain: "tasktrek-e7a04.firebaseapp.com",
+    projectId: "tasktrek-e7a04",
+    storageBucket: "tasktrek-e7a04.firebasestorage.app",
+    messagingSenderId: "900463967783",
+    appId: "1:900463967783:web:9dc9485517aa908fbdd802",
+    measurementId: "G-6BCT9FME3V"
+         };// --- Initialize Firebase ---
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-        // --- UI Elements ---
-        const actionTitle = document.getElementById('actionTitle');
-        const resetPasswordForm = document.getElementById('resetPasswordForm');
-        const infoMessage = document.getElementById('infoMessage');
-        const statusMessage = document.getElementById('statusMessage');
-        const resetEmailEl = document.getElementById('resetEmail');
-        const newPasswordInput = document.getElementById('newPassword');
-        const confirmPasswordInput = document.getElementById('confirmPassword');
-        const resetSubmitButton = document.getElementById('resetSubmitButton');
+    // --- UI Elements ---
+    const actionTitle = document.getElementById('actionTitle');
+    const resetPasswordForm = document.getElementById('resetPasswordForm');
+    const infoMessage = document.getElementById('infoMessage');
+    const statusMessage = document.getElementById('statusMessage');
+    const resetEmailEl = document.getElementById('resetEmail');
+    const newPasswordInput = document.getElementById('newPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    const resetSubmitButton = document.getElementById('resetSubmitButton');
 
-        let actionCode = null;
-        let mode = null;
+    let actionCode = null;
+    let mode = null;
 
-        // --- Helper Functions (Keep isValidPassword, validatePassword, showError, clearErrors, setLoadingState, showStatus) ---
-        function isValidPassword(password) { /* ... keep existing ... */ }
-        function validatePassword() { /* ... keep existing ... */ }
-        window.validatePassword = validatePassword; // Make accessible
-        function showError(elementId, message) { /* ... keep existing ... */ }
-        function clearErrors(errorIds) { /* ... keep existing ... */ }
-        function setLoadingState(button, isLoading) { /* ... keep existing ... */ }
-        function showStatus(message, isError = false) { /* ... keep existing ... */ }
+    // --- Helper Functions (Copied from auth.html) ---
 
-        // --- Main Logic ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            // 1. Get Action Code and Mode from URL
-            const urlParams = new URLSearchParams(window.location.search);
-            actionCode = urlParams.get('oobCode');
-            mode = urlParams.get('mode'); // 'resetPassword', 'verifyEmail', etc.
+    // Checks if a password meets all defined criteria
+    function isValidPassword(password) {
+        return password.length >= 8 &&
+               /[A-Z]/.test(password) &&
+               /[a-z]/.test(password) &&
+               /\d/.test(password) &&
+               /[!@#$%^&*(),.?":{}|<>]/.test(password) &&
+               !/\s/.test(password);
+    }
 
-            if (!actionCode || !mode) {
-                actionTitle.textContent = 'Invalid Request';
-                infoMessage.textContent = 'Invalid or incomplete action link.';
-                showStatus('Could not process request. Please try the link from your email again.', true);
-                return;
-            }
-
-            infoMessage.textContent = 'Processing...'; // Update initial message
-
-            // 2. Handle Action Based on Mode
-            switch (mode) {
-                case 'resetPassword':
-                    actionTitle.textContent = 'Set New Password';
-                    try {
-                        const email = await verifyPasswordResetCode(auth, actionCode);
-                        // Code is valid, show the form
-                        resetEmailEl.textContent = email;
-                        infoMessage.style.display = 'none'; // Hide initial message
-                        resetPasswordForm.style.display = 'grid';
-                        showStatus('Please enter and confirm your new password.', false);
-                    } catch (error) {
-                        // Code is invalid or expired
-                        console.error("Error verifying password reset code:", error);
-                        infoMessage.style.display = 'none'; // Hide initial message
-                        let errorMessage = 'Invalid or expired password reset link. Please request a new one.';
-                        // ... (keep existing specific error messages if desired) ...
-                        showStatus(errorMessage, true);
-                    }
-                    break;
-
-                case 'verifyEmail':
-                    actionTitle.textContent = 'Verify Email Address';
-                    try {
-                        await applyActionCode(auth, actionCode);
-                        // Email verified successfully
-                        infoMessage.style.display = 'none'; // Hide initial message
-                        showStatus('Email verified successfully! You can now log in.', false);
-                        // Optional: Add a link back to login
-                        // infoMessage.innerHTML = '<a href="auth.html" class="btn btn--primary">Proceed to Login</a>';
-                        // infoMessage.style.display = 'block';
-
-                    } catch (error) {
-                        // Handle verification errors
-                        console.error("Error applying action code for email verification:", error);
-                        infoMessage.style.display = 'none'; // Hide initial message
-                        let errorMessage = 'Failed to verify email. The link may be invalid or expired.';
-                        // ... (add specific error checks if needed) ...
-                        showStatus(errorMessage, true);
-                    }
-                    break;
-
-                // case 'recoverEmail':
-                //     // Handle email change recovery if you implement that feature
-                //     actionTitle.textContent = 'Recover Email';
-                //     // ... logic using checkActionCode and applyActionCode ...
-                //     break;
-
-                default:
-                    actionTitle.textContent = 'Unknown Action';
-                    infoMessage.textContent = 'The action requested is not recognized.';
-                    showStatus('The link used is not valid for a known action.', true);
+    // Updates the UI indicators for password requirements
+    function validatePassword() {
+        // Use newPasswordInput since that's the ID on this page
+        const password = newPasswordInput.value;
+        const requirements = {
+            length: password.length >= 8,
+            uppercase: /[A-Z]/.test(password),
+            lowercase: /[a-z]/.test(password),
+            number: /\d/.test(password),
+            special: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+            nospace: !/\s/.test(password) && password.length > 0 // Check space only if > 0 length
+        };
+        // Update UI elements based on requirements check
+        Object.keys(requirements).forEach(req => {
+            const element = document.getElementById(`req-${req}`);
+            if (element) { // Check if element exists before modifying
+                if (requirements[req]) {
+                    element.className = 'requirement valid';
+                    element.textContent = element.textContent.replace('✗', '✓');
+                } else {
+                    element.className = 'requirement invalid';
+                    element.textContent = element.textContent.replace('✓', '✗');
+                }
             }
         });
+        return isValidPassword(password); // Return overall validity
+    }
+    // Expose validatePassword globally for the oninput attribute in HTML
+    window.validatePassword = validatePassword;
 
-        // 3. Handle Password Reset Form Submission (Keep existing logic)
-        resetPasswordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            clearErrors(['newPassword-error', 'confirmPassword-error']);
-            statusMessage.style.display = 'none'; // Hide previous status
+    // Displays an error message below a specific form field
+    function showError(elementId, message) {
+        const el = document.getElementById(elementId);
+        if (el) el.textContent = message;
+    }
 
-            const newPassword = newPasswordInput.value;
-            const confirmPassword = confirmPasswordInput.value;
-
-            // Client-side validation
-            let hasErrors = false;
-            if (newPassword !== confirmPassword) {
-                showError('confirmPassword-error', 'Passwords do not match.');
-                hasErrors = true;
-            }
-            if (!isValidPassword(newPassword)) { // Use your custom validation
-                showError('newPassword-error', 'Password does not meet requirements.');
-                hasErrors = true;
-            }
-            if (hasErrors) return;
-
-            // Attempt to confirm the reset with Firebase
-            setLoadingState(resetSubmitButton, true);
-            try {
-                await confirmPasswordReset(auth, actionCode, newPassword);
-                // Success!
-                resetPasswordForm.style.display = 'none'; // Hide form
-                showStatus('Password successfully reset! You can now log in with your new password.', false);
-
-            } catch (error) {
-                // Handle Firebase errors
-                console.error("Error confirming password reset:", error);
-                let errorMessage = 'Failed to reset password. Please try again.';
-                 if (error.code === 'auth/weak-password') {
-                     errorMessage = 'The new password is too weak. Please choose a stronger one.';
-                     showError('newPassword-error', errorMessage);
-                 } else if (error.code === 'auth/expired-action-code' || error.code === 'auth/invalid-action-code') {
-                     errorMessage = 'This password reset link is no longer valid. Please request a new one.';
-                     showStatus(errorMessage, true);
-                     resetPasswordForm.style.display = 'none'; // Hide form if code is invalid
-                 } else {
-                     showStatus(errorMessage, true);
-                 }
-            } finally {
-                setLoadingState(resetSubmitButton, false);
-            }
+    // Clears error messages for a list of element IDs
+    function clearErrors(errorIds) {
+        errorIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = '';
         });
+    }
 
-    </script>
+    // Toggles button loading state (disables button, shows/hides text/spinner)
+    function setLoadingState(button, isLoading) {
+        const text = button.querySelector('.btn-text');
+        const spinner = button.querySelector('.btn-spinner');
+        // If button doesn't have spinner structure, just disable/enable
+        if (!text || !spinner) {
+             button.disabled = isLoading;
+             return;
+        }
+        button.disabled = isLoading;
+        text.style.display = isLoading ? 'none' : 'inline';
+        spinner.style.display = isLoading ? 'inline' : 'none';
+    }
+
+    // Displays a general status message (success or error)
+    function showStatus(message, isError = false) {
+         statusMessage.textContent = message;
+         statusMessage.className = `status-message ${isError ? 'error' : 'success'}`;
+         statusMessage.style.display = 'block';
+    }
+
+    // --- Main Logic (Handles URL parameters and actions) ---
+    document.addEventListener('DOMContentLoaded', async () => {
+        // 1. Get Action Code and Mode from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        actionCode = urlParams.get('oobCode');
+        mode = urlParams.get('mode');
+
+        if (!actionCode || !mode) {
+            actionTitle.textContent = 'Invalid Request';
+            infoMessage.textContent = 'Invalid or incomplete action link.';
+            showStatus('Could not process request. Please try the link from your email again.', true);
+            return;
+        }
+
+        infoMessage.textContent = 'Processing...';
+
+        // 2. Handle Action Based on Mode
+        switch (mode) {
+            case 'resetPassword':
+                actionTitle.textContent = 'Set New Password';
+                try {
+                    const email = await verifyPasswordResetCode(auth, actionCode);
+                    resetEmailEl.textContent = email;
+                    infoMessage.style.display = 'none';
+                    resetPasswordForm.style.display = 'grid'; // Show form
+                    showStatus('Please enter and confirm your new password.', false);
+                } catch (error) {
+                    console.error("Error verifying password reset code:", error);
+                    infoMessage.style.display = 'none';
+                    let errorMessage = 'Invalid or expired password reset link. Please request a new one.';
+                    if (error.code === 'auth/expired-action-code') errorMessage = 'This password reset link has expired.';
+                    else if (error.code === 'auth/invalid-action-code') errorMessage = 'This password reset link is invalid.';
+                    else if (error.code === 'auth/user-disabled') errorMessage = 'Your account has been disabled.';
+                    else if (error.code === 'auth/user-not-found') errorMessage = 'No account found for this reset link.';
+                    showStatus(errorMessage, true);
+                }
+                break;
+
+            case 'verifyEmail':
+                actionTitle.textContent = 'Verify Email Address';
+                try {
+                    await applyActionCode(auth, actionCode);
+                    infoMessage.style.display = 'none';
+                    showStatus('Email verified successfully! You can now log in.', false);
+                    // Add a login link below the status message
+                    infoMessage.innerHTML = '<a href="auth.html" class="btn btn--primary" style="margin-top: 15px;">Proceed to Login</a>';
+                    infoMessage.style.display = 'block';
+                } catch (error) {
+                    console.error("Error applying action code for email verification:", error);
+                    infoMessage.style.display = 'none';
+                    let errorMessage = 'Failed to verify email. The link may be invalid, expired, or the email may already be verified.';
+                    if (error.code === 'auth/expired-action-code') errorMessage = 'This verification link has expired.';
+                    else if (error.code === 'auth/invalid-action-code') errorMessage = 'This verification link is invalid.';
+                    else if (error.code === 'auth/user-disabled') errorMessage = 'Your account has been disabled.';
+                    else if (error.code === 'auth/user-not-found') errorMessage = 'No account found for this verification link.';
+                    showStatus(errorMessage, true);
+                }
+                break;
+
+            default:
+                actionTitle.textContent = 'Unknown Action';
+                infoMessage.textContent = 'The action requested is not recognized.';
+                showStatus('The link used is not valid for a known action.', true);
+        }
+    });
+
+    // 3. Handle Password Reset Form Submission
+    resetPasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearErrors(['newPassword-error', 'confirmPassword-error']);
+        statusMessage.style.display = 'none';
+
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        let hasErrors = false;
+        if (newPassword !== confirmPassword) {
+            showError('confirmPassword-error', 'Passwords do not match.');
+            hasErrors = true;
+        }
+        // Use your custom validation function
+        if (!isValidPassword(newPassword)) {
+            // UI indicators are updated by oninput="validatePassword()"
+            showError('newPassword-error', 'Password does not meet requirements.');
+            hasErrors = true;
+        }
+        if (hasErrors) return;
+
+        setLoadingState(resetSubmitButton, true);
+        try {
+            await confirmPasswordReset(auth, actionCode, newPassword);
+            resetPasswordForm.style.display = 'none';
+            showStatus('Password successfully reset! You can now log in with your new password.', false);
+             // Add a login link below the status message
+             infoMessage.innerHTML = '<a href="auth.html" class="btn btn--primary" style="margin-top: 15px;">Proceed to Login</a>';
+             infoMessage.style.display = 'block';
+
+        } catch (error) {
+            console.error("Error confirming password reset:", error);
+            let errorMessage = 'Failed to reset password. Please try again.';
+             if (error.code === 'auth/weak-password') {
+                 errorMessage = 'The new password is too weak according to Firebase standards.'; // More specific Firebase message
+                 showError('newPassword-error', errorMessage);
+             } else if (error.code === 'auth/expired-action-code' || error.code === 'auth/invalid-action-code') {
+                 errorMessage = 'This password reset link is no longer valid. Please request a new one.';
+                 showStatus(errorMessage, true);
+                 resetPasswordForm.style.display = 'none'; // Hide form if code is invalid
+             } else {
+                 showStatus(errorMessage, true);
+             }
+        } finally {
+            setLoadingState(resetSubmitButton, false);
+        }
+    });
+
+</script>
 </body>
 </html>
