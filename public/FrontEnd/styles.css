@@ -922,6 +922,52 @@ select.input {
   gap: 16px;
 }
 
+
+.task-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: var(--panel);
+  border: 1px solid var(--outline);
+  border-radius: var(--radius);
+  padding: 15px;
+  box-shadow: var(--shadow-2);
+  z-index: 1001;
+  max-width: 300px;
+  animation: fadeIn 0.3s ease; /* Use existing fadeIn */
+}
+
+.task-notification h4 {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  border-bottom: 1px solid var(--outline);
+  padding-bottom: 5px;
+}
+
+.task-notification ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+}
+
+.task-notification li {
+  margin-bottom: 5px;
+  color: var(--muted);
+}
+.task-notification li strong {
+   color: var(--text);
+   display: block; /* Make title appear on its own line */
+}
+
+#closeTaskNotification {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 2px 6px; /* Smaller button */
+  border-radius: 50%;
+  line-height: 1;
+}
 .metric-item {
   display: flex;
   justify-content: space-between;

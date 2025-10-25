@@ -15,10 +15,80 @@
         [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
         .theme-toggle-btn .theme-icon--sun { stroke: white; }
         [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); }
+
+        /* --- Styles for Notification (Also add to styles.css for consistency) --- */
+        .task-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), var(--panel) 70%);
+            border: 1px solid var(--purple-400);
+            border-radius: var(--radius);
+            padding: 18px;
+            box-shadow: var(--shadow-1);
+            z-index: 1001;
+            width: 350px;
+            max-width: 90vw;
+            animation: fadeIn 0.3s ease;
+            display: none; /* Hidden by default */
+        }
+        [data-theme="light"] .task-notification {
+             background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), var(--panel) 70%);
+             border: 1px solid var(--purple-400);
+             box-shadow: var(--shadow-1);
+        }
+        .task-notification h4 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid var(--outline);
+            padding-bottom: 8px;
+            color: var(--text);
+        }
+        .task-notification ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 15px;
+            font-size: 0.95rem;
+        }
+        .task-notification li {
+            margin-bottom: 8px;
+            color: var(--muted);
+            padding: 5px;
+            background-color: rgba(0,0,0,0.1);
+            border-radius: 4px;
+        }
+         [data-theme="light"] .task-notification li {
+              background-color: rgba(0,0,0,0.03);
+         }
+         .task-notification li strong {
+             color: var(--text);
+             display: block;
+         }
+         .task-notification li.no-tasks {
+             font-style: italic;
+             text-align: center;
+             background-color: transparent;
+         }
+        #closeTaskNotification {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 4px 8px;
+            border-radius: 50%;
+            line-height: 1;
+        }
+        /* --- End Notification Styles --- */
     </style>
 </head>
 <body>
     <section class="app">
+
+        <div id="upcomingTaskNotification" class="task-notification">
+            <h4>Upcoming Task Deadlines</h4>
+            <ul id="upcomingTaskList">
+                </ul>
+            <button id="closeTaskNotification" class="btn btn--ghost btn--sm">&times;</button>
+        </div>
         <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
         <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
             <span></span><span></span><span></span>
@@ -27,14 +97,14 @@
         <aside class="sidebar">
             <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
             <nav class="sidebar__nav">
-                 <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
-                 <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
-                 <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
-                 <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
-                 <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
-                 <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
-                 <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
-                 <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
+                <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
+                <a href="tasks.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
+                <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
+                <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
+                <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
+                <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
+                <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
+                <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
             </nav>
             <div class="sidebar__footer">
                 <div class="theme-toggle">
@@ -61,23 +131,119 @@
     <script src="theme.js"></script>
 
     <script type="module">
+        // --- Firebase Imports ---
+        // Auth
         import { auth, onAuthStateChanged } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        // Firestore (Added necessary imports for notification)
+        import { db } from './firebase.js'; // Assuming firebase.js exports db
+        import { collection, query, where, orderBy, limit, getDocs, Timestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
+        // --- UI Elements ---
         const logoutBtn = document.getElementById('logout-btn');
+        const notificationArea = document.getElementById('upcomingTaskNotification');
+        const notificationList = document.getElementById('upcomingTaskList');
+        const closeNotificationBtn = document.getElementById('closeTaskNotification');
 
-        // Redirect if not logged in
-        onAuthStateChanged(auth, (user) => {
+        // --- Global State ---
+        let currentUser = null; // Store current user info from Auth
+
+        // --- Helper: Get date string N days from now (YYYY-MM-DD) ---
+        function getDateString(daysFromNow = 0) {
+            const date = new Date();
+            date.setDate(date.getDate() + daysFromNow);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // --- Function: Fetch and display upcoming tasks (MODIFIED: removed groupId) ---
+        async function showUpcomingTasks(userId) {
+            if (!userId) { // Simplified check
+                 console.log("Cannot show upcoming tasks: Missing userId.");
+                 notificationArea.style.display = 'none';
+                 return;
+            }
+
+            const todayStr = getDateString(0);
+            const threeDaysFromNowStr = getDateString(3);
+
+            console.log(`Checking all tasks for user ${userId} due between ${todayStr} and ${threeDaysFromNowStr}`);
+            notificationList.innerHTML = ''; // Clear previous content
+
+            try {
+                // MODIFIED Query: Removed the groupId check
+                const q = query(
+                    collection(db, "tasks"),
+                    where("assignee", "==", userId),
+                    where("status", "==", "in-progress"),
+                    where("dueDate", ">=", todayStr),
+                    where("dueDate", "<=", threeDaysFromNowStr),
+                    orderBy("dueDate", "asc"),
+                    limit(3)
+                );
+
+                const querySnapshot = await getDocs(q);
+
+                if (!querySnapshot.empty) {
+                    querySnapshot.forEach((docSnap) => {
+                        const task = docSnap.data();
+                        const li = document.createElement('li');
+                        let dueDateText = task.dueDate;
+                        if (task.dueDate === todayStr) {
+                            dueDateText = 'Today';
+                        } else if (task.dueDate === getDateString(1)) {
+                            dueDateText = 'Tomorrow';
+                        }
+                        li.innerHTML = `<strong>${task.title || 'Untitled Task'}</strong> Due: ${dueDateText}`;
+                        notificationList.appendChild(li);
+                    });
+                    console.log(`Found ${querySnapshot.size} upcoming tasks.`);
+                } else {
+                    // Display message if no tasks found
+                    console.log("No upcoming tasks due soon found.");
+                    const li = document.createElement('li');
+                    li.textContent = 'No upcoming tasks due soon.';
+                    li.className = 'no-tasks'; // Add class for styling
+                    notificationList.appendChild(li);
+                }
+                // Always show the notification area
+                notificationArea.style.display = 'block';
+
+            } catch (error) {
+                // Important: Check console for index creation link if query fails!
+                console.error("Error fetching upcoming tasks (Index needed?):", error);
+                notificationList.innerHTML = '<li class="no-tasks" style="color: var(--danger);">Error loading tasks. (Index required?)</li>';
+                notificationArea.style.display = 'block'; // Show area even on error
+            }
+        }
+
+        // --- Close Button Listener ---
+        closeNotificationBtn.addEventListener('click', () => {
+            notificationArea.style.display = 'none';
+        });
+
+        // --- MODIFIED Auth State Change ---
+        onAuthStateChanged(auth, async (user) => { // Made async
+            // Reset state on change
+            currentUser = null;
+            notificationArea.style.display = 'none'; // Hide initially
+
             if (!user) {
-                // User is signed out, redirect to auth page
+                // User is signed out
                 window.location.href = "auth.html";
             } else {
                 // User is signed in.
+                currentUser = user; // Store user
                 console.log("User signed in:", user.uid);
+
+                // Fetch tasks for this user, regardless of group
+                await showUpcomingTasks(user.uid); // No longer need to fetch activeGroupId
             }
         });
 
-        // Logout button functionality
+        // --- Original Logout button functionality ---
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
             signOut(auth).catch(error => {

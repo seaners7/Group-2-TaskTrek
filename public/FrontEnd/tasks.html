@@ -50,16 +50,15 @@
         <div class="content">
             <section class="panel">
                 <div class="panel__header">
-                    <h2>Tasks</h2>
-                    <div class="panel__actions">
-                        <select class="input" style="width: auto;" onchange="filterTasks(this.value)">
-                            <option value="all">All Tasks</option>
+                    <h2 id="tasks-title">Tasks</h2> <div class="panel__actions">
+                        <select class="input" id="task-filter-select" style="width: auto;" onchange="filterTasks(this.value)">
+                            <option value="all">All Tasks (Current Group)</option>
                             <option value="available">Available</option>
                             <option value="in-progress">In Progress</option>
                             <option value="completed">Completed</option>
-                            <option value="my-tasks">My Tasks</option>
+                            <option value="my-tasks">My Tasks (All Groups)</option>
                         </select>
-                        <button class="btn btn--primary" onclick="openModal('addTaskModal')">Add Task</button>
+                         <button class="btn btn--primary" id="add-task-button" onclick="openModal('addTaskModal')">Add Task</button>
                     </div>
                 </div>
 
@@ -82,7 +81,6 @@
                     <button class="btn btn--ghost" onclick="closeModal('addTaskModal')">&times;</button>
                 </div>
                 <form id="addTaskForm" class="modal-form">
-
                     <div class="form-field">
                       <h4 style="margin-top:0px; margin-bottom: 8px;">AI Suggested Tasks:</h4>
                       <ul id="ai-suggestions">
@@ -105,7 +103,7 @@
         </div>
 
         <div id="taskDetailsModal" class="modal" style="display: none;">
-            <div class="modal-content">
+             <div class="modal-content">
                 <div class="modal-header"><h3 id="task-detail-title">Task Details</h3><button class="btn btn--ghost" onclick="closeModal('taskDetailsModal')">&times;</button></div>
                 <div class="modal-form">
                     <div class="task-detail-info">
@@ -115,6 +113,7 @@
                             <div class="meta-item"><strong>Points:</strong><span id="task-detail-points">...</span></div>
                             <div class="meta-item"><strong>Due Date:</strong><span id="task-detail-due">...</span></div>
                             <div class="meta-item"><strong>Assignee:</strong><span id="task-detail-assignee">...</span></div>
+                            <div class="meta-item"><strong>Group:</strong><span id="task-detail-group">...</span></div>
                         </div>
                         <div class="task-detail-description"><h4>Description</h4><p id="task-detail-desc">...</p></div>
                         <div class="task-detail-history">
@@ -127,7 +126,7 @@
                         <button class="btn btn--primary" id="task-detail-action" onclick="handleTaskDetailAction()">Claim Task</button>
                     </div>
                 </div>
-            </div>
+             </div>
         </div>
     </section>
 
@@ -137,14 +136,17 @@
         // --- Firebase Imports ---
         import { db, auth, onAuthStateChanged, doc, updateDoc, increment, formatTimeAgo } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { collection, addDoc, query, onSnapshot, serverTimestamp, where, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { collection, addDoc, query, onSnapshot, serverTimestamp, where, orderBy, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // --- UI Elements ---
         const taskListEl = document.getElementById('task-list');
         const addTaskForm = document.getElementById('addTaskForm');
         const myPointsEl = document.getElementById('my-points');
         const logoutBtn = document.getElementById('logout-btn');
-        const aiSuggestionsListEl = document.getElementById('ai-suggestions'); // AI suggestions UL
+        const aiSuggestionsListEl = document.getElementById('ai-suggestions');
+        const tasksTitle = document.getElementById('tasks-title');
+        const taskFilterSelect = document.getElementById('task-filter-select');
+        const addTaskButton = document.getElementById('add-task-button');
 
         // Task Detail Modal Elements
         const taskDetailTitle = document.getElementById('task-detail-title');
@@ -156,20 +158,21 @@
         const taskDetailDesc = document.getElementById('task-detail-desc');
         const taskDetailHistory = document.getElementById('task-detail-history');
         const taskDetailAction = document.getElementById('task-detail-action');
+        const taskDetailGroup = document.getElementById('task-detail-group');
 
         // --- Global State ---
-        let currentUser = null; // Will store Auth user object
+        let currentUser = null;
         let activeGroupId = null;
-        let allTasksData = new Map();
+        let allTasksData = new Map(); // Cache for *all* tasks (both group and 'my-tasks' query)
         let unsubscribeUserListener = null;
-        let unsubscribeTasksListener = null;
+        let unsubscribeTasksListener = null; // Listener for *active group* tasks
+        let userGroupNameMap = new Map(); // Cache for group names
 
         // --- Global Modal Functions (Integrated) ---
         window.openModal = (modalId) => {
             document.getElementById(modalId).style.display = 'flex';
-            // If opening the Add Task modal, fetch AI suggestions
             if (modalId === 'addTaskModal') {
-                getAISuggestions(); // Call the AI function
+                getAISuggestions();
             }
         };
         window.closeModal = (modalId) => {
@@ -177,149 +180,169 @@
             if (modal) modal.style.display = 'none';
             const form = modal.querySelector('form');
             if (form) form.reset();
-             // Clear AI suggestions when closing add task modal
              if (modalId === 'addTaskModal') {
                  aiSuggestionsListEl.innerHTML = '<li>Loading AI Suggestions...</li>';
              }
         };
         document.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target.id); });
 
-        // --- Global Filter Function ---
-        window.filterTasks = (filter) => {
-            if (!currentUser) return; // Need user for 'my-tasks' filter
+        
+        // --- NEW: Central Filter Application Function ---
+        // This function *only* hides/shows cards based on the filter.
+        // It does not fetch data.
+        function applyCurrentFilter() {
+            const filter = taskFilterSelect.value;
+            if (!currentUser) return;
+
+            // When in "My Tasks" mode, the query *already* filtered for the user.
+            // So, "my-tasks" filter here is redundant, but harmless.
+            // We just need to handle the other statuses.
             document.querySelectorAll('.task-card').forEach(card => {
                 const status = card.dataset.status;
                 const assignee = card.dataset.assignee;
                 let show = false;
+
                 switch(filter) {
-                    case 'all': show = true; break;
-                    case 'available': show = status === 'available'; break;
-                    case 'in-progress': show = status === 'in-progress'; break;
-                    case 'completed': show = status === 'completed'; break;
-                    case 'my-tasks': show = assignee === currentUser.uid; break;
+                    case 'all': 
+                        show = true; 
+                        break;
+                    case 'available': 
+                        show = (status === 'available'); 
+                        break;
+                    case 'in-progress': 
+                        show = (status === 'in-progress'); 
+                        break;
+                    case 'completed': 
+                        show = (status === 'completed'); 
+                        break;
+                    case 'my-tasks': 
+                        // This filter *loads* differently, but if we're here, all cards *are* my tasks.
+                        show = true; 
+                        break;
                 }
                 card.style.display = show ? 'block' : 'none';
             });
-            updateTaskSummary(); // Update summary after filtering
+            
+            updateTaskSummary(); // Update summary counts based on *visible* cards
+        }
+
+        // --- MODIFIED: Global Filter Function ---
+        // This function *decides* which data to load
+        window.filterTasks = (filter) => {
+            if (!currentUser) return;
+
+            if (filter === 'my-tasks') {
+                // Stop the group listener
+                if (unsubscribeTasksListener) {
+                    unsubscribeTasksListener();
+                    unsubscribeTasksListener = null;
+                }
+                // Load all user's tasks
+                loadMyTasks(currentUser.uid);
+            } else {
+                // Load the active group's tasks (this will start listener if needed)
+                listenForTasks(); 
+                // Apply the filter (e.g., 'available') to the *existing* cards for an instant UI update
+                // The listener's snapshot will correct this if data is stale.
+                applyCurrentFilter();
+            }
         };
 
         // --- Date Formatter ---
-        // Using imported formatTimeAgo if available, otherwise simple formatDate
         const formatDateOrAgo = typeof formatTimeAgo === 'function' ? formatTimeAgo : function(timestamp) {
             if (!timestamp || !timestamp.toDate) return '—';
             return timestamp.toDate().toLocaleDateString();
         };
-// ✅ MOVED definition here, BEFORE it's used in getAISuggestions
-function getTodayDateString() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-    window.getTodayDateString = getTodayDateString; // Explicitly assign to window
 
-      // --- AI Suggestion Fetching & Handling ---
-    async function getAISuggestions() {
-        const user = auth.currentUser;
-        if (!user?.displayName) {
-            aiSuggestionsListEl.innerHTML = "<li style='color: var(--muted);'>Cannot fetch suggestions without a display name.</li>";
-            return;
+        // --- Get Today's Date String ---
+        function getTodayDateString() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
         }
+        window.getTodayDateString = getTodayDateString; // Expose for AI suggestions
 
-        aiSuggestionsListEl.innerHTML = "<li>Loading AI Suggestions...</li>";
-
-        try {
-            const assigneeNameWithSpaces = user.displayName;
-            console.log("➡️ Fetching AI suggestions for:", assigneeNameWithSpaces);
-
-            const response = await fetch(`/api/aiSuggest?assigneeName=${encodeURIComponent(assigneeNameWithSpaces)}`);
-            const data = await response.json(); // Expect { suggestions: [ {title:.., desc:..}, ... ] }
-
-            aiSuggestionsListEl.innerHTML = ""; // clear loading/previous
-
-            if (!response.ok || data.error || !Array.isArray(data.suggestions) || data.suggestions.length === 0) {
-                console.error("AI Suggestion Error:", data.error || "Invalid/Empty suggestions array");
-                aiSuggestionsListEl.innerHTML = `<li style='color: var(--muted);'>${data.message || data.error || 'No AI suggestions available.'}</li>`;
+        // --- AI Suggestion Fetching & Handling ---
+        async function getAISuggestions() {
+            const user = auth.currentUser;
+            if (!user?.displayName) {
+                aiSuggestionsListEl.innerHTML = "<li style='color: var(--muted);'>Cannot fetch suggestions without a display name.</li>";
                 return;
             }
-
-            // Create clickable buttons with full task data
-            data.suggestions.forEach((taskSuggestion) => { // Now taskSuggestion is an object
-                // Basic validation of the suggestion object
-                if (!taskSuggestion || typeof taskSuggestion !== 'object' || !taskSuggestion.title) {
-                    console.warn("Skipping invalid suggestion object:", taskSuggestion);
-                    return; // Skip this suggestion if it's malformed
+            aiSuggestionsListEl.innerHTML = "<li>Loading AI Suggestions...</li>";
+            try {
+                const assigneeNameWithSpaces = user.displayName;
+                console.log("➡️ Fetching AI suggestions for:", assigneeNameWithSpaces);
+                const response = await fetch(`/api/aiSuggest?assigneeName=${encodeURIComponent(assigneeNameWithSpaces)}`);
+                const data = await response.json();
+                aiSuggestionsListEl.innerHTML = "";
+                if (!response.ok || data.error || !Array.isArray(data.suggestions) || data.suggestions.length === 0) {
+                    console.error("AI Suggestion Error:", data.error || "Invalid/Empty suggestions array");
+                    aiSuggestionsListEl.innerHTML = `<li style='color: var(--muted);'>${data.message || data.error || 'No AI suggestions available.'}</li>`;
+                    return;
                 }
-
-                const li = document.createElement("li");
-                const btn = document.createElement("button");
-                btn.textContent = taskSuggestion.title; // Display only the title on the button
-                btn.type = "button"; // Prevent form submission
-                btn.dataset.taskData = JSON.stringify(taskSuggestion); // Store full data
-
-                // Event Listener to populate all fields
-                btn.addEventListener("click", (event) => {
-                    try {
-                        const clickedButton = event.target;
-                        const taskDataString = clickedButton.dataset.taskData;
-                        if (!taskDataString) return;
-
-                        const taskData = JSON.parse(taskDataString);
-
-                        // Get form elements
-                        const titleInput = document.getElementById("taskTitle");
-                        const descriptionInput = document.getElementById("taskDescription");
-                        const difficultySelect = document.getElementById("taskDifficulty");
-                        const pointsInput = document.getElementById("taskPoints");
-                        const dueDateInput = document.getElementById("taskDueDate");
-
-                        // Populate form fields
-                        titleInput.value = taskData.title || '';
-                        descriptionInput.value = taskData.description || '';
-                        pointsInput.value = taskData.points || ''; // Use AI points or leave blank
-
-                        // Set difficulty - check if the suggested value is valid
-                        const validDifficulties = ['bronze', 'silver', 'gold'];
-                        if (taskData.difficulty && validDifficulties.includes(taskData.difficulty.toLowerCase())) {
-                            difficultySelect.value = taskData.difficulty.toLowerCase();
-                        } else {
-                            difficultySelect.value = ''; // Reset if invalid suggestion
-                        }
-
-                        // ✅ Call the function correctly here
-                        dueDateInput.value = window.getTodayDateString(); // Default to today
-
-                        console.log("Applied AI suggestion:", taskData);
-
-                    } catch (e) {
-                        console.error("Error parsing or applying AI suggestion:", e);
-                        // Fallback: just set the title if parsing fails
-                        document.getElementById("taskTitle").value = event.target.textContent;
-                         // Clear other fields in case of error
-                         document.getElementById("taskDescription").value = '';
-                         document.getElementById("taskDifficulty").value = '';
-                         document.getElementById("taskPoints").value = '';
-                         // ✅ Set date even on fallback
-                         document.getElementById("taskDueDate").value = getTodayDateString();
+                data.suggestions.forEach((taskSuggestion) => {
+                    if (!taskSuggestion || typeof taskSuggestion !== 'object' || !taskSuggestion.title) {
+                        console.warn("Skipping invalid suggestion object:", taskSuggestion);
+                        return;
                     }
+                    const li = document.createElement("li");
+                    const btn = document.createElement("button");
+                    btn.textContent = taskSuggestion.title;
+                    btn.type = "button";
+                    btn.dataset.taskData = JSON.stringify(taskSuggestion);
+                    btn.addEventListener("click", (event) => {
+                        try {
+                            const clickedButton = event.target;
+                            const taskDataString = clickedButton.dataset.taskData;
+                            if (!taskDataString) return;
+                            const taskData = JSON.parse(taskDataString);
+                            document.getElementById("taskTitle").value = taskData.title || '';
+                            document.getElementById("taskDescription").value = taskData.description || '';
+                            document.getElementById("taskPoints").value = taskData.points || '';
+                            const validDifficulties = ['bronze', 'silver', 'gold'];
+                            if (taskData.difficulty && validDifficulties.includes(taskData.difficulty.toLowerCase())) {
+                                document.getElementById("taskDifficulty").value = taskData.difficulty.toLowerCase();
+                            } else {
+                                document.getElementById("taskDifficulty").value = '';
+                            }
+                            document.getElementById("taskDueDate").value = getTodayDateString();
+                            console.log("Applied AI suggestion:", taskData);
+                        } catch (e) {
+                            console.error("Error parsing or applying AI suggestion:", e);
+                            document.getElementById("taskTitle").value = event.target.textContent;
+                            document.getElementById("taskDescription").value = '';
+                            document.getElementById("taskDifficulty").value = '';
+                            document.getElementById("taskPoints").value = '';
+                            document.getElementById("taskDueDate").value = getTodayDateString();
+                        }
+                    });
+                    li.appendChild(btn);
+                    aiSuggestionsListEl.appendChild(li);
                 });
-                // End Event Listener
-
-                li.appendChild(btn);
-                aiSuggestionsListEl.appendChild(li);
-            });
-
-            console.log("✅ AI Suggestions Received (Structured):", data.suggestions);
-        } catch (err) {
-            console.error("❌ AI Request failed:", err);
-            aiSuggestionsListEl.innerHTML = "<li style='color: var(--danger);'>Failed to load AI suggestions.</li>";
+                console.log("✅ AI Suggestions Received (Structured):", data.suggestions);
+            } catch (err) {
+                console.error("❌ AI Request failed:", err);
+                aiSuggestionsListEl.innerHTML = "<li style='color: var(--danger);'>Failed to load AI suggestions.</li>";
+            }
         }
-    }
 
-        // --- Core Data & Render Logic ---
+
+        // --- MODIFIED: Core Data & Render Logic ---
         function listenForTasks() {
-            if (unsubscribeTasksListener) unsubscribeTasksListener();
+            // This function *only* listens for active group tasks
+            // If listener is already active, just re-apply filter
+            if (unsubscribeTasksListener) {
+                applyCurrentFilter(); // Re-apply filter to existing data
+                return; // Already listening
+            }
+            if (taskFilterSelect.value === 'my-tasks') return; // Don't run if "My Tasks" is active
+
+            allTasksData.clear();
+            tasksTitle.textContent = "Tasks (Current Group)";
+            addTaskButton.style.display = 'inline-block'; // Show Add Task button
 
             if (!activeGroupId) {
                 taskListEl.innerHTML = '<p>Please select an active group on the "Groups" page to see tasks.</p>';
@@ -327,6 +350,7 @@ function getTodayDateString() {
                 return;
             }
 
+            console.log(`(Re)Starting listener for tasks in group: ${activeGroupId}`);
             const q = query(
                 collection(db, "tasks"),
                 where("groupId", "==", activeGroupId),
@@ -334,39 +358,104 @@ function getTodayDateString() {
             );
 
             unsubscribeTasksListener = onSnapshot(q, (snapshot) => {
+                console.log("Group tasks snapshot received.");
                 taskListEl.innerHTML = '';
-                allTasksData.clear();
+                allTasksData.clear(); // Clear cache on new snapshot
                 if(snapshot.empty) taskListEl.innerHTML = '<p>No tasks created for this group yet.</p>';
 
                 snapshot.forEach(doc => {
-                    allTasksData.set(doc.id, doc.data());
+                    allTasksData.set(doc.id, doc.data()); // Cache data
                     renderTask(doc.id, doc.data());
                 });
-                const currentFilter = document.querySelector('.panel__actions select').value;
-                filterTasks(currentFilter); // This calls updateTaskSummary
+                
+                applyCurrentFilter(); // Apply filter *after* rendering
             }, (error) => {
                 console.error("Error listening for tasks (Index needed?):", error.message);
                 taskListEl.innerHTML = "<p>Error loading tasks. Check console for index link.</p>";
             });
         }
 
+        // --- NEW: Function to load *only* "My Tasks" ---
+        async function loadMyTasks(userId) {
+            if (unsubscribeTasksListener) {
+                unsubscribeTasksListener(); // Stop the group listener
+                unsubscribeTasksListener = null;
+            }
+            allTasksData.clear();
+            taskListEl.innerHTML = '<p>Loading your tasks from all groups...</p>';
+            tasksTitle.textContent = "My Tasks (All Groups)";
+            addTaskButton.style.display = 'none'; // Hide Add Task button
+
+            try {
+                const q = query(
+                    collection(db, "tasks"),
+                    where("assignee", "==", userId), // Get tasks assigned to me
+                    orderBy("createdAt", "desc")
+                );
+                
+                const myTasksSnapshot = await getDocs(q); // One-time fetch
+                
+                taskListEl.innerHTML = '';
+                allTasksData.clear(); // Clear cache before loading
+                if (myTasksSnapshot.empty) {
+                    taskListEl.innerHTML = '<p>You have not claimed any tasks yet.</p>';
+                }
+                
+                myTasksSnapshot.forEach(doc => {
+                    allTasksData.set(doc.id, doc.data()); // Cache data
+                    renderTask(doc.id, doc.data()); // Render each task
+                });
+                
+                applyCurrentFilter(); // Update summary and ensure all are shown
+                
+            } catch (error) {
+                console.error("Error fetching 'My Tasks' (Index needed?):", error);
+                taskListEl.innerHTML = "<p>Error loading tasks. Check console for index link.</allTasksData>";
+            }
+        }
+
+
+        // --- MODIFIED: renderTask ---
         function renderTask(id, data) {
             const card = document.createElement('article');
             card.className = 'task-card';
             card.dataset.id = id;
             card.dataset.status = data.status || 'available';
             card.dataset.assignee = data.assignee || '';
-            card.setAttribute('onclick', `openTaskDetails('${id}')`); // Keep modal opening on card click
+            card.dataset.groupId = data.groupId || ''; // Store group ID
+            card.setAttribute('onclick', `openTaskDetails('${id}')`);
 
             const difficultyMap = { gold: '🥇 Gold', silver: '🥈 Silver', bronze: '🥉 Bronze' };
-            const isClaimedByMe = data.assignee === currentUser?.uid; // Check currentUser exists
+            const isClaimedByMe = data.assignee === currentUser?.uid;
             const isAvailable = data.status === 'available';
             const isInProgress = data.status === 'in-progress';
             const isCompleted = data.status === 'completed';
 
-            // Ensure points are displayed correctly
             const pointsDisplay = data.points ? `${data.points} pts` : '0 pts';
             const assigneeNameDisplay = data.assigneeName || '—';
+
+            // Show group name if in "My Tasks" view, otherwise show Due Date
+            const filter = taskFilterSelect.value;
+            const groupInfoHtml = (filter === 'my-tasks' && data.groupId)
+                ? `<span>Group: ${userGroupNameMap.get(data.groupId) || 'Loading...'}</span>`
+                : `<span>Due: ${data.dueDate || 'N/A'}</span>`;
+            
+            // If in 'my-tasks' view and group name isn't cached, fetch it
+            if (filter === 'my-tasks' && data.groupId && !userGroupNameMap.has(data.groupId)) {
+                getDoc(doc(db, "groups", data.groupId)).then(groupDoc => {
+                    let gName = 'Unknown';
+                    if (groupDoc.exists()) {
+                        gName = groupDoc.data().name || 'Unnamed Group';
+                        userGroupNameMap.set(data.groupId, gName); // Cache it
+                    } else {
+                        userGroupNameMap.set(data.groupId, 'Unknown'); // Cache 'Unknown'
+                    }
+                    // Find the rendered card and update the group name
+                    const cardOnPage = taskListEl.querySelector(`.task-card[data-id="${id}"] .task-meta span:last-child`);
+                    if (cardOnPage) cardOnPage.textContent = `Group: ${gName}`;
+                }).catch(e => console.warn(`Could not fetch group name for ${data.groupId}`, e));
+            }
+
 
             card.innerHTML = `
                 <div class="task-card__top">
@@ -376,15 +465,15 @@ function getTodayDateString() {
                 <p>${data.description || 'No description.'}</p>
                 <div class="task-meta">
                     <span>Created: ${formatDateOrAgo(data.createdAt)}</span>
-                    <span>Claimed: ${formatDateOrAgo(data.claimedAt)}</span>
-                    <span>Done: ${formatDateOrAgo(data.completedAt)}</span>
+                    <span>Claimed: ${data.claimedAt ? formatDateOrAgo(data.claimedAt) : '—'}</span>
+                    <span>Done: ${data.completedAt ? formatDateOrAgo(data.completedAt) : '—'}</span>
                     <span>By: ${assigneeNameDisplay}</span>
                     <span>Points: ${pointsDisplay}</span>
-                    <span>Due: ${data.dueDate || 'N/A'}</span>
+                    ${groupInfoHtml}
                 </div>
                 <div class="task-actions">
                     <button class="btn ${isAvailable ? 'btn--neon' : 'btn--secondary'}" ${!isAvailable ? 'disabled' : ''} onclick="claimTask(event, this)">
-                        ${isAvailable ? 'Claim Task' : (isInProgress ? (isClaimedByMe ? 'You Claimed' : `Claimed by ${assigneeNameDisplay}`) : 'Claimed')}
+                        ${isAvailable ? 'Claim Task' : (isInProgress ? (isClaimedByMe ? 'You Claimed' : `Claimed`) : 'Claimed')}
                     </button>
                     <button class="btn ${isInProgress && isClaimedByMe ? 'btn--primary' : 'btn--secondary'}" ${!(isInProgress && isClaimedByMe) || isCompleted ? 'disabled' : ''} onclick="markAsDone(event, this)">
                         ${isCompleted ? 'Completed' : 'Mark as Done'}
@@ -394,6 +483,8 @@ function getTodayDateString() {
             taskListEl.appendChild(card);
         }
 
+        // --- MODIFIED: updateTaskSummary ---
+        // This function now counts *visible* cards in the DOM
         function updateTaskSummary(reset = false) {
             if (reset) {
                 document.getElementById('total-tasks').textContent = '0';
@@ -401,137 +492,187 @@ function getTodayDateString() {
                 document.getElementById('completed-tasks').textContent = '0';
                 return;
             }
-            // Use allTasksData map for accurate counts regardless of filter
-            let total = 0, inProgress = 0, completed = 0;
-             allTasksData.forEach(task => {
-                total++;
-                if (task.status === 'in-progress') inProgress++;
-                if (task.status === 'completed') completed++;
-             });
+            
+            const visibleCards = document.querySelectorAll('.task-card[style*="display: block"], .task-card:not([style*="display: none"])');
+            
+            let inProgressCount = 0;
+            let completedCount = 0;
 
-            document.getElementById('total-tasks').textContent = total;
-            document.getElementById('in-progress-tasks').textContent = inProgress;
-            document.getElementById('completed-tasks').textContent = completed;
+            visibleCards.forEach(card => {
+                if (card.dataset.status === 'in-progress') inProgressCount++;
+                if (card.dataset.status === 'completed') completedCount++;
+            });
+
+            // When "My Tasks" is selected, "Total" means total *visible* tasks
+            // When other filters are selected, "Total" means *all* tasks in the group (from cache)
+            const filter = taskFilterSelect.value;
+            if (filter === 'my-tasks') {
+                 document.getElementById('total-tasks').textContent = visibleCards.length;
+            } else {
+                 document.getElementById('total-tasks').textContent = allTasksData.size;
+            }
+            
+            document.getElementById('in-progress-tasks').textContent = inProgressCount;
+            document.getElementById('completed-tasks').textContent = completedCount;
         }
 
-        // --- Task Detail Modal Logic ---
-        window.openTaskDetails = (taskId) => {
+
+        // --- MODIFIED: openTaskDetails ---
+        window.openTaskDetails = async (taskId) => { // Made async
             const data = allTasksData.get(taskId);
             if (!data) return;
             taskDetailTitle.textContent = data.title || 'Task Details';
             taskDetailDesc.textContent = data.description || 'No description provided.';
             taskDetailStatus.textContent = (data.status || 'available').replace('-', ' ');
-             // Add badge class dynamically
              taskDetailDifficulty.className = `badge badge--${data.difficulty}`;
             taskDetailDifficulty.textContent = (data.difficulty ? data.difficulty.charAt(0).toUpperCase() + data.difficulty.slice(1) : 'N/A');
             taskDetailPoints.textContent = data.points || 0;
             taskDetailDue.textContent = data.dueDate || 'N/A';
             taskDetailAssignee.textContent = data.assigneeName || 'Not Assigned';
-            taskDetailHistory.innerHTML = ''; // Clear previous history
+            
+            // --- ADDED: Fetch and display group name ---
+            let groupName = 'Unknown Group';
+            const groupId = data.groupId; // Get group ID from task data
+            if (userGroupNameMap.has(groupId)) {
+                groupName = userGroupNameMap.get(groupId);
+            } else if (groupId) {
+                try {
+                    const groupDoc = await getDoc(doc(db, "groups", groupId));
+                    if (groupDoc.exists()) {
+                        groupName = groupDoc.data().name || 'Unnamed Group';
+                        userGroupNameMap.set(groupId, groupName); // Cache it
+                    } else {
+                         userGroupNameMap.set(groupId, 'Unknown'); // Cache failure
+                    }
+                } catch (e) { 
+                    console.error("Error fetching group name:", e); 
+                    userGroupNameMap.set(groupId, 'Error'); // Cache error
+                }
+            }
+            taskDetailGroup.textContent = groupName;
+            // --- END ---
+
+            taskDetailHistory.innerHTML = '';
             taskDetailHistory.innerHTML += `<li>Task created ${data.createdAt ? formatDateOrAgo(data.createdAt) : 'at unknown time'}</li>`;
             if (data.claimedAt) taskDetailHistory.innerHTML += `<li>Task claimed by ${data.assigneeName || 'someone'} ${formatDateOrAgo(data.claimedAt)}</li>`;
             if (data.completedAt) taskDetailHistory.innerHTML += `<li>Task completed ${formatDateOrAgo(data.completedAt)}</li>`;
 
-            taskDetailAction.dataset.taskId = taskId; // Store taskId on the button
+            taskDetailAction.dataset.taskId = taskId;
             const isClaimedByMe = data.assignee === currentUser?.uid;
 
             if (data.status === 'available') {
                 taskDetailAction.textContent = 'Claim Task';
-                taskDetailAction.className = 'btn btn--primary'; // Use primary for main action
+                taskDetailAction.className = 'btn btn--primary';
                 taskDetailAction.disabled = false;
             } else if (data.status === 'in-progress') {
                 taskDetailAction.textContent = 'Mark as Done';
-                taskDetailAction.className = 'btn btn--primary'; // Use primary for main action
-                taskDetailAction.disabled = !isClaimedByMe; // Disable if not claimed by current user
-            } else { // Completed
+                taskDetailAction.className = 'btn btn--primary';
+                taskDetailAction.disabled = !isClaimedByMe;
+            } else {
                 taskDetailAction.textContent = 'Completed';
-                taskDetailAction.className = 'btn btn--success'; // Use success style
+                taskDetailAction.className = 'btn btn--success';
                 taskDetailAction.disabled = true;
             }
             openModal('taskDetailsModal');
         };
 
+        // --- (handleTaskDetailAction remains the same) ---
         window.handleTaskDetailAction = () => {
-            const taskId = taskDetailAction.dataset.taskId;
-            if (!taskId) return;
-            const taskCard = taskListEl.querySelector(`.task-card[data-id="${taskId}"]`); // Find card in the main list
-            if (!taskCard) {
-                console.warn("Could not find corresponding task card for action.");
-                // Attempt action anyway based on modal state
-                const currentStatus = allTasksData.get(taskId)?.status;
-                 if (currentStatus === 'available') {
-                     window.claimTask(new Event('click'), taskDetailAction); // Pass modal button if card not found
-                 } else if (currentStatus === 'in-progress') {
-                     window.markAsDone(new Event('click'), taskDetailAction);
-                 }
-                closeModal('taskDetailsModal');
-                return;
-            }
-
-            // Find the correct button on the card based on the modal action text
-            if (taskDetailAction.textContent === 'Claim Task') {
-                const claimButtonOnCard = taskCard.querySelector('.task-actions button:first-child'); // Assumes Claim is first
-                if (claimButtonOnCard) window.claimTask(new Event('click'), claimButtonOnCard);
-            } else if (taskDetailAction.textContent === 'Mark as Done') {
-                const markDoneButtonOnCard = taskCard.querySelector('.task-actions button:last-child'); // Assumes Mark Done is last
-                if (markDoneButtonOnCard) window.markAsDone(new Event('click'), markDoneButtonOnCard);
-            }
-            closeModal('taskDetailsModal');
+             const taskId = taskDetailAction.dataset.taskId;
+             if (!taskId) return;
+             const taskCard = taskListEl.querySelector(`.task-card[data-id="${taskId}"]`);
+             if (!taskCard) {
+                 console.warn("Could not find corresponding task card for action.");
+                 const currentStatus = allTasksData.get(taskId)?.status;
+                  if (currentStatus === 'available') {
+                      window.claimTask(new Event('click'), taskDetailAction);
+                  } else if (currentStatus === 'in-progress') {
+                      window.markAsDone(new Event('click'), taskDetailAction);
+                  }
+                 closeModal('taskDetailsModal');
+                 return;
+             }
+             if (taskDetailAction.textContent === 'Claim Task') {
+                 const claimButtonOnCard = taskCard.querySelector('.task-actions button:first-child');
+                 if (claimButtonOnCard) window.claimTask(new Event('click'), claimButtonOnCard);
+             } else if (taskDetailAction.textContent === 'Mark as Done') {
+                 const markDoneButtonOnCard = taskCard.querySelector('.task-actions button:last-child');
+                 if (markDoneButtonOnCard) window.markAsDone(new Event('click'), markDoneButtonOnCard);
+             }
+             closeModal('taskDetailsModal');
         };
 
-        // --- Firebase Actions ---
-        window.claimTask = async (event, button) => {
-            event?.stopPropagation(); // Prevent modal from opening if clicked on card button
-            if (!currentUser || !activeGroupId) return alert("Cannot claim task. Please ensure you are logged in and have an active group.");
 
-            const card = button.closest('.task-card'); // Get card from button if possible
-            const taskId = card ? card.dataset.id : taskDetailAction.dataset.taskId; // Fallback to modal button data
+        // --- MODIFIED: Firebase Actions (claimTask) ---
+        window.claimTask = async (event, button) => {
+            event?.stopPropagation();
+            if (!currentUser) return alert("You must be logged in.");
+            
+            const card = button.closest('.task-card');
+            const taskId = card ? card.dataset.id : taskDetailAction.dataset.taskId;
             if (!taskId) return alert("Task ID not found.");
 
             const taskData = allTasksData.get(taskId);
-            if (!taskData || taskData.status !== 'available') return; // Only claim available tasks
+            if (!taskData || taskData.status !== 'available') return;
 
             const taskTitle = taskData.title;
             const taskRef = doc(db, "tasks", taskId);
+            
+            const taskGroupId = taskData.groupId; 
+            if (!taskGroupId) {
+                console.error("Cannot claim task: Group ID missing from task data.", taskData);
+                return alert("Cannot claim task: Critical data missing (Group ID).");
+            }
 
-            button.disabled = true; // Disable button during operation
+            button.disabled = true;
 
             try {
                 await updateDoc(taskRef, {
                     status: "in-progress",
                     assignee: currentUser.uid,
-                    assigneeName: currentUser.displayName || "Anonymous", // Use Auth display name
+                    assigneeName: currentUser.displayName || "Anonymous",
                     claimedAt: serverTimestamp()
                 });
-                // Add activity log
                 await addDoc(collection(db, "activities"), {
                     userId: currentUser.uid, userName: currentUser.displayName || 'Anonymous', type: 'task-claimed',
                     details: `claimed task: "${taskTitle}"`, createdAt: serverTimestamp(),
-                    groupId: activeGroupId
+                    groupId: taskGroupId
                 });
                 console.log(`Task ${taskId} claimed by ${currentUser.uid}`);
-                // UI updates via onSnapshot
+                
+                // Refresh list if we are in 'my-tasks' view
+                if (taskFilterSelect.value === 'my-tasks') {
+                    loadMyTasks(currentUser.uid);
+                }
+                // Otherwise, the onSnapshot listener for the group will handle the update
+                
             } catch (err) {
                  console.error("Error claiming task: ", err);
                  alert("Failed to claim task.");
-                 button.disabled = false; // Re-enable button on error
+                 button.disabled = false;
             }
         };
 
+        // --- MODIFIED: Firebase Actions (markAsDone) ---
         window.markAsDone = async (event, button) => {
             event?.stopPropagation();
-            if (!currentUser || !activeGroupId) return alert("Cannot complete task. Please ensure you are logged in and have an active group.");
+            if (!currentUser) return alert("You must be logged in.");
 
             const card = button.closest('.task-card');
             const taskId = card ? card.dataset.id : taskDetailAction.dataset.taskId;
             if (!taskId) return alert("Task ID not found.");
 
             const taskData = allTasksData.get(taskId);
-            // Ensure task exists, is in progress, and claimed by current user
             if (!taskData || taskData.status !== 'in-progress' || taskData.assignee !== currentUser.uid) return;
 
             const taskTitle = taskData.title;
             const points = taskData.points || 0;
+            const taskGroupId = taskData.groupId;
+            if (!taskGroupId) {
+                 console.error("Cannot complete task: Group ID missing from task data.", taskData);
+                 return alert("Cannot complete task: Critical data missing (Group ID).");
+            }
+
             const taskRef = doc(db, "tasks", taskId);
             const userRef = doc(db, "users", currentUser.uid);
 
@@ -543,29 +684,31 @@ function getTodayDateString() {
                     completedAt: serverTimestamp()
                 });
                 await updateDoc(userRef, { points: increment(points) });
-                // Add activity log
                 await addDoc(collection(db, "activities"), {
                     userId: currentUser.uid, userName: currentUser.displayName || 'Anonymous', type: 'task-completed',
                     details: `completed task: "${taskTitle}" for +${points} pts`, createdAt: serverTimestamp(),
-                    groupId: activeGroupId
+                    groupId: taskGroupId
                 });
                 console.log(`Task ${taskId} marked as done by ${currentUser.uid}`);
-                // UI updates via onSnapshot
+                
+                if (taskFilterSelect.value === 'my-tasks') {
+                    loadMyTasks(currentUser.uid);
+                }
             } catch (err) {
                 console.error("Error completing task: ", err);
                 alert("Failed to mark task as done.");
-                button.disabled = false; // Re-enable button on error
+                button.disabled = false;
             }
         };
-
-        // --- Add Task Form Listener ---
+        
+        // --- Add Task Form Listener (No changes needed) ---
         addTaskForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!currentUser) return alert("You must be logged in.");
             if (!activeGroupId) return alert("You must have an active group selected to add a task.");
 
              const submitButton = addTaskForm.querySelector('button[type="submit"]');
-             submitButton.disabled = true; // Disable during submission
+             submitButton.disabled = true;
 
             try {
                 await addDoc(collection(db, "tasks"), {
@@ -576,39 +719,41 @@ function getTodayDateString() {
                     dueDate: addTaskForm.taskDueDate.value,
                     createdAt: serverTimestamp(),
                     status: "available",
-                    assignee: null, assigneeName: null, // Ensure these are null initially
+                    assignee: null, assigneeName: null,
                     createdBy: currentUser.uid,
                     claimedAt: null, completedAt: null,
-                    groupId: activeGroupId // Link task to the active group
+                    groupId: activeGroupId
                 });
-                closeModal('addTaskModal'); // Also resets the form
+                closeModal('addTaskModal');
             } catch (err) {
                  console.error("Error adding task:", err);
                  alert("Failed to add task.");
             } finally {
-                 submitButton.disabled = false; // Re-enable button
+                 submitButton.disabled = false;
             }
         });
 
         // --- Logout & Initialize ---
         logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
 
+        // --- MODIFIED: onAuthStateChanged ---
         onAuthStateChanged(auth, (user) => {
-             // Clean up previous listeners
+             // Clean up listeners
              if (unsubscribeUserListener) unsubscribeUserListener();
              if (unsubscribeTasksListener) unsubscribeTasksListener();
              // Reset state
              currentUser = null;
              activeGroupId = null;
              allTasksData.clear();
-             taskListEl.innerHTML = '<p>Loading...</p>'; // Reset task list display
+             userGroupNameMap.clear(); // Clear group name cache
+             taskListEl.innerHTML = '<p>Loading...</p>';
 
 
             if (user) {
                 currentUser = user; // Store auth user object
                 const userRef = doc(db, "users", user.uid);
 
-                unsubscribeUserListener = onSnapshot(userRef, (userDocSnap) => { // Use different variable name
+                unsubscribeUserListener = onSnapshot(userRef, (userDocSnap) => {
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
                         myPointsEl.textContent = (userData.points || 0).toLocaleString();
@@ -618,25 +763,30 @@ function getTodayDateString() {
                         if (newActiveGroupId !== activeGroupId) {
                             console.log("Active group changed to:", newActiveGroupId);
                             activeGroupId = newActiveGroupId;
-                            listenForTasks(); // Reload tasks for the new/initial group
+                             // Trigger filterTasks to load correct view
+                             filterTasks(taskFilterSelect.value);
                         } else if (!activeGroupId && newActiveGroupId === undefined) {
-                            // Handle case where user has no active group set yet
                              console.log("User has no active group.");
                              activeGroupId = null;
-                             listenForTasks(); // This will show the "select group" message
+                             filterTasks(taskFilterSelect.value); // Will show 'select group' or 'my tasks'
+                        } else {
+                            // Active group ID is the same, but maybe the filter is 'my-tasks'
+                            // which doesn't depend on the group listener
+                            if (taskFilterSelect.value === 'my-tasks') {
+                                loadMyTasks(currentUser.uid); // Refresh 'my-tasks' view
+                            }
                         }
                     } else {
-                        // User document doesn't exist in Firestore
                         console.warn("User document not found in Firestore:", user.uid);
                         myPointsEl.textContent = '0';
                         activeGroupId = null;
-                        listenForTasks(); // Show "select group" message
+                        filterTasks(taskFilterSelect.value); // Show 'select group' or 'my tasks'
                     }
                 }, (error) => {
                      console.error("Error listening to user document:", error);
                      myPointsEl.textContent = 'Error';
                      activeGroupId = null;
-                     listenForTasks(); // Show error/select group message
+                     filterTasks(taskFilterSelect.value); // Show error/select group message
                 });
 
             } else {
