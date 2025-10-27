@@ -5,14 +5,21 @@ const { setGlobalOptions } = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 
-admin.initializeApp();
+// ✅ Initialize Admin SDK *once*
+if (!admin.apps.length) {
+    admin.initializeApp();
+}
 setGlobalOptions({ maxInstances: 10 });
+
+// ✅ Define db globally *once*
+const db = admin.firestore();
 
 /**
  * Helper function to get group points chart data
  * This is used by getDashboardData
+ * ✅ Removed 'db' argument, will use global 'db'
  */
-async function getGroupPointsChart(db, activeGroupId, userId) {
+async function getGroupPointsChart(activeGroupId, userId) {
     try {
         const groupDoc = await db.collection("groups").doc(activeGroupId).get();
         const memberIds = groupDoc.data()?.members;
@@ -45,7 +52,7 @@ exports.getDashboardData = onCall(async (request) => {
     if (!request.auth) throw new HttpsError("unauthenticated", "User must be logged in.");
     
     const userId = request.auth.uid;
-    const db = admin.firestore();
+    // ✅ REMOVED: const db = admin.firestore();
     const { period = 'month' } = request.data;
     logger.info(`Fetching dashboard data for user: ${userId}, period: ${period}`);
 
@@ -53,7 +60,7 @@ exports.getDashboardData = onCall(async (request) => {
     let activeGroupId = null;
     let userDoc, userData;
     try {
-        userDoc = await db.collection("users").doc(userId).get();
+        userDoc = await db.collection("users").doc(userId).get(); // Uses global db
         if (!userDoc.exists) throw new HttpsError("not-found", "User document not found.");
         userData = userDoc.data();
         activeGroupId = userData.activeGroupId;
@@ -84,7 +91,7 @@ exports.getDashboardData = onCall(async (request) => {
     if (!activeGroupId) {
         logger.warn(`User ${userId} has no active group. Returning partial data.`);
         try {
-             const usersQuery = db.collection("users").orderBy("points", "desc");
+             const usersQuery = db.collection("users").orderBy("points", "desc"); // Uses global db
              const usersSnapshot = await usersQuery.get();
              const rankIndex = usersSnapshot.docs.findIndex(doc => doc.id === userId);
              if (rankIndex !== -1) userRank = rankIndex + 1;
@@ -101,13 +108,13 @@ exports.getDashboardData = onCall(async (request) => {
     // --- 4. Process All Data (User has Active Group) ---
     try {
         // Get User Rank (Global)
-        const usersQuery = db.collection("users").orderBy("points", "desc");
+        const usersQuery = db.collection("users").orderBy("points", "desc"); // Uses global db
         const usersSnapshot = await usersQuery.get();
         const rankIndex = usersSnapshot.docs.findIndex(doc => doc.id === userId);
         if (rankIndex !== -1) userRank = rankIndex + 1;
 
         // Process User-Specific Tasks (Stats Cards)
-        const userTasksQuery = db.collection("tasks").where("assignee", "==", userId).where("groupId", "==", activeGroupId);
+        const userTasksQuery = db.collection("tasks").where("assignee", "==", userId).where("groupId", "==", activeGroupId); // Uses global db
         const userTasksSnapshot = await userTasksQuery.get();
         userTasksSnapshot.forEach(doc => {
             const task = doc.data(); tasksTotal++;
@@ -134,7 +141,7 @@ exports.getDashboardData = onCall(async (request) => {
         }
         
         const chartStartDateTimestamp = admin.firestore.Timestamp.fromDate(chartStartDate);
-        const groupTasksQuery = db.collection("tasks").where("groupId", "==", activeGroupId).where("createdAt", ">=", startOfLastWeekTimestamp);
+        const groupTasksQuery = db.collection("tasks").where("groupId", "==", activeGroupId).where("createdAt", ">=", startOfLastWeekTimestamp); // Uses global db
         const groupTasksSnapshot = await groupTasksQuery.get();
         
         let tasksCompletedByUnit = Array(numUnits).fill(0), tasksCreatedByUnit = Array(numUnits).fill(0);
@@ -177,7 +184,7 @@ exports.getDashboardData = onCall(async (request) => {
         };
 
         // Process Group Member Points (Donut Chart)
-        const { pointsChartData } = await getGroupPointsChart(db, activeGroupId, userId);
+        const { pointsChartData } = await getGroupPointsChart(activeGroupId, userId); // ✅ REMOVED db
 
         // --- 7. Return Full Payload ---
         return {
@@ -198,92 +205,191 @@ exports.getDashboardData = onCall(async (request) => {
 
 // --- Function 2: inviteMemberToGroup ---
 exports.inviteMemberToGroup = onCall(async (request) => {
-  if (!request.auth) { logger.error("Invite Member: Auth check failed."); throw new HttpsError("unauthenticated", "User must be logged in."); }
-  const inviterId = request.auth.uid; const { email, groupId } = request.data;
-  if (!email || !groupId) { throw new HttpsError("invalid-argument", "Email and groupId required."); }
-  const db = admin.firestore();
-  try {
-      const groupRef = db.collection("groups").doc(groupId); const groupDoc = await groupRef.get();
-      if (!groupDoc.exists) { throw new HttpsError("not-found", "Group not found."); }
-      const groupData = groupDoc.data();
-      if (!groupData.admins || !groupData.admins.includes(inviterId)) {
-          throw new HttpsError("permission-denied", "Only group admins can invite members.");
-      }
-      let userToInviteRecord; try { userToInviteRecord = await admin.auth().getUserByEmail(email); } catch (error) { if (error.code === 'auth/user-not-found') { throw new HttpsError("not-found", `User ${email} not found.`); } throw new HttpsError("internal", "Error looking up user."); }
-      const userToInviteId = userToInviteRecord.uid;
-      if (groupData.members?.includes(userToInviteId)) { return { success: true, message: `User ${email} is already a member.` }; }
-      await groupRef.update({ members: admin.firestore.FieldValue.arrayUnion(userToInviteId) });
-      logger.info(`User ${userToInviteId} added to group ${groupId} by ${inviterId}`);
-      await db.collection("activities").add({ groupId: groupId, userName: groupData.name, type: 'member-invited', details: `Invited ${email} to the group.`, createdAt: admin.firestore.FieldValue.serverTimestamp() });
-      return { success: true, message: `User ${email} successfully added!` };
-  } catch (error) { if (error instanceof HttpsError) { logger.error(`Invite Error: ${error.message}`); throw error; } else { logger.error(`Unexpected Invite Error:`, error); throw new HttpsError("internal", "Unexpected error."); } }
+    if (!request.auth) { logger.error("Invite Member: Auth check failed."); throw new HttpsError("unauthenticated", "User must be logged in."); }
+    const inviterId = request.auth.uid; const { email, groupId } = request.data;
+    if (!email || !groupId) { throw new HttpsError("invalid-argument", "Email and groupId required."); }
+    // ✅ REMOVED: const db = admin.firestore();
+    try {
+        const groupRef = db.collection("groups").doc(groupId); // Uses global db
+        const groupDoc = await groupRef.get();
+        if (!groupDoc.exists) { throw new HttpsError("not-found", "Group not found."); }
+        const groupData = groupDoc.data();
+        if (!groupData.admins || !groupData.admins.includes(inviterId)) {
+            throw new HttpsError("permission-denied", "Only group admins can invite members.");
+        }
+        let userToInviteRecord; try { userToInviteRecord = await admin.auth().getUserByEmail(email); } catch (error) { if (error.code === 'auth/user-not-found') { throw new HttpsError("not-found", `User ${email} not found.`); } throw new HttpsError("internal", "Error looking up user."); }
+        const userToInviteId = userToInviteRecord.uid;
+        if (groupData.members?.includes(userToInviteId)) { return { success: true, message: `User ${email} is already a member.` }; }
+        await groupRef.update({ members: admin.firestore.FieldValue.arrayUnion(userToInviteId) });
+        logger.info(`User ${userToInviteId} added to group ${groupId} by ${inviterId}`);
+        await db.collection("activities").add({ groupId: groupId, userName: groupData.name, type: 'member-invited', details: `Invited ${email} to the group.`, createdAt: admin.firestore.FieldValue.serverTimestamp() }); // Uses global db
+        return { success: true, message: `User ${email} successfully added!` };
+    } catch (error) { if (error instanceof HttpsError) { logger.error(`Invite Error: ${error.message}`); throw error; } else { logger.error(`Unexpected Invite Error:`, error); throw new HttpsError("internal", "Unexpected error."); } }
 });
 
 // --- Function 3: getGroupStats ---
-// ✅ THIS FUNCTION IS NOW FIXED
 exports.getGroupStats = onCall(async (request) => {
-  if (!request.auth) { logger.error("Get Group Stats: Auth check failed."); throw new HttpsError("unauthenticated", "User must be logged in."); }
-  const userId = request.auth.uid; const { groupId } = request.data;
-  if (!groupId) { throw new HttpsError("invalid-argument", "GroupId is required."); }
-  const db = admin.firestore(); logger.info(`Fetching stats for group ${groupId}, called by user ${userId}`);
-  try {
-      const groupRef = db.collection("groups").doc(groupId); const groupDoc = await groupRef.get();
-      if (!groupDoc.exists) { throw new HttpsError("not-found", "Group not found."); }
-      const groupData = groupDoc.data(); let memberIds = groupData.members;
-      if (!memberIds || memberIds.length === 0) { logger.info(`Group ${groupId} has no members.`); return { activeToday: 0, newThisWeek: 0 }; }
-      
-      const now = new Date(); 
-      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      
-      // ✅ FIX: Create a new Date object for weekStart
-      const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
-      weekStart.setHours(0, 0, 0, 0);
+    if (!request.auth) { logger.error("Get Group Stats: Auth check failed."); throw new HttpsError("unauthenticated", "User must be logged in."); }
+    const userId = request.auth.uid; const { groupId } = request.data;
+    if (!groupId) { throw new HttpsError("invalid-argument", "GroupId is required."); }
+    // ✅ REMOVED: const db = admin.firestore();
+    logger.info(`Fetching stats for group ${groupId}, called by user ${userId}`);
+    try {
+        const groupRef = db.collection("groups").doc(groupId); // Uses global db
+        const groupDoc = await groupRef.get();
+        if (!groupDoc.exists) { throw new HttpsError("not-found", "Group not found."); }
+        const groupData = groupDoc.data(); let memberIds = groupData.members;
+        if (!memberIds || memberIds.length === 0) { logger.info(`Group ${groupId} has no members.`); return { activeToday: 0, newThisWeek: 0 }; }
+        
+        const now = new Date(); 
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        
+        const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+        weekStart.setHours(0, 0, 0, 0);
 
-      const startOfTodayTimestamp = admin.firestore.Timestamp.fromDate(todayStart); 
-      const startOfWeekTimestamp = admin.firestore.Timestamp.fromDate(weekStart);
-      
-      const memberIdsToQuery = memberIds.length > 30 ? memberIds.slice(0, 30) : memberIds;
-      if (memberIds.length > 30) logger.warn(`Group ${groupId} has ${memberIds.length} members, querying stats only for first 30.`);
-      
-      const membersQuery = db.collection("users").where(admin.firestore.FieldPath.documentId(), "in", memberIdsToQuery); 
-      const membersSnapshot = await membersQuery.get();
-      
-      let activeTodayCount = 0; let newThisWeekCount = 0;
-      membersSnapshot.forEach(doc => {
-           const userData = doc.data();
-           
-           // ✅ FIX: Check for both Timestamp AND String date
-           const lastLogin = userData.lastLogin;
-           if (lastLogin) {
-               // Convert string or timestamp to a Date object
-               const lastLoginDate = (lastLogin instanceof admin.firestore.Timestamp) ? lastLogin.toDate() : new Date(lastLogin);
-               if (lastLoginDate >= todayStart) {
-                   activeTodayCount++;
-               }
-           }
-           
-           // ✅ FIX: Check for both Timestamp AND String date
-           const createdAt = userData.createdAt;
-           if (createdAt) {
-               const createdAtDate = (createdAt instanceof admin.firestore.Timestamp) ? createdAt.toDate() : new Date(createdAt);
-               if (createdAtDate >= weekStart) {
-                   newThisWeekCount++;
-               }
-           }
-      });
-      
-      logger.info(`Stats for group ${groupId}: ActiveToday=${activeTodayCount}, NewThisWeek=${newThisWeekCount}`);
-      return { activeToday: activeTodayCount, newThisWeek: newThisWeekCount };
-  } catch (error) { if (error instanceof HttpsError) { logger.error(`Error getting group stats for ${groupId}: ${error.message}`); throw error; } else { logger.error(`Unexpected error getting group stats for ${groupId}:`, error); throw new HttpsError("internal", "An unexpected error occurred."); } }
+        const startOfTodayTimestamp = admin.firestore.Timestamp.fromDate(todayStart); 
+        const startOfWeekTimestamp = admin.firestore.Timestamp.fromDate(weekStart);
+        
+        const memberIdsToQuery = memberIds.length > 30 ? memberIds.slice(0, 30) : memberIds;
+        if (memberIds.length > 30) logger.warn(`Group ${groupId} has ${memberIds.length} members, querying stats only for first 30.`);
+        
+        const membersQuery = db.collection("users").where(admin.firestore.FieldPath.documentId(), "in", memberIdsToQuery); // Uses global db
+        const membersSnapshot = await membersQuery.get();
+        
+        let activeTodayCount = 0; let newThisWeekCount = 0;
+        membersSnapshot.forEach(doc => {
+             const userData = doc.data();
+             
+             const lastLogin = userData.lastLogin;
+             if (lastLogin) {
+                 const lastLoginDate = (lastLogin instanceof admin.firestore.Timestamp) ? lastLogin.toDate() : new Date(lastLogin);
+                 if (lastLoginDate >= todayStart) {
+                     activeTodayCount++;
+                 }
+             }
+             
+             const createdAt = userData.createdAt;
+             if (createdAt) {
+                 const createdAtDate = (createdAt instanceof admin.firestore.Timestamp) ? createdAt.toDate() : new Date(createdAt);
+                 if (createdAtDate >= weekStart) {
+                     newThisWeekCount++;
+                 }
+             }
+        });
+        
+        logger.info(`Stats for group ${groupId}: ActiveToday=${activeTodayCount}, NewThisWeek=${newThisWeekCount}`);
+        return { activeToday: activeTodayCount, newThisWeek: newThisWeekCount };
+    } catch (error) { if (error instanceof HttpsError) { logger.error(`Error getting group stats for ${groupId}: ${error.message}`); throw error; } else { logger.error(`Unexpected error getting group stats for ${groupId}:`, error); throw new HttpsError("internal", "An unexpected error occurred."); } }
 });
 
-// --- Function 4: toggleAdminStatus ---
+// --- Function 4: deleteGroup ---
+exports.deleteGroup = onCall(async (request) => {
+    if (!request.auth) {
+        logger.error("Delete Group: Auth check failed.");
+        throw new HttpsError("unauthenticated", "User must be logged in.");
+    }
+    
+    const userId = request.auth.uid;
+    const { groupId } = request.data;
+    
+    if (!groupId) {
+        throw new HttpsError("invalid-argument", "groupId is required.");
+    }
+    
+    // ✅ REMOVED: const db = admin.firestore();
+    const groupRef = db.collection("groups").doc(groupId); // Uses global db
+    
+    logger.info(`User ${userId} attempting to delete group ${groupId}`);
+
+    try {
+        // --- 1. Verify Ownership ---
+        const groupDoc = await groupRef.get();
+        if (!groupDoc.exists) {
+            throw new HttpsError("not-found", "Group not found.");
+        }
+        
+        const groupData = groupDoc.data();
+        if (groupData.ownerId !== userId) {
+            logger.warn(`Permission denied: User ${userId} is not owner of group ${groupId}.`);
+            throw new HttpsError("permission-denied", "Only the group owner can delete this group.");
+        }
+
+        // --- 2. Prepare to delete all associated data ---
+        let batch = db.batch(); // Uses global db
+        let operationCount = 0;
+        
+        // Helper function to query and add deletes to batch
+        const deleteCollection = async (collectionName) => {
+            const snapshot = await db.collection(collectionName).where("groupId", "==", groupId).get(); // Uses global db
+            if (!snapshot.empty) {
+                 logger.info(`Found ${snapshot.size} documents in ${collectionName} to delete.`);
+                 
+                 // ✅ FIX: Use for...of loop which respects await
+                 for (const doc of snapshot.docs) {
+                     batch.delete(doc.ref);
+                     operationCount++;
+                     
+                     if (operationCount >= 499) {
+                         logger.warn("Batch limit (500) reached, committing and starting new batch.");
+                         await batch.commit();
+                         batch = db.batch(); // Uses global db
+                         operationCount = 0;
+                     }
+                 }
+            }
+        };
+
+        // --- 3. Delete associated data ---
+        await deleteCollection('tasks');
+        await deleteCollection('shopItems');
+        await deleteCollection('activities');
+
+        // --- 4. Find users who have this group as active ---
+        const usersToUpdateSnapshot = await db.collection('users').where("activeGroupId", "==", groupId).get(); // Uses global db
+        if (!usersToUpdateSnapshot.empty) {
+            logger.info(`Found ${usersToUpdateSnapshot.size} users to update activeGroupId for.`);
+            
+            // ✅ FIX: Use for...of loop which respects await
+            for (const userDoc of usersToUpdateSnapshot.docs) {
+                batch.update(userDoc.ref, { activeGroupId: null });
+                operationCount++;
+                 if (operationCount >= 499) {
+                     logger.warn("Batch limit (500) reached during user update, committing and starting new batch.");
+                     await batch.commit();
+                     batch = db.batch();
+                     operationCount = 0;
+                 }
+            }
+        }
+
+        // --- 5. Delete the group itself ---
+        batch.delete(groupRef);
+        operationCount++;
+        
+        // --- 6. Commit the final batch ---
+        logger.info(`Committing final batch with ${operationCount} operations.`);
+        await batch.commit();
+        
+        logger.info(`Successfully deleted group ${groupId} and all associated data.`);
+        return { success: true };
+
+    } catch (error) {
+        logger.error(`Error deleting group ${groupId}:`, error);
+        if (error instanceof HttpsError) {
+            throw error; // Re-throw HttpsError
+        } else {
+            throw new HttpsError("internal", "An unexpected error occurred while deleting the group.");
+        }
+    }
+});
+
+// --- Function 5: toggleAdminStatus ---
 exports.toggleAdminStatus = onCall(async (request) => {
     if (!request.auth) { throw new HttpsError("unauthenticated", "User must be logged in."); }
     const adminId = request.auth.uid; const { groupId, targetUserId, makeAdmin } = request.data;
     if (!groupId || !targetUserId) { throw new HttpsError("invalid-argument", "groupId and targetUserId are required."); }
-    const db = admin.firestore();
-    const groupRef = db.collection("groups").doc(groupId);
+    // ✅ REMOVED: const db = admin.firestore();
+    const groupRef = db.collection("groups").doc(groupId); // Uses global db
     try {
         const groupDoc = await groupRef.get();
         if (!groupDoc.exists) { throw new HttpsError("not-found", "Group not found."); }

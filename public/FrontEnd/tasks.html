@@ -1,798 +1,916 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TaskTrek — Tasks</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-    <script>!function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}}();</script>
-    <link rel="stylesheet" href="styles.css" />
-    <style>
-        /* Optional: Theme icon color adaptation */
-        [data-theme="light"] .nav__icon { stroke: var(--text-muted); }
-        [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
-        .theme-toggle-btn .theme-icon--sun { stroke: white; }
-        [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); }
-    </style>
-</head>
-<body>
-    <section class="app">
-        <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
-        <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
-            <span></span><span></span><span></span>
-        </label>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>TaskTrek — Tasks</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+        <script>!function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}}();</script>
+        <link rel="stylesheet" href="styles.css" />
+        <style>
+            /* Optional: Theme icon color adaptation */
+            [data-theme="light"] .nav__icon { stroke: var(--text-muted); }
+            [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
+            .theme-toggle-btn .theme-icon--sun { stroke: white; }
+            [data-theme="light"] .theme-toggle-btn .theme-icon--sun { stroke: var(--text); }
+        </style>
+    </head>
+    <body>
+        <section class="app">
+            <input type="checkbox" id="sidebar-toggle" class="sidebar-toggle" aria-hidden="true" />
+            <label for="sidebar-toggle" class="sidebar__hamburger" aria-label="Toggle navigation">
+                <span></span><span></span><span></span>
+            </label>
 
-        <aside class="sidebar">
-            <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
-            <nav class="sidebar__nav">
-                <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
-                <a href="tasks.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
-                <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
-                <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
-                <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
-                <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
-                <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
-                <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
-            </nav>
-            <div class="sidebar__footer">
-                <div class="theme-toggle">
-                    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
-                        <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                        <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                    </button>
+            <aside class="sidebar">
+                <div class="sidebar__brand"><span class="logo-dot"></span><span class="brand-text">TaskTrek</span></div>
+                <nav class="sidebar__nav">
+                    <a href="dashboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg><span>Dashboard</span></a>
+                    <a href="tasks.html" class="nav__item active"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg><span>Tasks</span></a>
+                    <a href="shop.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2h12l2 6H4l2-6Z"/><path d="M4 8h16v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V8Z"/><path d="M9 13h6"/></svg><span>Shop</span></a>
+                    <a href="groups.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Groups</span></a>
+                    <a href="leaderboard.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21V10"/><path d="M16 21V3"/><path d="M12 21v-6"/></svg><span>Leaderboard</span></a>
+                    <a href="activity.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Activity</span></a>
+                    <a href="team.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Team</span></a>
+                    <a href="profile.html" class="nav__item"><svg xmlns="http://www.w3.org/2000/svg" class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
+                </nav>
+                <div class="sidebar__footer">
+                    <div class="theme-toggle">
+                        <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle theme">
+                            <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                            <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        </button>
+                    </div>
+                    <a class="btn btn--ghost" id="logout-btn" href="#">Logout</a>
                 </div>
-                <a class="btn btn--ghost" id="logout-btn" href="#">Logout</a>
-            </div>
-        </aside>
+            </aside>
 
-        <div class="content">
-            <section class="panel">
-                <div class="panel__header">
-                    <h2 id="tasks-title">Tasks</h2> <div class="panel__actions">
-                        <select class="input" id="task-filter-select" style="width: auto;" onchange="filterTasks(this.value)">
-                            <option value="all">All Tasks (Current Group)</option>
-                            <option value="available">Available</option>
-                            <option value="in-progress">In Progress</option>
-                            <option value="completed">Completed</option>
-                            <option value="my-tasks">My Tasks (All Groups)</option>
-                        </select>
-                         <button class="btn btn--primary" id="add-task-button" onclick="openModal('addTaskModal')">Add Task</button>
+            <div class="content">
+                <section class="panel">
+                    <div class="panel__header">
+                        <h2 id="tasks-title">Tasks</h2> <div class="panel__actions">
+                            <select class="input" id="task-filter-select" style="width: auto;" onchange="filterTasks(this.value)">
+                                <option value="all">All Tasks (Current Group)</option>
+                                <option value="available">Available</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="my-tasks">My Tasks (All Groups)</option>
+                            </select>
+                            <button class="btn btn--primary" id="add-task-button" onclick="openModal('addTaskModal')">Add Task</button>
+                        </div>
+                    </div>
+
+                    <div class="task-summary">
+                        <div class="stat-card"><span class="stat-label">Total Tasks</span><span class="stat-value" id="total-tasks">0</span></div>
+                        <div class="stat-card"><span class="stat-label">In Progress</span><span class="stat-value" id="in-progress-tasks">0</span></div>
+                        <div class="stat-card"><span class="stat-label">Completed</span><span class="stat-value" id="completed-tasks">0</span></div>
+                        <div class="stat-card"><span class="stat-label">My Points</span><span class="stat-value" id="my-points">...</span></div>
+                    </div>
+                    <div class="task-list" id="task-list">
+                        <p>Loading tasks...</p>
+                    </div>
+                </section>
+            </div>
+
+            <div id="addTaskModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Add New Task</h3>
+                        <button class="btn btn--ghost" onclick="closeModal('addTaskModal')">&times;</button>
+                    </div>
+                    <form id="addTaskForm" class="modal-form">
+                        <div class="form-field">
+                        <h4 style="margin-top:0px; margin-bottom: 8px;">AI Suggested Tasks:</h4>
+                        <ul id="ai-suggestions">
+                            <li>Loading AI Suggestions...</li>
+                        </ul>
+                        </div>
+                        <div class="form-field"><label for="taskTitle">Task Title</label><input type="text" id="taskTitle" class="input" required placeholder="Enter task title"></div>
+                        <div class="form-field"><label for="taskDescription">Description</label><textarea id="taskDescription" class="input" rows="3" required placeholder="Describe the task details"></textarea></div>
+                        <div class="form-field">
+                            <label for="taskDifficulty">Difficulty</label>
+                            <select id="taskDifficulty" class="input" required>
+                                <option value="">Select difficulty</option><option value="bronze">🥉 Bronze</option><option value="silver">🥈 Silver</option><option value="gold">🥇 Gold</option>
+                            </select>
+                        </div>
+                        <div class="form-field"><label for="taskPoints">Points</label><input type="number" id="taskPoints" class="input" required placeholder="Points for completion" min="1"></div>
+                        <div class="form-field"><label for="taskDueDate">Due Date</label><input type="date" id="taskDueDate" class="input" required></div>
+                        <div class="modal-actions"><button type="button" class="btn btn--ghost" onclick="closeModal('addTaskModal')">Cancel</button><button type="submit" class="btn btn--primary">Add Task</button></div>
+                    </form>
+                </div>
+            </div>
+
+            <div id="taskDetailsModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header"><h3 id="task-detail-title">Task Details</h3><button class="btn btn--ghost" onclick="closeModal('taskDetailsModal')">&times;</button></div>
+                    <div class="modal-form">
+                        <div class="task-detail-info">
+                            <div class="task-detail-meta">
+                                <div class="meta-item"><strong>Status:</strong><span id="task-detail-status" class="status-badge">...</span></div>
+                                <div class="meta-item"><strong>Difficulty:</strong><span id="task-detail-difficulty" class="badge">...</span></div>
+                                <div class="meta-item"><strong>Points:</strong><span id="task-detail-points">...</span></div>
+                                <div class="meta-item"><strong>Due Date:</strong><span id="task-detail-due">...</span></div>
+                                <div class="meta-item"><strong>Assignee:</strong><span id="task-detail-assignee">...</span></div>
+                                <div class="meta-item"><strong>Group:</strong><span id="task-detail-group">...</span></div>
+                            </div>
+                            <div class="task-detail-description"><h4>Description</h4><p id="task-detail-desc">...</p></div>
+                            <div class="task-detail-history">
+                                <h4>Activity History</h4>
+                                <ul id="task-detail-history" class="task-history"><li>...</li></ul>
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn--danger btn--ghostlike" id="task-detail-delete-button" style="display: none; margin-right: auto;">Delete Task</button>
+
+                            <button class="btn btn--ghost" onclick="closeModal('taskDetailsModal')">Close</button>
+                            <button class="btn btn--primary" id="task-detail-action" onclick="handleTaskDetailAction()">Claim Task</button>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="task-summary">
-                    <div class="stat-card"><span class="stat-label">Total Tasks</span><span class="stat-value" id="total-tasks">0</span></div>
-                    <div class="stat-card"><span class="stat-label">In Progress</span><span class="stat-value" id="in-progress-tasks">0</span></div>
-                    <div class="stat-card"><span class="stat-label">Completed</span><span class="stat-value" id="completed-tasks">0</span></div>
-                    <div class="stat-card"><span class="stat-label">My Points</span><span class="stat-value" id="my-points">...</span></div>
-                </div>
-                <div class="task-list" id="task-list">
-                    <p>Loading tasks...</p>
-                </div>
-            </section>
-        </div>
-
-        <div id="addTaskModal" class="modal" style="display: none;">
-            <div class="modal-content">
+            <div id="deleteTaskModal" class="modal" style="display: none;">
+                <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Add New Task</h3>
-                    <button class="btn btn--ghost" onclick="closeModal('addTaskModal')">&times;</button>
+                    <h3>Delete Task</h3>
+                    <button class="btn btn--ghost" onclick="closeModal('deleteTaskModal')">&times;</button>
                 </div>
-                <form id="addTaskForm" class="modal-form">
-                    <div class="form-field">
-                      <h4 style="margin-top:0px; margin-bottom: 8px;">AI Suggested Tasks:</h4>
-                      <ul id="ai-suggestions">
-                        <li>Loading AI Suggestions...</li>
-                      </ul>
-                    </div>
-                    <div class="form-field"><label for="taskTitle">Task Title</label><input type="text" id="taskTitle" class="input" required placeholder="Enter task title"></div>
-                    <div class="form-field"><label for="taskDescription">Description</label><textarea id="taskDescription" class="input" rows="3" required placeholder="Describe the task details"></textarea></div>
-                    <div class="form-field">
-                        <label for="taskDifficulty">Difficulty</label>
-                        <select id="taskDifficulty" class="input" required>
-                            <option value="">Select difficulty</option><option value="bronze">🥉 Bronze</option><option value="silver">🥈 Silver</option><option value="gold">🥇 Gold</option>
-                        </select>
-                    </div>
-                    <div class="form-field"><label for="taskPoints">Points</label><input type="number" id="taskPoints" class="input" required placeholder="Points for completion" min="1"></div>
-                    <div class="form-field"><label for="taskDueDate">Due Date</label><input type="date" id="taskDueDate" class="input" required></div>
-                    <div class="modal-actions"><button type="button" class="btn btn--ghost" onclick="closeModal('addTaskModal')">Cancel</button><button type="submit" class="btn btn--primary">Add Task</button></div>
-                </form>
-            </div>
-        </div>
-
-        <div id="taskDetailsModal" class="modal" style="display: none;">
-             <div class="modal-content">
-                <div class="modal-header"><h3 id="task-detail-title">Task Details</h3><button class="btn btn--ghost" onclick="closeModal('taskDetailsModal')">&times;</button></div>
                 <div class="modal-form">
-                    <div class="task-detail-info">
-                        <div class="task-detail-meta">
-                            <div class="meta-item"><strong>Status:</strong><span id="task-detail-status" class="status-badge">...</span></div>
-                            <div class="meta-item"><strong>Difficulty:</strong><span id="task-detail-difficulty" class="badge">...</span></div>
-                            <div class="meta-item"><strong>Points:</strong><span id="task-detail-points">...</span></div>
-                            <div class="meta-item"><strong>Due Date:</strong><span id="task-detail-due">...</span></div>
-                            <div class="meta-item"><strong>Assignee:</strong><span id="task-detail-assignee">...</span></div>
-                            <div class="meta-item"><strong>Group:</strong><span id="task-detail-group">...</span></div>
-                        </div>
-                        <div class="task-detail-description"><h4>Description</h4><p id="task-detail-desc">...</p></div>
-                        <div class="task-detail-history">
-                            <h4>Activity History</h4>
-                            <ul id="task-detail-history" class="task-history"><li>...</li></ul>
-                        </div>
-                    </div>
+                    <p>Are you sure you want to permanently delete this task?</p>
+                    <p class="muted"><strong><span id="taskToDeleteName">Task Name Here</span></strong></p>
+                    <p class="muted">This action cannot be undone.</p>
+                    <input type="hidden" id="taskToDeleteId">
                     <div class="modal-actions">
-                        <button class="btn btn--ghost" onclick="closeModal('taskDetailsModal')">Close</button>
-                        <button class="btn btn--primary" id="task-detail-action" onclick="handleTaskDetailAction()">Claim Task</button>
+                        <button type="button" class="btn btn--ghost" onclick="closeModal('deleteTaskModal')">Cancel</button>
+                        <button type="button" class="btn btn--danger" id="confirm-delete-button">
+                            <span class="btn-text">Delete Task</span>
+                            <span class="btn-spinner" style="display: none;">⏳</span>
+                        </button>
                     </div>
                 </div>
-             </div>
-        </div>
-    </section>
+                </div>
+            </div>
+        </section>
 
-    <script src="theme.js"></script>
+        <script src="theme.js"></script>
 
-    <script type="module">
-        // --- Firebase Imports ---
-        import { db, auth, onAuthStateChanged, doc, updateDoc, increment, formatTimeAgo } from './firebase.js';
-        import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { collection, addDoc, query, onSnapshot, serverTimestamp, where, orderBy, getDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-        // --- UI Elements ---
-        const taskListEl = document.getElementById('task-list');
-        const addTaskForm = document.getElementById('addTaskForm');
-        const myPointsEl = document.getElementById('my-points');
-        const logoutBtn = document.getElementById('logout-btn');
-        const aiSuggestionsListEl = document.getElementById('ai-suggestions');
-        const tasksTitle = document.getElementById('tasks-title');
-        const taskFilterSelect = document.getElementById('task-filter-select');
-        const addTaskButton = document.getElementById('add-task-button');
-
-        // Task Detail Modal Elements
-        const taskDetailTitle = document.getElementById('task-detail-title');
-        const taskDetailStatus = document.getElementById('task-detail-status');
-        const taskDetailDifficulty = document.getElementById('task-detail-difficulty');
-        const taskDetailPoints = document.getElementById('task-detail-points');
-        const taskDetailDue = document.getElementById('task-detail-due');
-        const taskDetailAssignee = document.getElementById('task-detail-assignee');
-        const taskDetailDesc = document.getElementById('task-detail-desc');
-        const taskDetailHistory = document.getElementById('task-detail-history');
-        const taskDetailAction = document.getElementById('task-detail-action');
-        const taskDetailGroup = document.getElementById('task-detail-group');
-
-        // --- Global State ---
-        let currentUser = null;
-        let activeGroupId = null;
-        let allTasksData = new Map(); // Cache for *all* tasks (both group and 'my-tasks' query)
-        let unsubscribeUserListener = null;
-        let unsubscribeTasksListener = null; // Listener for *active group* tasks
-        let userGroupNameMap = new Map(); // Cache for group names
-
-        // --- Global Modal Functions (Integrated) ---
-        window.openModal = (modalId) => {
-            document.getElementById(modalId).style.display = 'flex';
-            if (modalId === 'addTaskModal') {
-                getAISuggestions();
-            }
-        };
-        window.closeModal = (modalId) => {
-            const modal = document.getElementById(modalId);
-            if (modal) modal.style.display = 'none';
-            const form = modal.querySelector('form');
-            if (form) form.reset();
-             if (modalId === 'addTaskModal') {
-                 aiSuggestionsListEl.innerHTML = '<li>Loading AI Suggestions...</li>';
-             }
-        };
-        document.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target.id); });
-
+        <script type="module">
+            // --- Firebase Imports ---
+            import { db, auth, onAuthStateChanged, doc, updateDoc, increment, formatTimeAgo } from './firebase.js';
+            import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+            // MODIFIED: Added getDocs and deleteDoc
+            import { collection, addDoc, query, onSnapshot, serverTimestamp, where, orderBy, getDoc, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
         
-        // --- NEW: Central Filter Application Function ---
-        // This function *only* hides/shows cards based on the filter.
-        // It does not fetch data.
-        function applyCurrentFilter() {
-            const filter = taskFilterSelect.value;
-            if (!currentUser) return;
-
-            // When in "My Tasks" mode, the query *already* filtered for the user.
-            // So, "my-tasks" filter here is redundant, but harmless.
-            // We just need to handle the other statuses.
-            document.querySelectorAll('.task-card').forEach(card => {
-                const status = card.dataset.status;
-                const assignee = card.dataset.assignee;
-                let show = false;
-
-                switch(filter) {
-                    case 'all': 
-                        show = true; 
-                        break;
-                    case 'available': 
-                        show = (status === 'available'); 
-                        break;
-                    case 'in-progress': 
-                        show = (status === 'in-progress'); 
-                        break;
-                    case 'completed': 
-                        show = (status === 'completed'); 
-                        break;
-                    case 'my-tasks': 
-                        // This filter *loads* differently, but if we're here, all cards *are* my tasks.
-                        show = true; 
-                        break;
+            // --- UI Elements ---
+            const taskListEl = document.getElementById('task-list');
+            const addTaskForm = document.getElementById('addTaskForm');
+            const myPointsEl = document.getElementById('my-points');
+            const logoutBtn = document.getElementById('logout-btn');
+            const aiSuggestionsListEl = document.getElementById('ai-suggestions');
+            const tasksTitle = document.getElementById('tasks-title');
+            const taskFilterSelect = document.getElementById('task-filter-select');
+            const addTaskButton = document.getElementById('add-task-button');
+        
+            // Task Detail Modal Elements
+            const taskDetailTitle = document.getElementById('task-detail-title');
+            const taskDetailStatus = document.getElementById('task-detail-status');
+            const taskDetailDifficulty = document.getElementById('task-detail-difficulty');
+            const taskDetailPoints = document.getElementById('task-detail-points');
+            const taskDetailDue = document.getElementById('task-detail-due');
+            const taskDetailAssignee = document.getElementById('task-detail-assignee');
+            const taskDetailDesc = document.getElementById('task-detail-desc');
+            const taskDetailHistory = document.getElementById('task-detail-history');
+            const taskDetailAction = document.getElementById('task-detail-action');
+            const taskDetailGroup = document.getElementById('task-detail-group');
+            const taskDetailDeleteButton = document.getElementById('task-detail-delete-button'); // ADDED
+        
+            // Delete Modal Elements (ADDED)
+            const confirmDeleteButton = document.getElementById('confirm-delete-button');
+            const taskToDeleteName = document.getElementById('taskToDeleteName');
+            const taskToDeleteId = document.getElementById('taskToDeleteId');
+        
+            // --- Global State ---
+            let currentUser = null;
+            let activeGroupId = null;
+            let allTasksData = new Map();
+            let unsubscribeUserListener = null;
+            let unsubscribeTasksListener = null;
+            let userGroupNameMap = new Map();
+            let adminGroupIds = new Set(); // ADDED: To store group IDs where user is admin
+            let unsubscribeAdminGroupsListener = null; // ADDED: Listener for admin groups
+        
+            // --- Global Modal Functions (Integrated) ---
+            window.openModal = (modalId) => {
+                document.getElementById(modalId).style.display = 'flex';
+                if (modalId === 'addTaskModal') {
+                    getAISuggestions();
                 }
-                card.style.display = show ? 'block' : 'none';
-            });
+            };
+            window.closeModal = (modalId) => {
+                const modal = document.getElementById(modalId);
+                if (modal) modal.style.display = 'none';
+                const form = modal.querySelector('form');
+                if (form) form.reset();
+                 if (modalId === 'addTaskModal') {
+                     aiSuggestionsListEl.innerHTML = '<li>Loading AI Suggestions...</li>';
+                 }
+                 // ADDED: Reset delete modal
+                 if (modalId === 'deleteTaskModal') {
+                     taskToDeleteName.textContent = '...';
+                     taskToDeleteId.value = '';
+                 }
+            };
+            document.addEventListener('click', (e) => { if (e.target.classList.contains('modal')) closeModal(e.target.id); });
+        
             
-            updateTaskSummary(); // Update summary counts based on *visible* cards
-        }
-
-        // --- MODIFIED: Global Filter Function ---
-        // This function *decides* which data to load
-        window.filterTasks = (filter) => {
-            if (!currentUser) return;
-
-            if (filter === 'my-tasks') {
-                // Stop the group listener
+            // --- ADDED: setLoadingState Helper Function ---
+            function setLoadingState(button, isLoading) {
+                const text = button.querySelector('.btn-text');
+                const spinner = button.querySelector('.btn-spinner');
+                if (!button) return; // Guard clause
+        
+                // If button doesn't have spinner structure, just disable/enable
+                if (!text || !spinner) {
+                     button.disabled = isLoading;
+                     return;
+                }
+                button.disabled = isLoading;
+                text.style.display = isLoading ? 'none' : 'inline';
+                spinner.style.display = isLoading ? 'inline' : 'none';
+            }
+        
+            
+            // --- Central Filter Application Function ---
+            function applyCurrentFilter() {
+                const filter = taskFilterSelect.value;
+                if (!currentUser) return;
+        
+                document.querySelectorAll('.task-card').forEach(card => {
+                    const status = card.dataset.status;
+                    const assignee = card.dataset.assignee;
+                    let show = false;
+        
+                    switch(filter) {
+                        case 'all': 
+                            show = true; 
+                            break;
+                        case 'available': 
+                            show = (status === 'available'); 
+                            break;
+                        case 'in-progress': 
+                            show = (status === 'in-progress'); 
+                            break;
+                        case 'completed': 
+                            show = (status === 'completed'); 
+                            break;
+                        case 'my-tasks': 
+                            show = true; // All tasks shown in this mode *are* my tasks
+                            break;
+                    }
+                    card.style.display = show ? 'block' : 'none';
+                });
+                
+                updateTaskSummary(); // Update summary counts
+            }
+        
+            // --- Global Filter Function ---
+            window.filterTasks = (filter) => {
+                if (!currentUser) return;
+        
+                if (filter === 'my-tasks') {
+                    if (unsubscribeTasksListener) {
+                        unsubscribeTasksListener();
+                        unsubscribeTasksListener = null;
+                    }
+                    loadMyTasks(currentUser.uid);
+                } else {
+                    // Start the group listener (it checks internally if already running)
+                    listenForTasks(); 
+                }
+            };
+        
+            // --- Date Formatter ---
+            const formatDateOrAgo = typeof formatTimeAgo === 'function' ? formatTimeAgo : function(timestamp) {
+                if (!timestamp || !timestamp.toDate) return '—';
+                return timestamp.toDate().toLocaleDateString();
+            };
+        
+            // --- Get Today's Date String ---
+            function getTodayDateString() {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            window.getTodayDateString = getTodayDateString; // Expose for AI suggestions
+        
+            // --- AI Suggestion Fetching & Handling ---
+            async function getAISuggestions() {
+                const user = auth.currentUser;
+                if (!user?.displayName) {
+                    aiSuggestionsListEl.innerHTML = "<li style='color: var(--muted);'>Cannot fetch suggestions without a display name.</li>";
+                    return;
+                }
+                aiSuggestionsListEl.innerHTML = "<li>Loading AI Suggestions...</li>";
+                try {
+                    const assigneeNameWithSpaces = user.displayName;
+                    console.log("➡️ Fetching AI suggestions for:", assigneeNameWithSpaces);
+                    const response = await fetch(`/api/aiSuggest?assigneeName=${encodeURIComponent(assigneeNameWithSpaces)}`);
+                    const data = await response.json();
+                    aiSuggestionsListEl.innerHTML = "";
+                    if (!response.ok || data.error || !Array.isArray(data.suggestions) || data.suggestions.length === 0) {
+                        console.error("AI Suggestion Error:", data.error || "Invalid/Empty suggestions array");
+                        aiSuggestionsListEl.innerHTML = `<li style='color: var(--muted);'>${data.message || data.error || 'No AI suggestions available.'}</li>`;
+                        return;
+                    }
+                    data.suggestions.forEach((taskSuggestion) => {
+                        if (!taskSuggestion || typeof taskSuggestion !== 'object' || !taskSuggestion.title) {
+                            console.warn("Skipping invalid suggestion object:", taskSuggestion);
+                            return;
+                        }
+                        const li = document.createElement("li");
+                        const btn = document.createElement("button");
+                        btn.textContent = taskSuggestion.title;
+                        btn.type = "button";
+                        btn.dataset.taskData = JSON.stringify(taskSuggestion);
+                        btn.addEventListener("click", (event) => {
+                            try {
+                                const clickedButton = event.target;
+                                const taskDataString = clickedButton.dataset.taskData;
+                                if (!taskDataString) return;
+                                const taskData = JSON.parse(taskDataString);
+                                document.getElementById("taskTitle").value = taskData.title || '';
+                                document.getElementById("taskDescription").value = taskData.description || '';
+                                document.getElementById("taskPoints").value = taskData.points || '';
+                                const validDifficulties = ['bronze', 'silver', 'gold'];
+                                if (taskData.difficulty && validDifficulties.includes(taskData.difficulty.toLowerCase())) {
+                                    document.getElementById("taskDifficulty").value = taskData.difficulty.toLowerCase();
+                                } else {
+                                    document.getElementById("taskDifficulty").value = '';
+                                }
+                                document.getElementById("taskDueDate").value = getTodayDateString();
+                            } catch (e) {
+                                console.error("Error parsing or applying AI suggestion:", e);
+                                document.getElementById("taskTitle").value = event.target.textContent;
+                                document.getElementById("taskDescription").value = '';
+                                document.getElementById("taskDifficulty").value = '';
+                                document.getElementById("taskPoints").value = '';
+                                document.getElementById("taskDueDate").value = getTodayDateString();
+                            }
+                        });
+                        li.appendChild(btn);
+                        aiSuggestionsListEl.appendChild(li);
+                    });
+                    console.log("✅ AI Suggestions Received (Structured):", data.suggestions);
+                } catch (err) {
+                    console.error("❌ AI Request failed:", err);
+                    aiSuggestionsListEl.innerHTML = "<li style='color: var(--danger);'>Failed to load AI suggestions.</li>";
+                }
+            }
+        
+        
+            // --- Core Data & Render Logic ---
+            function listenForTasks() {
+                if (unsubscribeTasksListener) return;
+                if (taskFilterSelect.value === 'my-tasks') return;
+        
+                allTasksData.clear();
+                tasksTitle.textContent = "Tasks (Current Group)";
+                addTaskButton.style.display = 'inline-block';
+        
+                if (!activeGroupId) {
+                    taskListEl.innerHTML = '<p>Please select an active group on the "Groups" page to see tasks.</p>';
+                    updateTaskSummary(true);
+                    return;
+                }
+        
+                console.log(`(Re)Starting listener for tasks in group: ${activeGroupId}`);
+                const q = query(
+                    collection(db, "tasks"),
+                    where("groupId", "==", activeGroupId),
+                    orderBy("createdAt", "desc")
+                );
+        
+                unsubscribeTasksListener = onSnapshot(q, (snapshot) => {
+                    console.log("Group tasks snapshot received.");
+                    taskListEl.innerHTML = '';
+                    allTasksData.clear();
+                    if(snapshot.empty) taskListEl.innerHTML = '<p>No tasks created for this group yet.</p>';
+        
+                    snapshot.forEach(doc => {
+                        allTasksData.set(doc.id, doc.data());
+                        renderTask(doc.id, doc.data());
+                    });
+                    
+                    applyCurrentFilter(); // Apply filter *after* rendering
+                }, (error) => {
+                    console.error("Error listening for tasks (Index needed?):", error.message);
+                    taskListEl.innerHTML = "<p>Error loading tasks. Check console for index link.</p>";
+                });
+            }
+        
+            // --- Function to load *only* "My Tasks" ---
+            async function loadMyTasks(userId) {
                 if (unsubscribeTasksListener) {
                     unsubscribeTasksListener();
                     unsubscribeTasksListener = null;
                 }
-                // Load all user's tasks
-                loadMyTasks(currentUser.uid);
-            } else {
-                // Load the active group's tasks (this will start listener if needed)
-                listenForTasks(); 
-                // Apply the filter (e.g., 'available') to the *existing* cards for an instant UI update
-                // The listener's snapshot will correct this if data is stale.
-                applyCurrentFilter();
+                allTasksData.clear();
+                taskListEl.innerHTML = '<p>Loading your tasks from all groups...</p>';
+                tasksTitle.textContent = "My Tasks (All Groups)";
+                addTaskButton.style.display = 'none';
+        
+                try {
+                    const q = query(
+                        collection(db, "tasks"),
+                        where("assignee", "==", userId),
+                        orderBy("createdAt", "desc")
+                    );
+                    
+                    const myTasksSnapshot = await getDocs(q);
+                    
+                    taskListEl.innerHTML = '';
+                    allTasksData.clear();
+                    if (myTasksSnapshot.empty) {
+                        taskListEl.innerHTML = '<p>You have not claimed any tasks yet.</p>';
+                    }
+                    
+                    myTasksSnapshot.forEach(doc => {
+                        allTasksData.set(doc.id, doc.data());
+                        renderTask(doc.id, doc.data());
+                    });
+                    
+                    applyCurrentFilter();
+                    
+                } catch (error) {
+                    console.error("Error fetching 'My Tasks' (Index needed?):", error);
+                    taskListEl.innerHTML = "<p>Error loading tasks. Check console for index link.</p>";
+                }
             }
-        };
-
-        // --- Date Formatter ---
-        const formatDateOrAgo = typeof formatTimeAgo === 'function' ? formatTimeAgo : function(timestamp) {
-            if (!timestamp || !timestamp.toDate) return '—';
-            return timestamp.toDate().toLocaleDateString();
-        };
-
-        // --- Get Today's Date String ---
-        function getTodayDateString() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-        window.getTodayDateString = getTodayDateString; // Expose for AI suggestions
-
-        // --- AI Suggestion Fetching & Handling ---
-        async function getAISuggestions() {
-            const user = auth.currentUser;
-            if (!user?.displayName) {
-                aiSuggestionsListEl.innerHTML = "<li style='color: var(--muted);'>Cannot fetch suggestions without a display name.</li>";
-                return;
+        
+        
+            // --- MODIFIED: renderTask ---
+            function renderTask(id, data) {
+                const card = document.createElement('article');
+                card.className = 'task-card';
+                card.dataset.id = id;
+                card.dataset.status = data.status || 'available';
+                card.dataset.assignee = data.assignee || '';
+                card.dataset.groupId = data.groupId || '';
+                card.setAttribute('onclick', `openTaskDetails('${id}')`);
+        
+                const difficultyMap = { gold: '🥇 Gold', silver: '🥈 Silver', bronze: '🥉 Bronze' };
+                const isClaimedByMe = data.assignee === currentUser?.uid;
+                const isAvailable = data.status === 'available';
+                const isInProgress = data.status === 'in-progress';
+                const isCompleted = data.status === 'completed';
+        
+                const pointsDisplay = data.points ? `${data.points} pts` : '0 pts';
+                const assigneeNameDisplay = data.assigneeName || '—';
+        
+                const filter = taskFilterSelect.value;
+                const groupInfoHtml = (filter === 'my-tasks' && data.groupId)
+                    ? `<span>Group: ${userGroupNameMap.get(data.groupId) || 'Loading...'}</span>`
+                    : `<span>Due: ${data.dueDate || 'N/A'}</span>`;
+                
+                if (filter === 'my-tasks' && data.groupId && !userGroupNameMap.has(data.groupId)) {
+                    getDoc(doc(db, "groups", data.groupId)).then(groupDoc => {
+                        let gName = 'Unknown';
+                        if (groupDoc.exists()) {
+                            gName = groupDoc.data().name || 'Unnamed Group';
+                            userGroupNameMap.set(data.groupId, gName);
+                        } else {
+                            userGroupNameMap.set(data.groupId, 'Unknown');
+                        }
+                        const cardOnPage = taskListEl.querySelector(`.task-card[data-id="${id}"] .task-meta span:last-child`);
+                        if (cardOnPage) cardOnPage.textContent = `Group: ${gName}`;
+                    }).catch(e => console.warn(`Could not fetch group name for ${data.groupId}`, e));
+                }
+                
+                // ADDED: Check if user is admin of this task's group
+                const isAdmin = adminGroupIds.has(data.groupId);
+                // ADDED: Escape single quotes in title for onclick attribute
+                const escapedTitle = (data.title || 'this task').replace(/'/g, "\\'");
+                const deleteButtonHtml = isAdmin
+                    ? `<button class="btn btn--danger btn--ghostlike" onclick="openDeleteModal(event, '${id}', '${escapedTitle}')">Delete</button>`
+                    : '';
+        
+                card.innerHTML = `
+                    <div class="task-card__top">
+                        <h3>${data.title || 'Untitled Task'}</h3>
+                        <span class="badge badge--${data.difficulty}">${difficultyMap[data.difficulty] || data.difficulty || ''}</span>
+                    </div>
+                    <p>${data.description || 'No description.'}</p>
+                    <div class="task-meta">
+                        <span>Created: ${formatDateOrAgo(data.createdAt)}</span>
+                        <span>Claimed: ${data.claimedAt ? formatDateOrAgo(data.claimedAt) : '—'}</span>
+                        <span>Done: ${data.completedAt ? formatDateOrAgo(data.completedAt) : '—'}</span>
+                        <span>By: ${assigneeNameDisplay}</span>
+                        <span>Points: ${pointsDisplay}</span>
+                        ${groupInfoHtml}
+                    </div>
+                    <div class="task-actions">
+                        <button class="btn ${isAvailable ? 'btn--neon' : 'btn--secondary'}" ${!isAvailable ? 'disabled' : ''} onclick="claimTask(event, this)">
+                            ${isAvailable ? 'Claim Task' : (isInProgress ? (isClaimedByMe ? 'You Claimed' : `Claimed`) : 'Claimed')}
+                        </button>
+                        <button class="btn ${isInProgress && isClaimedByMe ? 'btn--primary' : 'btn--secondary'}" ${!(isInProgress && isClaimedByMe) || isCompleted ? 'disabled' : ''} onclick="markAsDone(event, this)">
+                            ${isCompleted ? 'Completed' : 'Mark as Done'}
+                        </button>
+                        ${deleteButtonHtml} </div>
+                `;
+                taskListEl.appendChild(card);
             }
-            aiSuggestionsListEl.innerHTML = "<li>Loading AI Suggestions...</li>";
-            try {
-                const assigneeNameWithSpaces = user.displayName;
-                console.log("➡️ Fetching AI suggestions for:", assigneeNameWithSpaces);
-                const response = await fetch(`/api/aiSuggest?assigneeName=${encodeURIComponent(assigneeNameWithSpaces)}`);
-                const data = await response.json();
-                aiSuggestionsListEl.innerHTML = "";
-                if (!response.ok || data.error || !Array.isArray(data.suggestions) || data.suggestions.length === 0) {
-                    console.error("AI Suggestion Error:", data.error || "Invalid/Empty suggestions array");
-                    aiSuggestionsListEl.innerHTML = `<li style='color: var(--muted);'>${data.message || data.error || 'No AI suggestions available.'}</li>`;
+        
+            // --- MODIFIED: updateTaskSummary ---
+            function updateTaskSummary(reset = false) {
+                if (reset) {
+                    document.getElementById('total-tasks').textContent = '0';
+                    document.getElementById('in-progress-tasks').textContent = '0';
+                    document.getElementById('completed-tasks').textContent = '0';
                     return;
                 }
-                data.suggestions.forEach((taskSuggestion) => {
-                    if (!taskSuggestion || typeof taskSuggestion !== 'object' || !taskSuggestion.title) {
-                        console.warn("Skipping invalid suggestion object:", taskSuggestion);
-                        return;
-                    }
-                    const li = document.createElement("li");
-                    const btn = document.createElement("button");
-                    btn.textContent = taskSuggestion.title;
-                    btn.type = "button";
-                    btn.dataset.taskData = JSON.stringify(taskSuggestion);
-                    btn.addEventListener("click", (event) => {
-                        try {
-                            const clickedButton = event.target;
-                            const taskDataString = clickedButton.dataset.taskData;
-                            if (!taskDataString) return;
-                            const taskData = JSON.parse(taskDataString);
-                            document.getElementById("taskTitle").value = taskData.title || '';
-                            document.getElementById("taskDescription").value = taskData.description || '';
-                            document.getElementById("taskPoints").value = taskData.points || '';
-                            const validDifficulties = ['bronze', 'silver', 'gold'];
-                            if (taskData.difficulty && validDifficulties.includes(taskData.difficulty.toLowerCase())) {
-                                document.getElementById("taskDifficulty").value = taskData.difficulty.toLowerCase();
-                            } else {
-                                document.getElementById("taskDifficulty").value = '';
-                            }
-                            document.getElementById("taskDueDate").value = getTodayDateString();
-                            console.log("Applied AI suggestion:", taskData);
-                        } catch (e) {
-                            console.error("Error parsing or applying AI suggestion:", e);
-                            document.getElementById("taskTitle").value = event.target.textContent;
-                            document.getElementById("taskDescription").value = '';
-                            document.getElementById("taskDifficulty").value = '';
-                            document.getElementById("taskPoints").value = '';
-                            document.getElementById("taskDueDate").value = getTodayDateString();
-                        }
-                    });
-                    li.appendChild(btn);
-                    aiSuggestionsListEl.appendChild(li);
-                });
-                console.log("✅ AI Suggestions Received (Structured):", data.suggestions);
-            } catch (err) {
-                console.error("❌ AI Request failed:", err);
-                aiSuggestionsListEl.innerHTML = "<li style='color: var(--danger);'>Failed to load AI suggestions.</li>";
-            }
-        }
-
-
-        // --- MODIFIED: Core Data & Render Logic ---
-        function listenForTasks() {
-            // This function *only* listens for active group tasks
-            // If listener is already active, just re-apply filter
-            if (unsubscribeTasksListener) {
-                applyCurrentFilter(); // Re-apply filter to existing data
-                return; // Already listening
-            }
-            if (taskFilterSelect.value === 'my-tasks') return; // Don't run if "My Tasks" is active
-
-            allTasksData.clear();
-            tasksTitle.textContent = "Tasks (Current Group)";
-            addTaskButton.style.display = 'inline-block'; // Show Add Task button
-
-            if (!activeGroupId) {
-                taskListEl.innerHTML = '<p>Please select an active group on the "Groups" page to see tasks.</p>';
-                updateTaskSummary(true);
-                return;
-            }
-
-            console.log(`(Re)Starting listener for tasks in group: ${activeGroupId}`);
-            const q = query(
-                collection(db, "tasks"),
-                where("groupId", "==", activeGroupId),
-                orderBy("createdAt", "desc")
-            );
-
-            unsubscribeTasksListener = onSnapshot(q, (snapshot) => {
-                console.log("Group tasks snapshot received.");
-                taskListEl.innerHTML = '';
-                allTasksData.clear(); // Clear cache on new snapshot
-                if(snapshot.empty) taskListEl.innerHTML = '<p>No tasks created for this group yet.</p>';
-
-                snapshot.forEach(doc => {
-                    allTasksData.set(doc.id, doc.data()); // Cache data
-                    renderTask(doc.id, doc.data());
-                });
                 
-                applyCurrentFilter(); // Apply filter *after* rendering
-            }, (error) => {
-                console.error("Error listening for tasks (Index needed?):", error.message);
-                taskListEl.innerHTML = "<p>Error loading tasks. Check console for index link.</p>";
-            });
-        }
-
-        // --- NEW: Function to load *only* "My Tasks" ---
-        async function loadMyTasks(userId) {
-            if (unsubscribeTasksListener) {
-                unsubscribeTasksListener(); // Stop the group listener
-                unsubscribeTasksListener = null;
-            }
-            allTasksData.clear();
-            taskListEl.innerHTML = '<p>Loading your tasks from all groups...</p>';
-            tasksTitle.textContent = "My Tasks (All Groups)";
-            addTaskButton.style.display = 'none'; // Hide Add Task button
-
-            try {
-                const q = query(
-                    collection(db, "tasks"),
-                    where("assignee", "==", userId), // Get tasks assigned to me
-                    orderBy("createdAt", "desc")
-                );
+                const visibleCards = document.querySelectorAll('.task-card[style*="display: block"], .task-card:not([style*="display: none"])');
                 
-                const myTasksSnapshot = await getDocs(q); // One-time fetch
-                
-                taskListEl.innerHTML = '';
-                allTasksData.clear(); // Clear cache before loading
-                if (myTasksSnapshot.empty) {
-                    taskListEl.innerHTML = '<p>You have not claimed any tasks yet.</p>';
-                }
-                
-                myTasksSnapshot.forEach(doc => {
-                    allTasksData.set(doc.id, doc.data()); // Cache data
-                    renderTask(doc.id, doc.data()); // Render each task
-                });
-                
-                applyCurrentFilter(); // Update summary and ensure all are shown
-                
-            } catch (error) {
-                console.error("Error fetching 'My Tasks' (Index needed?):", error);
-                taskListEl.innerHTML = "<p>Error loading tasks. Check console for index link.</allTasksData>";
-            }
-        }
-
-
-        // --- MODIFIED: renderTask ---
-        function renderTask(id, data) {
-            const card = document.createElement('article');
-            card.className = 'task-card';
-            card.dataset.id = id;
-            card.dataset.status = data.status || 'available';
-            card.dataset.assignee = data.assignee || '';
-            card.dataset.groupId = data.groupId || ''; // Store group ID
-            card.setAttribute('onclick', `openTaskDetails('${id}')`);
-
-            const difficultyMap = { gold: '🥇 Gold', silver: '🥈 Silver', bronze: '🥉 Bronze' };
-            const isClaimedByMe = data.assignee === currentUser?.uid;
-            const isAvailable = data.status === 'available';
-            const isInProgress = data.status === 'in-progress';
-            const isCompleted = data.status === 'completed';
-
-            const pointsDisplay = data.points ? `${data.points} pts` : '0 pts';
-            const assigneeNameDisplay = data.assigneeName || '—';
-
-            // Show group name if in "My Tasks" view, otherwise show Due Date
-            const filter = taskFilterSelect.value;
-            const groupInfoHtml = (filter === 'my-tasks' && data.groupId)
-                ? `<span>Group: ${userGroupNameMap.get(data.groupId) || 'Loading...'}</span>`
-                : `<span>Due: ${data.dueDate || 'N/A'}</span>`;
-            
-            // If in 'my-tasks' view and group name isn't cached, fetch it
-            if (filter === 'my-tasks' && data.groupId && !userGroupNameMap.has(data.groupId)) {
-                getDoc(doc(db, "groups", data.groupId)).then(groupDoc => {
-                    let gName = 'Unknown';
-                    if (groupDoc.exists()) {
-                        gName = groupDoc.data().name || 'Unnamed Group';
-                        userGroupNameMap.set(data.groupId, gName); // Cache it
-                    } else {
-                        userGroupNameMap.set(data.groupId, 'Unknown'); // Cache 'Unknown'
-                    }
-                    // Find the rendered card and update the group name
-                    const cardOnPage = taskListEl.querySelector(`.task-card[data-id="${id}"] .task-meta span:last-child`);
-                    if (cardOnPage) cardOnPage.textContent = `Group: ${gName}`;
-                }).catch(e => console.warn(`Could not fetch group name for ${data.groupId}`, e));
-            }
-
-
-            card.innerHTML = `
-                <div class="task-card__top">
-                    <h3>${data.title || 'Untitled Task'}</h3>
-                    <span class="badge badge--${data.difficulty}">${difficultyMap[data.difficulty] || data.difficulty || ''}</span>
-                </div>
-                <p>${data.description || 'No description.'}</p>
-                <div class="task-meta">
-                    <span>Created: ${formatDateOrAgo(data.createdAt)}</span>
-                    <span>Claimed: ${data.claimedAt ? formatDateOrAgo(data.claimedAt) : '—'}</span>
-                    <span>Done: ${data.completedAt ? formatDateOrAgo(data.completedAt) : '—'}</span>
-                    <span>By: ${assigneeNameDisplay}</span>
-                    <span>Points: ${pointsDisplay}</span>
-                    ${groupInfoHtml}
-                </div>
-                <div class="task-actions">
-                    <button class="btn ${isAvailable ? 'btn--neon' : 'btn--secondary'}" ${!isAvailable ? 'disabled' : ''} onclick="claimTask(event, this)">
-                        ${isAvailable ? 'Claim Task' : (isInProgress ? (isClaimedByMe ? 'You Claimed' : `Claimed`) : 'Claimed')}
-                    </button>
-                    <button class="btn ${isInProgress && isClaimedByMe ? 'btn--primary' : 'btn--secondary'}" ${!(isInProgress && isClaimedByMe) || isCompleted ? 'disabled' : ''} onclick="markAsDone(event, this)">
-                        ${isCompleted ? 'Completed' : 'Mark as Done'}
-                    </button>
-                </div>
-            `;
-            taskListEl.appendChild(card);
-        }
-
-        // --- MODIFIED: updateTaskSummary ---
-        // This function now counts *visible* cards in the DOM
-        function updateTaskSummary(reset = false) {
-            if (reset) {
-                document.getElementById('total-tasks').textContent = '0';
-                document.getElementById('in-progress-tasks').textContent = '0';
-                document.getElementById('completed-tasks').textContent = '0';
-                return;
-            }
-            
-            const visibleCards = document.querySelectorAll('.task-card[style*="display: block"], .task-card:not([style*="display: none"])');
-            
-            let inProgressCount = 0;
-            let completedCount = 0;
-
-            visibleCards.forEach(card => {
-                if (card.dataset.status === 'in-progress') inProgressCount++;
-                if (card.dataset.status === 'completed') completedCount++;
-            });
-
-            // When "My Tasks" is selected, "Total" means total *visible* tasks
-            // When other filters are selected, "Total" means *all* tasks in the group (from cache)
-            const filter = taskFilterSelect.value;
-            if (filter === 'my-tasks') {
-                 document.getElementById('total-tasks').textContent = visibleCards.length;
-            } else {
-                 document.getElementById('total-tasks').textContent = allTasksData.size;
-            }
-            
-            document.getElementById('in-progress-tasks').textContent = inProgressCount;
-            document.getElementById('completed-tasks').textContent = completedCount;
-        }
-
-
-        // --- MODIFIED: openTaskDetails ---
-        window.openTaskDetails = async (taskId) => { // Made async
-            const data = allTasksData.get(taskId);
-            if (!data) return;
-            taskDetailTitle.textContent = data.title || 'Task Details';
-            taskDetailDesc.textContent = data.description || 'No description provided.';
-            taskDetailStatus.textContent = (data.status || 'available').replace('-', ' ');
-             taskDetailDifficulty.className = `badge badge--${data.difficulty}`;
-            taskDetailDifficulty.textContent = (data.difficulty ? data.difficulty.charAt(0).toUpperCase() + data.difficulty.slice(1) : 'N/A');
-            taskDetailPoints.textContent = data.points || 0;
-            taskDetailDue.textContent = data.dueDate || 'N/A';
-            taskDetailAssignee.textContent = data.assigneeName || 'Not Assigned';
-            
-            // --- ADDED: Fetch and display group name ---
-            let groupName = 'Unknown Group';
-            const groupId = data.groupId; // Get group ID from task data
-            if (userGroupNameMap.has(groupId)) {
-                groupName = userGroupNameMap.get(groupId);
-            } else if (groupId) {
-                try {
-                    const groupDoc = await getDoc(doc(db, "groups", groupId));
-                    if (groupDoc.exists()) {
-                        groupName = groupDoc.data().name || 'Unnamed Group';
-                        userGroupNameMap.set(groupId, groupName); // Cache it
-                    } else {
-                         userGroupNameMap.set(groupId, 'Unknown'); // Cache failure
-                    }
-                } catch (e) { 
-                    console.error("Error fetching group name:", e); 
-                    userGroupNameMap.set(groupId, 'Error'); // Cache error
-                }
-            }
-            taskDetailGroup.textContent = groupName;
-            // --- END ---
-
-            taskDetailHistory.innerHTML = '';
-            taskDetailHistory.innerHTML += `<li>Task created ${data.createdAt ? formatDateOrAgo(data.createdAt) : 'at unknown time'}</li>`;
-            if (data.claimedAt) taskDetailHistory.innerHTML += `<li>Task claimed by ${data.assigneeName || 'someone'} ${formatDateOrAgo(data.claimedAt)}</li>`;
-            if (data.completedAt) taskDetailHistory.innerHTML += `<li>Task completed ${formatDateOrAgo(data.completedAt)}</li>`;
-
-            taskDetailAction.dataset.taskId = taskId;
-            const isClaimedByMe = data.assignee === currentUser?.uid;
-
-            if (data.status === 'available') {
-                taskDetailAction.textContent = 'Claim Task';
-                taskDetailAction.className = 'btn btn--primary';
-                taskDetailAction.disabled = false;
-            } else if (data.status === 'in-progress') {
-                taskDetailAction.textContent = 'Mark as Done';
-                taskDetailAction.className = 'btn btn--primary';
-                taskDetailAction.disabled = !isClaimedByMe;
-            } else {
-                taskDetailAction.textContent = 'Completed';
-                taskDetailAction.className = 'btn btn--success';
-                taskDetailAction.disabled = true;
-            }
-            openModal('taskDetailsModal');
-        };
-
-        // --- (handleTaskDetailAction remains the same) ---
-        window.handleTaskDetailAction = () => {
-             const taskId = taskDetailAction.dataset.taskId;
-             if (!taskId) return;
-             const taskCard = taskListEl.querySelector(`.task-card[data-id="${taskId}"]`);
-             if (!taskCard) {
-                 console.warn("Could not find corresponding task card for action.");
-                 const currentStatus = allTasksData.get(taskId)?.status;
-                  if (currentStatus === 'available') {
-                      window.claimTask(new Event('click'), taskDetailAction);
-                  } else if (currentStatus === 'in-progress') {
-                      window.markAsDone(new Event('click'), taskDetailAction);
-                  }
-                 closeModal('taskDetailsModal');
-                 return;
-             }
-             if (taskDetailAction.textContent === 'Claim Task') {
-                 const claimButtonOnCard = taskCard.querySelector('.task-actions button:first-child');
-                 if (claimButtonOnCard) window.claimTask(new Event('click'), claimButtonOnCard);
-             } else if (taskDetailAction.textContent === 'Mark as Done') {
-                 const markDoneButtonOnCard = taskCard.querySelector('.task-actions button:last-child');
-                 if (markDoneButtonOnCard) window.markAsDone(new Event('click'), markDoneButtonOnCard);
-             }
-             closeModal('taskDetailsModal');
-        };
-
-
-        // --- MODIFIED: Firebase Actions (claimTask) ---
-        window.claimTask = async (event, button) => {
-            event?.stopPropagation();
-            if (!currentUser) return alert("You must be logged in.");
-            
-            const card = button.closest('.task-card');
-            const taskId = card ? card.dataset.id : taskDetailAction.dataset.taskId;
-            if (!taskId) return alert("Task ID not found.");
-
-            const taskData = allTasksData.get(taskId);
-            if (!taskData || taskData.status !== 'available') return;
-
-            const taskTitle = taskData.title;
-            const taskRef = doc(db, "tasks", taskId);
-            
-            const taskGroupId = taskData.groupId; 
-            if (!taskGroupId) {
-                console.error("Cannot claim task: Group ID missing from task data.", taskData);
-                return alert("Cannot claim task: Critical data missing (Group ID).");
-            }
-
-            button.disabled = true;
-
-            try {
-                await updateDoc(taskRef, {
-                    status: "in-progress",
-                    assignee: currentUser.uid,
-                    assigneeName: currentUser.displayName || "Anonymous",
-                    claimedAt: serverTimestamp()
-                });
-                await addDoc(collection(db, "activities"), {
-                    userId: currentUser.uid, userName: currentUser.displayName || 'Anonymous', type: 'task-claimed',
-                    details: `claimed task: "${taskTitle}"`, createdAt: serverTimestamp(),
-                    groupId: taskGroupId
-                });
-                console.log(`Task ${taskId} claimed by ${currentUser.uid}`);
-                
-                // Refresh list if we are in 'my-tasks' view
-                if (taskFilterSelect.value === 'my-tasks') {
-                    loadMyTasks(currentUser.uid);
-                }
-                // Otherwise, the onSnapshot listener for the group will handle the update
-                
-            } catch (err) {
-                 console.error("Error claiming task: ", err);
-                 alert("Failed to claim task.");
-                 button.disabled = false;
-            }
-        };
-
-        // --- MODIFIED: Firebase Actions (markAsDone) ---
-        window.markAsDone = async (event, button) => {
-            event?.stopPropagation();
-            if (!currentUser) return alert("You must be logged in.");
-
-            const card = button.closest('.task-card');
-            const taskId = card ? card.dataset.id : taskDetailAction.dataset.taskId;
-            if (!taskId) return alert("Task ID not found.");
-
-            const taskData = allTasksData.get(taskId);
-            if (!taskData || taskData.status !== 'in-progress' || taskData.assignee !== currentUser.uid) return;
-
-            const taskTitle = taskData.title;
-            const points = taskData.points || 0;
-            const taskGroupId = taskData.groupId;
-            if (!taskGroupId) {
-                 console.error("Cannot complete task: Group ID missing from task data.", taskData);
-                 return alert("Cannot complete task: Critical data missing (Group ID).");
-            }
-
-            const taskRef = doc(db, "tasks", taskId);
-            const userRef = doc(db, "users", currentUser.uid);
-
-            button.disabled = true;
-
-            try {
-                await updateDoc(taskRef, {
-                    status: "completed",
-                    completedAt: serverTimestamp()
-                });
-                await updateDoc(userRef, { points: increment(points) });
-                await addDoc(collection(db, "activities"), {
-                    userId: currentUser.uid, userName: currentUser.displayName || 'Anonymous', type: 'task-completed',
-                    details: `completed task: "${taskTitle}" for +${points} pts`, createdAt: serverTimestamp(),
-                    groupId: taskGroupId
-                });
-                console.log(`Task ${taskId} marked as done by ${currentUser.uid}`);
-                
-                if (taskFilterSelect.value === 'my-tasks') {
-                    loadMyTasks(currentUser.uid);
-                }
-            } catch (err) {
-                console.error("Error completing task: ", err);
-                alert("Failed to mark task as done.");
-                button.disabled = false;
-            }
-        };
+                let inProgressCount = 0;
+                let completedCount = 0;
         
-        // --- Add Task Form Listener (No changes needed) ---
-        addTaskForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentUser) return alert("You must be logged in.");
-            if (!activeGroupId) return alert("You must have an active group selected to add a task.");
-
-             const submitButton = addTaskForm.querySelector('button[type="submit"]');
-             submitButton.disabled = true;
-
-            try {
-                await addDoc(collection(db, "tasks"), {
-                    title: addTaskForm.taskTitle.value.trim(),
-                    description: addTaskForm.taskDescription.value.trim(),
-                    difficulty: addTaskForm.taskDifficulty.value,
-                    points: parseInt(addTaskForm.taskPoints.value),
-                    dueDate: addTaskForm.taskDueDate.value,
-                    createdAt: serverTimestamp(),
-                    status: "available",
-                    assignee: null, assigneeName: null,
-                    createdBy: currentUser.uid,
-                    claimedAt: null, completedAt: null,
-                    groupId: activeGroupId
+                visibleCards.forEach(card => {
+                    if (card.dataset.status === 'in-progress') inProgressCount++;
+                    if (card.dataset.status === 'completed') completedCount++;
                 });
-                closeModal('addTaskModal');
-            } catch (err) {
-                 console.error("Error adding task:", err);
-                 alert("Failed to add task.");
-            } finally {
-                 submitButton.disabled = false;
+        
+                const filter = taskFilterSelect.value;
+                if (filter === 'my-tasks') {
+                     document.getElementById('total-tasks').textContent = visibleCards.length;
+                } else {
+                     document.getElementById('total-tasks').textContent = allTasksData.size;
+                }
+                
+                document.getElementById('in-progress-tasks').textContent = inProgressCount;
+                document.getElementById('completed-tasks').textContent = completedCount;
             }
-        });
-
-        // --- Logout & Initialize ---
-        logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
-
-        // --- MODIFIED: onAuthStateChanged ---
-        onAuthStateChanged(auth, (user) => {
-             // Clean up listeners
-             if (unsubscribeUserListener) unsubscribeUserListener();
-             if (unsubscribeTasksListener) unsubscribeTasksListener();
-             // Reset state
-             currentUser = null;
-             activeGroupId = null;
-             allTasksData.clear();
-             userGroupNameMap.clear(); // Clear group name cache
-             taskListEl.innerHTML = '<p>Loading...</p>';
-
-
-            if (user) {
-                currentUser = user; // Store auth user object
-                const userRef = doc(db, "users", user.uid);
-
-                unsubscribeUserListener = onSnapshot(userRef, (userDocSnap) => {
-                    if (userDocSnap.exists()) {
-                        const userData = userDocSnap.data();
-                        myPointsEl.textContent = (userData.points || 0).toLocaleString();
-                        const newActiveGroupId = userData.activeGroupId;
-
-                        // Check if active group changed
-                        if (newActiveGroupId !== activeGroupId) {
-                            console.log("Active group changed to:", newActiveGroupId);
-                            activeGroupId = newActiveGroupId;
-                             // Trigger filterTasks to load correct view
-                             filterTasks(taskFilterSelect.value);
-                        } else if (!activeGroupId && newActiveGroupId === undefined) {
-                             console.log("User has no active group.");
-                             activeGroupId = null;
-                             filterTasks(taskFilterSelect.value); // Will show 'select group' or 'my tasks'
+        
+        
+            // --- MODIFIED: openTaskDetails ---
+            window.openTaskDetails = async (taskId) => {
+                const data = allTasksData.get(taskId);
+                if (!data) return;
+                taskDetailTitle.textContent = data.title || 'Task Details';
+                taskDetailDesc.textContent = data.description || 'No description provided.';
+                taskDetailStatus.textContent = (data.status || 'available').replace('-', ' ');
+                 taskDetailDifficulty.className = `badge badge--${data.difficulty}`;
+                taskDetailDifficulty.textContent = (data.difficulty ? data.difficulty.charAt(0).toUpperCase() + data.difficulty.slice(1) : 'N/A');
+                taskDetailPoints.textContent = data.points || 0;
+                taskDetailDue.textContent = data.dueDate || 'N/A';
+                taskDetailAssignee.textContent = data.assigneeName || 'Not Assigned';
+                
+                let groupName = 'Unknown Group';
+                const groupId = data.groupId;
+                if (userGroupNameMap.has(groupId)) {
+                    groupName = userGroupNameMap.get(groupId);
+                } else if (groupId) {
+                    try {
+                        const groupDoc = await getDoc(doc(db, "groups", groupId));
+                        if (groupDoc.exists()) {
+                            groupName = groupDoc.data().name || 'Unnamed Group';
+                            userGroupNameMap.set(groupId, groupName);
                         } else {
-                            // Active group ID is the same, but maybe the filter is 'my-tasks'
-                            // which doesn't depend on the group listener
-                            if (taskFilterSelect.value === 'my-tasks') {
-                                loadMyTasks(currentUser.uid); // Refresh 'my-tasks' view
-                            }
+                             userGroupNameMap.set(groupId, 'Unknown');
                         }
-                    } else {
-                        console.warn("User document not found in Firestore:", user.uid);
-                        myPointsEl.textContent = '0';
-                        activeGroupId = null;
-                        filterTasks(taskFilterSelect.value); // Show 'select group' or 'my tasks'
+                    } catch (e) { 
+                        console.error("Error fetching group name:", e); 
+                        userGroupNameMap.set(groupId, 'Error');
                     }
-                }, (error) => {
-                     console.error("Error listening to user document:", error);
-                     myPointsEl.textContent = 'Error';
-                     activeGroupId = null;
-                     filterTasks(taskFilterSelect.value); // Show error/select group message
-                });
-
-            } else {
-                window.location.href = 'auth.html';
+                }
+                taskDetailGroup.textContent = groupName;
+        
+                taskDetailHistory.innerHTML = '';
+                taskDetailHistory.innerHTML += `<li>Task created ${data.createdAt ? formatDateOrAgo(data.createdAt) : 'at unknown time'}</li>`;
+                if (data.claimedAt) taskDetailHistory.innerHTML += `<li>Task claimed by ${data.assigneeName || 'someone'} ${formatDateOrAgo(data.claimedAt)}</li>`;
+                if (data.completedAt) taskDetailHistory.innerHTML += `<li>Task completed ${formatDateOrAgo(data.completedAt)}</li>`;
+        
+                taskDetailAction.dataset.taskId = taskId;
+                const isClaimedByMe = data.assignee === currentUser?.uid;
+        
+                if (data.status === 'available') {
+                    taskDetailAction.textContent = 'Claim Task';
+                    taskDetailAction.className = 'btn btn--primary';
+                    taskDetailAction.disabled = false;
+                } else if (data.status === 'in-progress') {
+                    taskDetailAction.textContent = 'Mark as Done';
+                    taskDetailAction.className = 'btn btn--primary';
+                    taskDetailAction.disabled = !isClaimedByMe;
+                } else {
+                    taskDetailAction.textContent = 'Completed';
+                    taskDetailAction.className = 'btn btn--success';
+                    taskDetailAction.disabled = true;
+                }
+                
+                // ADDED: Show/hide delete button based on admin status
+                const isAdmin = adminGroupIds.has(data.groupId);
+                if (isAdmin) {
+                    taskDetailDeleteButton.style.display = 'inline-block';
+                    // Use an anonymous function to avoid immediate execution
+                    taskDetailDeleteButton.onclick = (event) => openDeleteModal(event, taskId, data.title.replace(/'/g, "\\'"));
+                } else {
+                    taskDetailDeleteButton.style.display = 'none';
+                    taskDetailDeleteButton.onclick = null; // Remove old listener
+                }
+                
+                openModal('taskDetailsModal');
+            };
+        
+            // --- (handleTaskDetailAction remains the same) ---
+            window.handleTaskDetailAction = () => {
+                 const taskId = taskDetailAction.dataset.taskId;
+                 if (!taskId) return;
+                 const taskCard = taskListEl.querySelector(`.task-card[data-id="${taskId}"]`);
+                 if (!taskCard) {
+                     console.warn("Could not find corresponding task card for action.");
+                     const currentStatus = allTasksData.get(taskId)?.status;
+                      if (currentStatus === 'available') {
+                          window.claimTask(new Event('click'), taskDetailAction);
+                      } else if (currentStatus === 'in-progress') {
+                          window.markAsDone(new Event('click'), taskDetailAction);
+                      }
+                     closeModal('taskDetailsModal');
+                     return;
+                 }
+                 if (taskDetailAction.textContent === 'Claim Task') {
+                     const claimButtonOnCard = taskCard.querySelector('.task-actions button:first-child');
+                     if (claimButtonOnCard) window.claimTask(new Event('click'), claimButtonOnCard);
+                 } else if (taskDetailAction.textContent === 'Mark as Done') {
+                     const markDoneButtonOnCard = taskCard.querySelector('.task-actions button:last-child');
+                     if (markDoneButtonOnCard) window.markAsDone(new Event('click'), markDoneButtonOnCard);
+                 }
+                 closeModal('taskDetailsModal');
+            };
+        
+            // --- ADDED: Delete Task Functions ---
+            window.openDeleteModal = (event, taskId, taskTitle) => {
+                if (event) event.stopPropagation(); // Stop click from propagating to card
+                if (!adminGroupIds.has(allTasksData.get(taskId)?.groupId)) {
+                    return alert("You do not have permission to delete this task.");
+                }
+                console.log(`Opening delete modal for: ${taskId} (${taskTitle})`);
+                taskToDeleteName.textContent = taskTitle;
+                taskToDeleteId.value = taskId;
+                openModal('deleteTaskModal');
+            };
+        
+            async function confirmDeleteTask() {
+                const taskId = taskToDeleteId.value;
+                if (!taskId || !currentUser) return;
+                
+                const taskData = allTasksData.get(taskId);
+                // Final check for permission
+                if (!taskData || !adminGroupIds.has(taskData.groupId)) {
+                    alert("Permission error. Cannot delete task.");
+                    closeModal('deleteTaskModal');
+                    return;
+                }
+        
+                const taskRef = doc(db, "tasks", taskId);
+                setLoadingState(confirmDeleteButton, true);
+        
+                try {
+                    await deleteDoc(taskRef);
+                    console.log("Task deleted:", taskId);
+                    allTasksData.delete(taskId); // Remove from local cache
+        
+                    // Find and remove the card from the UI
+                    const cardToRemove = taskListEl.querySelector(`.task-card[data-id="${taskId}"]`);
+                    if (cardToRemove) {
+                        cardToRemove.remove();
+                    }
+                    
+                    updateTaskSummary(); // Recalculate summary
+                    
+                } catch (error) {
+                    console.error("Error deleting task:", error);
+                    alert("Failed to delete task.");
+                } finally {
+                    setLoadingState(confirmDeleteButton, false);
+                    closeModal('deleteTaskModal');
+                }
             }
-        });
-    </script>
-</body>
-</html>
+            // Attach listener to the confirmation button
+            confirmDeleteButton.addEventListener('click', confirmDeleteTask);
+        
+            // --- MODIFIED: Firebase Actions (claimTask & markAsDone) ---
+            window.claimTask = async (event, button) => {
+                event?.stopPropagation();
+                if (!currentUser) return alert("You must be logged in.");
+                
+                const card = button.closest('.task-card');
+                const taskId = card ? card.dataset.id : taskDetailAction.dataset.taskId;
+                if (!taskId) return alert("Task ID not found.");
+        
+                const taskData = allTasksData.get(taskId);
+                if (!taskData || taskData.status !== 'available') return;
+        
+                const taskTitle = taskData.title;
+                const taskRef = doc(db, "tasks", taskId);
+                const taskGroupId = taskData.groupId; 
+                if (!taskGroupId) return alert("Cannot claim task: Group ID missing.");
+        
+                button.disabled = true;
+        
+                try {
+                    await updateDoc(taskRef, {
+                        status: "in-progress",
+                        assignee: currentUser.uid,
+                        assigneeName: currentUser.displayName || "Anonymous",
+                        claimedAt: serverTimestamp()
+                    });
+                    await addDoc(collection(db, "activities"), {
+                        userId: currentUser.uid, userName: currentUser.displayName || 'Anonymous', type: 'task-claimed',
+                        details: `claimed task: "${taskTitle}"`, createdAt: serverTimestamp(),
+                        groupId: taskGroupId
+                    });
+                    console.log(`Task ${taskId} claimed by ${currentUser.uid}`);
+                    
+                    if (taskFilterSelect.value === 'my-tasks') {
+                        loadMyTasks(currentUser.uid); // Refresh 'my-tasks' view
+                    }
+                    // else: onSnapshot will handle update
+                    
+                } catch (err) {
+                     console.error("Error claiming task: ", err);
+                     alert("Failed to claim task.");
+                     button.disabled = false;
+                }
+            };
+        
+            window.markAsDone = async (event, button) => {
+                event?.stopPropagation();
+                if (!currentUser) return alert("You must be logged in.");
+        
+                const card = button.closest('.task-card');
+                const taskId = card ? card.dataset.id : taskDetailAction.dataset.taskId;
+                if (!taskId) return alert("Task ID not found.");
+        
+                const taskData = allTasksData.get(taskId);
+                if (!taskData || taskData.status !== 'in-progress' || taskData.assignee !== currentUser.uid) return;
+        
+                const taskTitle = taskData.title;
+                const points = taskData.points || 0;
+                const taskGroupId = taskData.groupId;
+                if (!taskGroupId) return alert("Cannot complete task: Group ID missing.");
+        
+                const taskRef = doc(db, "tasks", taskId);
+                const userRef = doc(db, "users", currentUser.uid);
+        
+                button.disabled = true;
+        
+                try {
+                    await updateDoc(taskRef, {
+                        status: "completed",
+                        completedAt: serverTimestamp()
+                    });
+                    await updateDoc(userRef, { points: increment(points) });
+                    await addDoc(collection(db, "activities"), {
+                        userId: currentUser.uid, userName: currentUser.displayName || 'Anonymous', type: 'task-completed',
+                        details: `completed task: "${taskTitle}" for +${points} pts`, createdAt: serverTimestamp(),
+                        groupId: taskGroupId
+                    });
+                    console.log(`Task ${taskId} marked as done by ${currentUser.uid}`);
+                    
+                    if (taskFilterSelect.value === 'my-tasks') {
+                        loadMyTasks(currentUser.uid);
+                    }
+                    // else: onSnapshot will handle update
+                } catch (err) {
+                    console.error("Error completing task: ", err);
+                    alert("Failed to mark task as done.");
+                    button.disabled = false;
+                }
+            };
+            
+            // --- Add Task Form Listener (No changes) ---
+            addTaskForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!currentUser) return alert("You must be logged in.");
+                if (!activeGroupId) return alert("You must have an active group selected to add a task.");
+                 const submitButton = addTaskForm.querySelector('button[type="submit"]');
+                 submitButton.disabled = true;
+                try {
+                    await addDoc(collection(db, "tasks"), {
+                        title: addTaskForm.taskTitle.value.trim(),
+                        description: addTaskForm.taskDescription.value.trim(),
+                        difficulty: addTaskForm.taskDifficulty.value,
+                        points: parseInt(addTaskForm.taskPoints.value),
+                        dueDate: addTaskForm.taskDueDate.value,
+                        createdAt: serverTimestamp(),
+                        status: "available",
+                        assignee: null, assigneeName: null,
+                        createdBy: currentUser.uid,
+                        claimedAt: null, completedAt: null,
+                        groupId: activeGroupId
+                    });
+                    closeModal('addTaskModal');
+                } catch (err) {
+                     console.error("Error adding task:", err);
+                     alert("Failed to add task.");
+                } finally {
+                     submitButton.disabled = false;
+                }
+            });
+        
+            // --- Logout & Initialize ---
+            logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+        
+            // --- MODIFIED: onAuthStateChanged ---
+            onAuthStateChanged(auth, (user) => {
+                 // Clean up ALL listeners
+                 if (unsubscribeUserListener) unsubscribeUserListener();
+                 if (unsubscribeTasksListener) unsubscribeTasksListener();
+                 if (unsubscribeAdminGroupsListener) unsubscribeAdminGroupsListener();
+                 
+                 // Reset state
+                 currentUser = null;
+                 activeGroupId = null;
+                 allTasksData.clear();
+                 userGroupNameMap.clear();
+                 adminGroupIds.clear(); // Clear admin groups
+                 taskListEl.innerHTML = '<p>Loading...</p>';
+        
+        
+                if (user) {
+                    currentUser = user; // Store auth user object
+                    
+                    // --- ADDED: Listen for user's admin groups ---
+                    // We need this to determine if delete buttons should show
+                    const adminGroupsQuery = query(collection(db, "groups"), where("admins", "array-contains", user.uid));
+                    unsubscribeAdminGroupsListener = onSnapshot(adminGroupsQuery, (snapshot) => {
+                        adminGroupIds.clear();
+                        snapshot.forEach(doc => {
+                            adminGroupIds.add(doc.id);
+                        });
+                        console.log("User is admin of groups:", Array.from(adminGroupIds)); // Log the set
+                        // Re-run the current filter/query to update UI with/without delete buttons
+                        // This will either call loadMyTasks or listenForTasks, which will re-render
+                        filterTasks(taskFilterSelect.value);
+                    }, (error) => {
+                        console.error("Error listening for admin groups:", error);
+                        // Still load tasks even if admin check fails
+                        filterTasks(taskFilterSelect.value);
+                    });
+                    // --- END ADDED ---
+        
+                    const userRef = doc(db, "users", user.uid);
+                    unsubscribeUserListener = onSnapshot(userRef, (userDocSnap) => {
+                        if (userDocSnap.exists()) {
+                            const userData = userDocSnap.data();
+                            myPointsEl.textContent = (userData.points || 0).toLocaleString();
+                            const newActiveGroupId = userData.activeGroupId;
+        
+                            if (newActiveGroupId !== activeGroupId) {
+                                console.log("Active group changed to:", newActiveGroupId);
+                                activeGroupId = newActiveGroupId;
+                                // Stop old group listener if it exists
+                                if (unsubscribeTasksListener) {
+                                     unsubscribeTasksListener();
+                                     unsubscribeTasksListener = null;
+                                }
+                                 // Trigger filterTasks to load correct view
+                                 filterTasks(taskFilterSelect.value);
+                            } else if (activeGroupId === null && (newActiveGroupId === null || newActiveGroupId === undefined)) {
+                                 console.log("User has no active group.");
+                                 activeGroupId = null;
+                                 // Only trigger filter if not 'my-tasks' (which is already loading)
+                                 if (taskFilterSelect.value !== 'my-tasks') {
+                                    filterTasks(taskFilterSelect.value);
+                                 }
+                            } else if (taskFilterSelect.value === 'my-tasks' && unsubscribeTasksListener) {
+                                // This case is tricky: active group didn't change,
+                                // but maybe we *were* on a group filter and need to switch
+                                // The admin listener above handles the initial call to filterTasks,
+                                // so this block might be redundant or only for edge cases.
+                                // Let's rely on the admin listener's call.
+                            }
+                        } else {
+                            console.warn("User document not found in Firestore:", user.uid);
+                            myPointsEl.textContent = '0';
+                            activeGroupId = null;
+                            filterTasks(taskFilterSelect.value);
+                        }
+                    }, (error) => {
+                         console.error("Error listening to user document:", error);
+                         myPointsEl.textContent = 'Error';
+                         activeGroupId = null;
+                         filterTasks(taskFilterSelect.value);
+                    });
+        
+                } else {
+                    window.location.href = 'auth.html';
+                }
+            });
+        </script>
+    
+    </body>
+    </html>

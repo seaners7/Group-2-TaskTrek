@@ -119,45 +119,95 @@
                 </form>
              </div>
         </div>
-    </section>
+        
+        <div id="deleteGroupModal" class="modal" style="display: none;">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>Delete Group</h3>
+              <button class="btn btn--ghost" onclick="closeModal('deleteGroupModal')">&times;</button>
+            </div>
+            <div class="modal-form">
+                <p>Are you sure you want to permanently delete this group?</p>
+                <p class="muted"><strong><span id="groupToDeleteName">Group Name Here</span></strong></p>
+                <p class="muted" style="color: var(--danger);">This will also delete ALL tasks, shop items, and activities associated with this group. This action cannot be undone.</p>
+                <input type="hidden" id="groupToDeleteId">
+                <div class="modal-actions">
+                    <button type="button" class="btn btn--ghost" onclick="closeModal('deleteGroupModal')">Cancel</button>
+                    <button type="button" class="btn btn--danger" id="confirm-delete-button">
+                        <span class="btn-text">Delete Group</span>
+                        <span class="btn-spinner" style="display: none;">⏳</span>
+                    </button>
+                </div>
+            </div>
+          </div>
+        </div>
+        </section>
 
     <script src="theme.js"></script>
 
     <script type="module">
         import { db, auth, onAuthStateChanged, doc, updateDoc } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        // ADDED: getDoc for checking membership, limit for query efficiency
-        import { collection, addDoc, query, where, getDocs, updateDoc as updateGroupDoc, arrayUnion, onSnapshot, serverTimestamp, limit, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        // MODIFIED: Added getDoc, limit, deleteDoc
+        import { collection, addDoc, query, where, getDocs, updateDoc as updateGroupDoc, arrayUnion, onSnapshot, serverTimestamp, limit, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        // ADDED: Imports for Cloud Functions
+        import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-functions.js";
 
         // UI Elements
         const groupsListEl = document.getElementById('groups-list');
         const publicGroupsListEl = document.getElementById('public-groups-list');
         const currentGroupInfoEl = document.getElementById('current-group-info');
-        const inviteCodeInput = document.getElementById('inviteCodeInput'); // For joining
+        const inviteCodeInput = document.getElementById('inviteCodeInput');
         const joinGroupForm = document.getElementById('joinGroupForm');
         const groupCodeInput = document.getElementById('groupCodeInput');
         const createGroupForm = document.getElementById('createGroupForm');
         const logoutBtn = document.getElementById('logout-btn');
         const groupNameErrorEl = document.getElementById('group-name-error');
-        // ADDED: Elements for the active group invite code section
         const activeGroupInviteSection = document.getElementById('active-group-invite-section');
         const activeInviteCodeDisplay = document.getElementById('active-invite-code-display');
+        // ADDED: Delete Modal UI Elements
+        const confirmDeleteButton = document.getElementById('confirm-delete-button');
+        const groupToDeleteName = document.getElementById('groupToDeleteName');
+        const groupToDeleteId = document.getElementById('groupToDeleteId');
 
 
         let currentUser = null;
         let activeGroupId = null;
         let myGroupIds = new Set();
+        
+        // ADDED: Cloud Function reference
+        const functions = getFunctions();
+        const deleteGroup = httpsCallable(functions, 'deleteGroup'); // This function must be created
 
-        // Global Modal & Helper Functions
+        // --- ADDED: setLoadingState Helper Function ---
+        function setLoadingState(button, isLoading) {
+            const text = button.querySelector('.btn-text');
+            const spinner = button.querySelector('.btn-spinner');
+            if (!button) return; // Guard clause
+            // If button doesn't have spinner structure, just disable/enable
+            if (!text || !spinner) {
+                 button.disabled = isLoading;
+                 return;
+            }
+            button.disabled = isLoading;
+            text.style.display = isLoading ? 'none' : 'inline';
+            spinner.style.display = isLoading ? 'inline' : 'none';
+        }
+
+        // --- Global Modal & Helper Functions ---
         window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
         window.closeModal = (modalId) => {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
             const form = modal.querySelector('form');
             if (form) form.reset();
-            groupNameErrorEl.textContent = ''; // Clear create group error specifically
+            groupNameErrorEl.textContent = '';
+            // ADDED: Reset delete modal
+            if (modalId === 'deleteGroupModal') {
+                groupToDeleteName.textContent = '...';
+                groupToDeleteId.value = '';
+            }
         };
-        // Close modal on outside click
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('modal')) {
                 closeModal(e.target.id);
@@ -170,8 +220,8 @@
             groupsListEl.innerHTML = "";
             myGroupIds.clear();
             let activeGroupName = "Select an active group";
-            let activeGroupInviteCode = null; // Store invite code for the active group
-            let isCurrentUserAdminOfActive = false; // Check admin status
+            let activeGroupInviteCode = null;
+            let isCurrentUserAdminOfActive = false;
 
             if (snapshot.empty) groupsListEl.innerHTML = "<li>You're not in any groups yet.</li>";
 
@@ -179,52 +229,55 @@
                 myGroupIds.add(doc.id);
                 const group = doc.data();
                 const isActive = doc.id === activeGroupId;
+                const isOwner = group.ownerId === currentUser.uid; // Check for ownership
 
-                if (isActive) { // If this is the active group
+                if (isActive) {
                     activeGroupName = `Active Group: ${group.name || 'Unnamed Group'}`;
-                    activeGroupInviteCode = group.inviteCode; // Get its invite code
-                    // Check if the current user is in the admins array
+                    activeGroupInviteCode = group.inviteCode;
                     isCurrentUserAdminOfActive = group.admins?.includes(currentUser.uid);
                 }
+
+                // ADDED: Delete button HTML (only if owner)
+                const deleteButtonHtml = isOwner
+                    ? `<button class="btn btn--danger btn--ghostlike" onclick="openDeleteGroupModal(event, '${doc.id}', '${group.name.replace(/'/g, "\\'")}')">Delete</button>`
+                    : '';
 
                 const li = document.createElement('li');
                 li.className = `list-card group-card ${isActive ? 'active' : ''}`;
                 li.innerHTML = `<div><strong>${group.name || 'Unnamed Group'}</strong><div class="muted">${group.members?.length || 0} members</div>${isActive ? '<div class="muted">Currently viewing</div>' : ''}</div>
-                                <button class="btn ${isActive ? 'btn--primary' : 'btn--ghost'}" ${isActive ? 'disabled' : ''} onclick="switchGroup('${doc.id}')">${isActive ? 'Active' : 'Switch'}</button>`;
+                                <div style="display: flex; gap: 8px;"> <button class="btn ${isActive ? 'btn--primary' : 'btn--ghost'}" ${isActive ? 'disabled' : ''} onclick="switchGroup('${doc.id}')">${isActive ? 'Active' : 'Switch'}</button>
+                                    ${deleteButtonHtml} </div>`;
                 groupsListEl.appendChild(li);
             });
 
             currentGroupInfoEl.textContent = activeGroupName;
 
-            // --- Logic to show/hide the active group invite code section ---
-            if (activeGroupInviteCode && isCurrentUserAdminOfActive) { // Only show if active and user is admin
+            if (activeGroupInviteCode && isCurrentUserAdminOfActive) {
                 activeInviteCodeDisplay.value = activeGroupInviteCode;
-                activeGroupInviteSection.style.display = 'block'; // Show the section
+                activeGroupInviteSection.style.display = 'block';
             } else {
-                activeGroupInviteSection.style.display = 'none'; // Hide the section
+                activeGroupInviteSection.style.display = 'none';
             }
-            // --- End Logic ---
-
-            listenForPublicGroups(); // Re-run public group filter
+            
+            listenForPublicGroups();
         }
 
         // --- Render Public Group List ---
         function renderPublicGroups(snapshot) {
-            publicGroupsListEl.innerHTML = ""; // Clear previous list
+            publicGroupsListEl.innerHTML = "";
             let count = 0;
             snapshot.forEach(doc => {
-                // Only render if the user is NOT already a member
                 if (!myGroupIds.has(doc.id)) {
                     count++;
                     const group = doc.data();
                     const li = document.createElement('li');
-                    li.className = 'list-card group-card'; // Use same styling
+                    li.className = 'list-card group-card';
                     li.innerHTML = `<div><strong>${group.name || 'Unnamed Group'}</strong><div class="muted">${group.members?.length || 0} members</div></div>
                                     <button class="btn btn--primary" onclick="joinPublicGroup('${doc.id}')">Join</button>`;
                     publicGroupsListEl.appendChild(li);
                 }
             });
-            if (count === 0 && myGroupIds.size > 0) { // Check if user has groups already
+            if (count === 0 && myGroupIds.size > 0) {
                  publicGroupsListEl.innerHTML = "<li>No other public groups found or you're already in them.</li>";
             } else if (count === 0) {
                  publicGroupsListEl.innerHTML = "<li>No public groups found.</li>";
@@ -236,50 +289,46 @@
             if (!currentUser) return;
             const userRef = doc(db, "users", currentUser.uid);
             onSnapshot(userRef, (userDoc) => {
-                if (!userDoc.exists()) { // Handle case where user doc might not exist yet
+                if (!userDoc.exists()) {
                     console.warn("User document not found, cannot load groups.");
                      groupsListEl.innerHTML = "<li>Error loading your profile.</li>";
                      publicGroupsListEl.innerHTML = "<li>Cannot load public groups.</li>";
-                     activeGroupInviteSection.style.display = 'none'; // Hide invite section
+                     activeGroupInviteSection.style.display = 'none';
                      return;
                 }
                 const newActiveGroupId = userDoc.data()?.activeGroupId;
                 if (newActiveGroupId !== activeGroupId) {
-                    activeGroupId = newActiveGroupId; // Update global state
+                    activeGroupId = newActiveGroupId;
                 }
-                // Always re-query groups to reflect active status change immediately
                 const groupsQuery = query(collection(db, "groups"), where("members", "array-contains", currentUser.uid));
                 onSnapshot(groupsQuery, renderGroups, e => {
                     console.error("Error listening to user's groups:", e);
                     groupsListEl.innerHTML = "<li>Error loading your groups.</li>";
-                    activeGroupInviteSection.style.display = 'none'; // Hide invite section on error too
+                    activeGroupInviteSection.style.display = 'none';
                 });
 
             }, e => {
                 console.error("Error listening to user doc:", e)
                 groupsListEl.innerHTML = "<li>Error loading your profile.</li>";
                 publicGroupsListEl.innerHTML = "<li>Cannot load public groups.</li>";
-                activeGroupInviteSection.style.display = 'none'; // Hide invite section
+                activeGroupInviteSection.style.display = 'none';
             });
         }
 
         // --- Listen for Public Groups ---
         function listenForPublicGroups() {
-            if (!currentUser) { // Don't run if not logged in
+            if (!currentUser) {
                 publicGroupsListEl.innerHTML = "<li>Log in to see public groups.</li>";
                 return;
             }
-            // Query for public groups, limit for performance
             const publicGroupsQuery = query(
                 collection(db, "groups"),
                 where("privacy", "==", "public"),
-                limit(20) // Limit to avoid fetching too many initially
+                limit(20)
             );
-            // Using onSnapshot for real-time updates
             onSnapshot(publicGroupsQuery, renderPublicGroups, e => {
                 console.error("Error listening to public groups:", e);
                 publicGroupsListEl.innerHTML = "<li>Error loading public groups. Check console (Index needed?).</li>";
-                // Firestore might suggest creating an index in the console error message!
             });
         }
 
@@ -289,70 +338,59 @@
             if (!currentUser || !groupId) return;
             try {
                 await updateDoc(doc(db, "users", currentUser.uid), { activeGroupId: groupId });
-                // Listener will handle UI update including the invite code section
             } catch (err) { console.error("Error switching group:", err); }
         };
 
         async function handleJoinGroup(code) {
              if (!code || code.length !== 6 || !currentUser) return alert('Please enter a valid 6-digit invite code.');
              code = code.toUpperCase();
-
              const q = query(collection(db, "groups"), where("inviteCode", "==", code));
              const snapshot = await getDocs(q);
              if (snapshot.empty) return alert("Invalid invite code found.");
-
+             
              const groupDoc = snapshot.docs[0];
              if (groupDoc.data().members?.includes(currentUser.uid)) {
                  return alert(`You are already a member of ${groupDoc.data().name}.`);
              }
-
              const groupRef = groupDoc.ref;
              await updateGroupDoc(groupRef, { members: arrayUnion(currentUser.uid) });
              alert(`Successfully joined ${groupDoc.data().name}!`);
-             // The 'My Groups' list will update automatically
         }
 
-        window.joinGroup = () => { // Function for the inline join button
+        window.joinGroup = () => {
             handleJoinGroup(inviteCodeInput.value.trim())
-                .then(() => inviteCodeInput.value = '') // Clear input on success
+                .then(() => inviteCodeInput.value = '')
                 .catch(err => console.error("Error joining group:", err));
         };
 
-        joinGroupForm.addEventListener('submit', (e) => { // Listener for the modal join form
+        joinGroupForm.addEventListener('submit', (e) => {
             e.preventDefault();
             handleJoinGroup(groupCodeInput.value.trim())
-                .then(() => closeModal('joinGroupModal')) // Close modal on success
+                .then(() => closeModal('joinGroupModal'))
                 .catch(err => console.error("Error joining group from modal:", err));
         });
 
-        // --- Join Public Group Function ---
         window.joinPublicGroup = async (groupId) => {
             if (!currentUser || !groupId) return alert('Cannot join group.');
-
             const groupRef = doc(db, "groups", groupId);
             try {
-                // Check if already a member one last time (optional but safe)
-                const groupDoc = await getDoc(groupRef);
+                 const groupDoc = await getDoc(groupRef);
                  if (groupDoc.exists() && groupDoc.data().members?.includes(currentUser.uid)) {
                      return alert(`You are already a member of ${groupDoc.data().name}.`);
                  }
-                // Add user to the members array
                 await updateGroupDoc(groupRef, {
                     members: arrayUnion(currentUser.uid)
                 });
                 alert(`Successfully joined ${groupDoc.data().name}!`);
-                // The 'My Groups' list will update automatically via its listener
             } catch (err) {
                 console.error("Error joining public group:", err);
                 alert("Failed to join group.");
             }
         };
 
-        // --- Copy Active Invite Code Function ---
         window.copyActiveInviteCode = () => {
-            activeInviteCodeDisplay.select(); // Select the text
+            activeInviteCodeDisplay.select();
             try {
-                // Use Clipboard API if available (more modern)
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(activeInviteCodeDisplay.value).then(() => {
                         alert('Invite code copied to clipboard!');
@@ -360,32 +398,65 @@
                          console.error('Async: Could not copy text: ', err);
                          alert('Could not copy code. Please copy it manually.');
                     });
-                } else { // Fallback for older browsers
-                    if (document.execCommand('copy')) {
-                       alert('Invite code copied to clipboard!');
-                    } else {
-                       throw new Error('execCommand failed');
-                    }
-                }
+                } else if (document.execCommand('copy')) {
+                   alert('Invite code copied to clipboard!');
+                } else { throw new Error('execCommand failed'); }
             } catch (err) {
                 console.error('Failed to copy invite code: ', err);
                 alert('Could not copy code. Please copy it manually.');
             }
-            // Deselect text regardless of method
-             if (window.getSelection) { // Modern browsers
-               window.getSelection().removeAllRanges();
-             } else if (document.selection) { // IE <= 8
-               document.selection.empty();
-             }
+             if (window.getSelection) window.getSelection().removeAllRanges();
+             else if (document.selection) document.selection.empty();
         };
 
+        // --- ADDED: Delete Group Functions ---
+        window.openDeleteGroupModal = (event, groupId, groupName) => {
+            event.stopPropagation(); // Stop click from propagating to the 'switch' button
+            console.log(`Opening delete modal for: ${groupId} (${groupName})`);
+            groupToDeleteName.textContent = groupName;
+            groupToDeleteId.value = groupId;
+            openModal('deleteGroupModal');
+        };
 
-        // Create Group Form Submission
+        async function confirmDeleteGroup() {
+            const groupId = groupToDeleteId.value;
+            const groupName = groupToDeleteName.textContent;
+            if (!groupId || !currentUser) return;
+
+            setLoadingState(confirmDeleteButton, true);
+
+            try {
+                // Call the Cloud Function
+                console.log(`Calling 'deleteGroup' Cloud Function for groupId: ${groupId}`);
+                const result = await deleteGroup({ groupId: groupId });
+
+                if (result.data.success) {
+                    console.log(`Group ${groupId} deletion initiated.`);
+                    alert(`Group "${groupName}" and all associated data have been deleted.`);
+                    // The onSnapshot listener will automatically remove the group from the UI.
+                } else {
+                    // Handle errors returned from the function
+                    throw new Error(result.data.error || 'Failed to delete group.');
+                }
+
+            } catch (error) {
+                console.error("Error calling deleteGroup function:", error);
+                alert(`Error: ${error.message}`);
+            } finally {
+                setLoadingState(confirmDeleteButton, false);
+                closeModal('deleteGroupModal');
+            }
+        }
+        // Attach listener to the confirmation button
+        confirmDeleteButton.addEventListener('click', confirmDeleteGroup);
+
+
+        // --- Create Group Form Submission ---
         createGroupForm.addEventListener('submit', async (e) => {
              e.preventDefault();
              if (!currentUser) return;
              const groupName = createGroupForm.newGroupName.value.trim();
-             groupNameErrorEl.textContent = ''; // Clear previous error
+             groupNameErrorEl.textContent = '';
              if (groupName.length < 3 || groupName.length > 50) {
                  groupNameErrorEl.textContent = 'Name must be 3-50 characters.'; return;
              }
@@ -394,29 +465,30 @@
                      name: groupName, description: createGroupForm.newGroupDescription.value.trim(),
                      type: createGroupForm.newGroupType.value, maxMembers: parseInt(createGroupForm.maxMembers.value) || null,
                      privacy: createGroupForm.groupPrivacy.value, ownerId: currentUser.uid, members: [currentUser.uid],
-                     admins: [currentUser.uid], // Creator is owner and admin
+                     admins: [currentUser.uid],
                      inviteCode: generateInviteCode(), createdAt: serverTimestamp()
                  };
                  const newGroupRef = await addDoc(collection(db, "groups"), newGroupData);
-                 await window.switchGroup(newGroupRef.id); // Auto-switch to new group
+                 await window.switchGroup(newGroupRef.id);
                  alert(`Group "${groupName}" created! Invite code: ${newGroupData.inviteCode}`);
                  closeModal('createGroupModal');
              } catch (err) { console.error("Error creating group:", err); alert("Failed to create group."); }
         });
 
+        // --- Logout & Initialize ---
         logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if (user) {
-                listenForUserAndGroups(); // Listen for user's own groups
-                listenForPublicGroups(); // Listen for public groups
+                listenForUserAndGroups();
+                listenForPublicGroups();
             } else {
                 window.location.href = 'auth.html';
-                 groupsListEl.innerHTML = "<li>Loading...</li>"; // Reset lists on logout
+                 groupsListEl.innerHTML = "<li>Loading...</li>";
                  publicGroupsListEl.innerHTML = "<li>Loading public groups...</li>";
                  myGroupIds.clear();
-                 activeGroupInviteSection.style.display = 'none'; // Hide invite section on logout
+                 activeGroupInviteSection.style.display = 'none';
             }
         });
     </script>

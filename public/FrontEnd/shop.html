@@ -124,6 +124,28 @@
                 </div>
              </div>
         </div>
+
+        <div id="deleteItemModal" class="modal" style="display: none;">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3>Delete Item</h3>
+                <button class="btn btn--ghost" onclick="closeModal('deleteItemModal')">&times;</button>
+              </div>
+              <div class="modal-form">
+                  <p>Are you sure you want to permanently delete this item?</p>
+                  <p class="muted"><strong><span id="itemToDeleteName">Item Name Here</span></strong></p>
+                  <p class="muted" style="color: var(--danger);">This action cannot be undone. Manually delete associated images from storage if needed.</p>
+                  <input type="hidden" id="itemToDeleteId">
+                  <div class="modal-actions">
+                      <button type="button" class="btn btn--ghost" onclick="closeModal('deleteItemModal')">Cancel</button>
+                      <button type="button" class="btn btn--danger" id="confirm-delete-button">
+                          <span class="btn-text">Delete Item</span>
+                          <span class="btn-spinner" style="display: none;">⏳</span>
+                      </button>
+                  </div>
+              </div>
+            </div>
+          </div>
     </section>
 
     <script src="theme.js"></script>
@@ -131,9 +153,10 @@
     <script type="module">
         // --- Firebase Imports ---
         // Firestore
-        import { db, auth, onAuthStateChanged, doc, increment, formatTimeAgo } from './firebase.js'; // Assuming firebase.js exports necessary Firestore functions
+        import { db, auth, onAuthStateChanged, doc, increment, formatTimeAgo } from './firebase.js';
         import { signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { collection, addDoc, query, onSnapshot, runTransaction, serverTimestamp, where, orderBy, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        // MODIFIED: Added deleteDoc
+        import { collection, addDoc, query, onSnapshot, runTransaction, serverTimestamp, where, orderBy, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
         // Storage
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-storage.js";
 
@@ -144,19 +167,24 @@
         const affordableCountEl = document.getElementById('affordable-count');
         const redeemedCountEl = document.getElementById('redeemed-count');
         const addItemForm = document.getElementById('addItemForm');
-        const addItemButton = document.getElementById('add-item-button'); // Button in header
-        const addItemSubmitButton = document.getElementById('add-item-submit-button'); // Button in modal
+        const addItemButton = document.getElementById('add-item-button');
+        const addItemSubmitButton = document.getElementById('add-item-submit-button');
         const logoutBtn = document.getElementById('logout-btn');
         const confirmRedeemBtn = document.getElementById('confirm-redeem-button');
-        const itemImageInput = document.getElementById('itemImage'); // File input
-        const imagePreview = document.getElementById('imagePreview'); // Image preview in modal
+        const itemImageInput = document.getElementById('itemImage');
+        const imagePreview = document.getElementById('imagePreview');
 
         // Redemption Modal Elements
         const confirmItemNameEl = document.getElementById('confirm-item-name');
         const confirmItemCostEl = document.getElementById('confirm-item-cost');
         const currentBalanceEl = document.getElementById('current-balance');
         const afterBalanceEl = document.getElementById('after-balance');
-        const redemptionItemImageEl = document.getElementById('redemption-item-image'); // Image in redemption modal
+        const redemptionItemImageEl = document.getElementById('redemption-item-image');
+
+        // ADDED: Delete Modal Elements
+        const confirmDeleteButton = document.getElementById('confirm-delete-button');
+        const itemToDeleteName = document.getElementById('itemToDeleteName');
+        const itemToDeleteId = document.getElementById('itemToDeleteId');
 
 
         // --- Global State ---
@@ -168,22 +196,28 @@
         let unsubscribeUserListener = null;
         let unsubscribeShopListener = null;
         let unsubscribeRedeemedListener = null;
-        let unsubscribeGroupListener = null; // Listener for group data
+        let unsubscribeGroupListener = null;
 
         // --- Firebase Storage Instance ---
-        const storage = getStorage(); // Initialize storage
+        const storage = getStorage();
 
         // --- Modal & Utility Functions ---
         window.openModal = (modalId) => document.getElementById(modalId).style.display = 'flex';
+        // MODIFIED: closeModal to handle delete modal reset
         window.closeModal = (modalId) => {
             const modal = document.getElementById(modalId);
             if (modal) modal.style.display = 'none';
             const form = modal.querySelector('form');
             if (form) form.reset();
-             // Reset image preview specifically for addItemModal
+            // Reset image preview specifically for addItemModal
             if (modalId === 'addItemModal') {
                 imagePreview.style.display = 'none';
                 imagePreview.src = '#';
+            }
+             // Reset delete modal
+            if (modalId === 'deleteItemModal') {
+                itemToDeleteName.textContent = '...';
+                itemToDeleteId.value = '';
             }
             currentItemToRedeem = null;
         };
@@ -193,26 +227,63 @@
         function setLoadingState(button, isLoading) {
             const text = button.querySelector('.btn-text');
             const spinner = button.querySelector('.btn-spinner');
-            if (!text || !spinner) return; // Ignore if elements not found
-            if (isLoading) {
-                button.disabled = true;
-                text.style.display = 'none';
-                spinner.style.display = 'inline';
-            } else {
-                button.disabled = false;
-                text.style.display = 'inline';
-                spinner.style.display = 'none';
+            if (!button) return; // Guard clause
+            
+            // If button doesn't have spinner structure, just disable/enable
+            if (!text || !spinner) {
+                 button.disabled = isLoading;
+                 return;
             }
+            button.disabled = isLoading;
+            text.style.display = isLoading ? 'none' : 'inline';
+            spinner.style.display = isLoading ? 'inline' : 'none';
         }
 
-        // --- Search and Filter (Keep existing) ---
-        window.searchRewards = (searchTerm) => { /* ... keep existing ... */ };
-        window.filterRewards = (filter) => { /* ... keep existing ... */ };
+        // --- Search and Filter ---
+        window.searchRewards = (searchTerm) => {
+            const term = searchTerm.toLowerCase().trim();
+            window.filterRewards.lastSearch = term;
+            const currentFilter = document.querySelector('.panel__actions select').value;
+            filterRewards(currentFilter);
+        };
+        window.filterRewards = (filter) => {
+            window.filterRewards.lastFilter = filter;
+            const currentSearch = window.filterRewards.lastSearch || '';
+            document.querySelectorAll('.shop-item').forEach(item => {
+                const price = parseInt(item.dataset.price || '0');
+                const stock = parseInt(item.dataset.stock || '0');
+                const name = (item.dataset.name || '').toLowerCase();
+                const isAffordable = price <= userPoints;
+                let show = false;
+                switch(filter) {
+                    case 'all': show = true; break;
+                    case 'affordable': show = isAffordable && stock > 0; break;
+                    case 'expensive': show = !isAffordable && stock > 0; break;
+                    case 'available': show = stock > 0; break;
+                }
+                if (show && currentSearch) {
+                    show = name.includes(currentSearch);
+                }
+                item.style.display = show ? 'grid' : 'none';
+            });
+            updateShopSummary();
+        };
         window.filterRewards.lastFilter = 'all';
         window.filterRewards.lastSearch = '';
 
-        // --- Update Summary Cards (Keep existing) ---
-        function updateShopSummary() { /* ... keep existing ... */ }
+        // --- Update Summary Cards ---
+        function updateShopSummary() {
+            const visibleItems = document.querySelectorAll('.shop-item[style*="display: grid"], .shop-item:not([style*="display: none"])');
+            let affordable = 0, available = 0;
+            visibleItems.forEach(item => {
+                const price = parseInt(item.dataset.price || '0');
+                const stock = parseInt(item.dataset.stock || '0');
+                if (stock > 0) available++;
+                if (price <= userPoints && stock > 0) affordable++;
+            });
+            availableCountEl.textContent = available;
+            affordableCountEl.textContent = affordable;
+        }
 
         // --- Render Functions ---
         function listenForShopItems() {
@@ -228,7 +299,7 @@
                 shopGridEl.innerHTML = '';
                 if (snapshot.empty) shopGridEl.innerHTML = '<p>No items for this group yet.</p>';
                 snapshot.forEach(doc => renderShopItem(doc.id, doc.data()));
-                filterRewards(window.filterRewards.lastFilter); // Apply filters after rendering
+                filterRewards(window.filterRewards.lastFilter);
                 if (window.filterRewards.lastSearch) searchRewards(window.filterRewards.lastSearch);
             }, (error) => {
                 console.error("Error listening for shop items (Index needed?):", error.message);
@@ -236,7 +307,7 @@
             });
         }
 
-        // --- MODIFIED: Render Shop Item to include image ---
+        // --- MODIFIED: Render Shop Item ---
         function renderShopItem(id, data) {
             const itemEl = document.createElement('div');
             itemEl.className = 'shop-item';
@@ -245,7 +316,7 @@
             itemEl.dataset.stock = data.stock || 0;
             itemEl.dataset.name = data.name || 'Unnamed Item';
             itemEl.dataset.description = data.description || '';
-            itemEl.dataset.imageUrl = data.imageUrl || ''; // Store image URL
+            itemEl.dataset.imageUrl = data.imageUrl || '';
 
             const itemPrice = parseInt(itemEl.dataset.price);
             const itemStock = parseInt(itemEl.dataset.stock);
@@ -255,22 +326,23 @@
             let buttonHtml = `<button class="btn btn--secondary" disabled>Out of Stock</button>`;
             if (inStock) {
                 if (canAfford) {
-                    // Pass imageUrl to openRedeemModal
                     buttonHtml = `<button class="btn btn--primary" onclick="openRedeemModal('${id}', '${data.name || 'Item'}', ${itemPrice}, '${data.imageUrl || ''}')">Redeem</button>`;
                 } else {
                     buttonHtml = `<button class="btn btn--secondary" disabled>Need ${itemPrice - userPoints} more pts</button>`;
                 }
             }
 
-            // Image display logic
             let imageHtml = '';
             if (data.imageUrl) {
                 imageHtml = `<img src="${data.imageUrl}" alt="${itemEl.dataset.name}" loading="lazy">`;
-            } else {
-                 // Keep default gradient background if no image
-                imageHtml = ''; // Or could add a placeholder SVG/icon here
             }
 
+            // ADDED: Admin check and Delete Button
+            const isAdmin = activeGroupData?.admins?.includes(currentUser.uid);
+            const escapedName = (data.name || 'this item').replace(/'/g, "\\'"); // Escape quotes for onclick
+            const deleteButtonHtml = isAdmin
+                ? `<button class="btn btn--danger btn--ghostlike" style="grid-column: 1 / -1; margin-top: 5px;" onclick="openDeleteItemModal(event, '${id}', '${escapedName}')">Delete Item</button>`
+                : '';
 
             itemEl.innerHTML = `
                 <div class="shop-thumb">${imageHtml}</div>
@@ -278,12 +350,11 @@
                 <div class="price">${itemPrice.toLocaleString()} pts</div>
                 <div class="quantity">Stock: ${itemStock}</div>
                 ${buttonHtml}
-            `;
+                ${deleteButtonHtml} `;
             shopGridEl.appendChild(itemEl);
         }
 
-        // --- MODIFIED: Actions ---
-        // Include imageUrl parameter
+        // --- Actions ---
         window.openRedeemModal = (itemId, itemName, itemPrice, imageUrl) => {
             if (!currentUser) return alert('You must be logged in!');
             currentItemToRedeem = { id: itemId, name: itemName, price: itemPrice, imageUrl: imageUrl };
@@ -292,91 +363,120 @@
             currentBalanceEl.textContent = `${userPoints.toLocaleString()} points`;
             afterBalanceEl.textContent = `${(userPoints - itemPrice).toLocaleString()} points`;
 
-             // Display image in redemption modal
             if (imageUrl) {
                  redemptionItemImageEl.innerHTML = `<img src="${imageUrl}" alt="${itemName}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">`;
-                 redemptionItemImageEl.style.background = 'none'; // Remove default background
+                 redemptionItemImageEl.style.background = 'none';
             } else {
-                 redemptionItemImageEl.innerHTML = ''; // Clear image
-                 redemptionItemImageEl.style.background = ''; // Restore default background if needed
+                 redemptionItemImageEl.innerHTML = '';
+                 redemptionItemImageEl.style.background = '';
             }
-
 
             openModal('redemptionModal');
         };
 
-        // ✅ RESTORED confirmRedemption function with console logs
-    async function confirmRedemption() {
-        console.log("confirmRedemption function started."); // <-- ADD THIS
+        // --- Confirm Redemption Function ---
+        async function confirmRedemption() {
+            console.log("confirmRedemption function started.");
+            if (!currentItemToRedeem || !currentUser || !activeGroupId) {
+                console.error("Cannot redeem: Missing item, user, or group ID.", { currentItemToRedeem, currentUser, activeGroupId });
+                return alert("Cannot redeem item. User or group not identified.");
+            }
+            const { id: itemId, name: itemName, price: itemPrice } = currentItemToRedeem;
+            const itemRef = doc(db, "shopItems", itemId);
+            const userRef = doc(db, "users", currentUser.uid);
 
-        if (!currentItemToRedeem || !currentUser || !activeGroupId) {
-            console.error("Cannot redeem: Missing item, user, or group ID.", { currentItemToRedeem, currentUser, activeGroupId }); // <-- ADD THIS
-            return alert("Cannot redeem item. User or group not identified.");
-        }
-        const { id: itemId, name: itemName, price: itemPrice } = currentItemToRedeem;
-        const itemRef = doc(db, "shopItems", itemId);
-        const userRef = doc(db, "users", currentUser.uid);
+            confirmRedeemBtn.disabled = true;
+            console.log("Attempting transaction for item:", itemId, "by user:", currentUser.uid);
 
-        confirmRedeemBtn.disabled = true;
-        console.log("Attempting transaction for item:", itemId, "by user:", currentUser.uid); // <-- ADD THIS
-
-        try {
-            await runTransaction(db, async (transaction) => {
-                console.log("Inside runTransaction callback."); // <-- ADD THIS
-
-                const itemDoc = await transaction.get(itemRef);
-                const userDoc = await transaction.get(userRef);
-
-                console.log("Docs fetched inside transaction:", { itemExists: itemDoc.exists(), userExists: userDoc.exists() }); // <-- ADD THIS
-
-                if (!itemDoc.exists() || !userDoc.exists()) throw new Error("Data missing (item or user doc)"); // More specific error
-
-                const currentStock = itemDoc.data().stock || 0;
-                const currentPoints = userDoc.data().points || 0;
-
-                console.log("Checking conditions:", { currentStock, currentPoints, itemPrice }); // <-- ADD THIS
-
-                if (currentStock <= 0) throw new Error("Item is out of stock!");
-                if (currentPoints < itemPrice) throw new Error("Not enough points!");
-
-                console.log("Conditions met, performing updates..."); // <-- ADD THIS
-
-                transaction.update(itemRef, { stock: increment(-1) });
-                transaction.update(userRef, { points: increment(-itemPrice) });
-                transaction.set(doc(collection(db, "activities")), {
-                    userId: currentUser.uid, userName: currentUser.displayName || 'User',
-                    type: 'reward-redeemed', details: `redeemed ${itemName} for -${itemPrice} pts`,
-                    createdAt: serverTimestamp(),
-                    groupId: activeGroupId
+            try {
+                await runTransaction(db, async (transaction) => {
+                    console.log("Inside runTransaction callback.");
+                    const itemDoc = await transaction.get(itemRef);
+                    const userDoc = await transaction.get(userRef);
+                    console.log("Docs fetched inside transaction:", { itemExists: itemDoc.exists(), userExists: userDoc.exists() });
+                    if (!itemDoc.exists() || !userDoc.exists()) throw new Error("Data missing (item or user doc)");
+                    const currentStock = itemDoc.data().stock || 0;
+                    const currentPoints = userDoc.data().points || 0;
+                    console.log("Checking conditions:", { currentStock, currentPoints, itemPrice });
+                    if (currentStock <= 0) throw new Error("Item is out of stock!");
+                    if (currentPoints < itemPrice) throw new Error("Not enough points!");
+                    console.log("Conditions met, performing updates...");
+                    transaction.update(itemRef, { stock: increment(-1) });
+                    transaction.update(userRef, { points: increment(-itemPrice) });
+                    transaction.set(doc(collection(db, "activities")), {
+                        userId: currentUser.uid, userName: currentUser.displayName || 'User',
+                        type: 'reward-redeemed', details: `redeemed ${itemName} for -${itemPrice} pts`,
+                        createdAt: serverTimestamp(),
+                        groupId: activeGroupId
+                    });
+                    console.log("Transaction updates queued.");
                 });
-
-                console.log("Transaction updates queued."); // <-- ADD THIS
-            });
-            console.log("Transaction completed successfully."); // <-- ADD THIS
-            alert(`Successfully redeemed ${itemName}!`);
-        } catch (e) {
-            console.error("Redemption transaction failed: ", e); // <-- MODIFY THIS to log the error object
-            alert("Redemption failed: " + (e.message || e));
-        } finally {
-            confirmRedeemBtn.disabled = false;
-            closeModal('redemptionModal'); // Close regardless of success/fail
-            console.log("confirmRedemption function finished."); // <-- ADD THIS
+                console.log("Transaction completed successfully.");
+                alert(`Successfully redeemed ${itemName}!`);
+            } catch (e) {
+                console.error("Redemption transaction failed: ", e);
+                alert("Redemption failed: " + (e.message || e));
+            } finally {
+                confirmRedeemBtn.disabled = false;
+                closeModal('redemptionModal');
+                console.log("confirmRedemption function finished.");
+            }
         }
-    }
-    // Make sure the event listener is attached
-    confirmRedeemBtn.addEventListener('click', confirmRedemption);
+        confirmRedeemBtn.addEventListener('click', confirmRedemption);
 
-        // --- MODIFIED: Add Item Form Submission with Image Upload ---
+        // --- ADDED: Delete Item Functions ---
+        window.openDeleteItemModal = (event, itemId, itemName) => {
+            event.stopPropagation(); // Stop click from propagating to card/redeem button
+            if (!activeGroupData?.admins?.includes(currentUser.uid)) {
+                return alert("You do not have permission to delete this item.");
+            }
+            console.log(`Opening delete modal for: ${itemId} (${itemName})`);
+            itemToDeleteName.textContent = itemName;
+            itemToDeleteId.value = itemId;
+            openModal('deleteItemModal');
+        };
+
+        async function confirmDeleteItem() {
+            const itemId = itemToDeleteId.value;
+            if (!itemId || !currentUser) return;
+            
+            // Final check for permission
+            if (!activeGroupData?.admins?.includes(currentUser.uid)) {
+                alert("Permission error. Cannot delete item.");
+                closeModal('deleteItemModal');
+                return;
+            }
+
+            const itemRef = doc(db, "shopItems", itemId);
+            setLoadingState(confirmDeleteButton, true);
+
+            try {
+                // Note: This does NOT delete the image from Firebase Storage.
+                // That would require a Cloud Function for security.
+                await deleteDoc(itemRef);
+                console.log("Item deleted:", itemId);
+                
+                // onSnapshot will automatically re-render the list
+                
+            } catch (error) {
+                console.error("Error deleting item:", error);
+                alert("Failed to delete item.");
+            } finally {
+                setLoadingState(confirmDeleteButton, false);
+                closeModal('deleteItemModal');
+            }
+        }
+        confirmDeleteButton.addEventListener('click', confirmDeleteItem);
+        // --- END ADDED ---
+
+        // --- Add Item Form Submission with Image Upload ---
         addItemForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!currentUser || !activeGroupId) return alert("User or group not identified.");
-            // Check if user is admin before proceeding
              if (!activeGroupData?.admins?.includes(currentUser.uid)) {
                  return alert("You do not have permission to add items.");
              }
-
-            setLoadingState(addItemSubmitButton, true); // Start loading
-
+            setLoadingState(addItemSubmitButton, true);
             const newItem = {
                 name: addItemForm.itemName.value.trim(),
                 price: parseInt(addItemForm.itemPrice.value),
@@ -384,44 +484,35 @@
                 description: addItemForm.itemDescription.value.trim(),
                 createdAt: serverTimestamp(),
                 groupId: activeGroupId,
-                imageUrl: null // Initialize imageUrl as null
+                imageUrl: null
             };
-
              if (!newItem.name || isNaN(newItem.price) || isNaN(newItem.stock) || newItem.price <= 0 || newItem.stock < 0) {
                  setLoadingState(addItemSubmitButton, false);
                  return alert("Please enter valid item details.");
              }
-
             const imageFile = itemImageInput.files[0];
             let imageUrl = null;
-
             try {
-                // --- Upload Image if selected ---
                 if (imageFile) {
                     console.log("Image file selected:", imageFile.name);
-                    // Create a unique path e.g., shopItemsImages/groupId/timestamp-filename
                     const imageFileName = `${Date.now()}-${imageFile.name}`;
                     const storageRef = ref(storage, `shopItemsImages/${activeGroupId}/${imageFileName}`);
-
                     console.log("Uploading to:", storageRef.fullPath);
                     const uploadResult = await uploadBytes(storageRef, imageFile);
                     imageUrl = await getDownloadURL(uploadResult.ref);
                     console.log("Image uploaded, URL:", imageUrl);
-                    newItem.imageUrl = imageUrl; // Add URL to the item data
+                    newItem.imageUrl = imageUrl;
                 } else {
                     console.log("No image file selected.");
                 }
-
-                // --- Add item data to Firestore ---
                 await addDoc(collection(db, "shopItems"), newItem);
                 console.log("Item added to Firestore:", newItem.name);
                 closeModal('addItemModal');
-
             } catch (error) {
                 console.error("Error adding item or uploading image: ", error);
                 alert(`Failed to add item. ${error.message || ''}`);
             } finally {
-                setLoadingState(addItemSubmitButton, false); // Stop loading
+                setLoadingState(addItemSubmitButton, false);
             }
         });
 
@@ -441,9 +532,26 @@
             }
         });
 
-
-        // --- Listen for User's Redeemed Count (Keep existing) ---
-        function listenForRedeemedCount(userId) { /* ... keep existing ... */ }
+        // --- Listen for User's Redeemed Count ---
+        function listenForRedeemedCount(userId) {
+             if (unsubscribeRedeemedListener) unsubscribeRedeemedListener();
+             if (!activeGroupId) {
+                 redeemedCountEl.textContent = '0';
+                 return;
+             }
+             const rewardsQuery = query(
+                 collection(db, "activities"), 
+                 where("userId", "==", userId), 
+                 where("type", "==", "reward-redeemed"), 
+                 where("groupId", "==", activeGroupId)
+             );
+             unsubscribeRedeemedListener = onSnapshot(rewardsQuery, (snapshot) => {
+                 redeemedCountEl.textContent = snapshot.size;
+             }, (error) => {
+                 console.error("Error fetching redeemed count (Index needed?):", error.message);
+                 redeemedCountEl.textContent = '?';
+             });
+         }
 
         // --- Check Admin Status and Toggle Add Item Button ---
         function checkAdminStatusAndToggleButton() {
@@ -451,7 +559,7 @@
                 const isAdmin = activeGroupData.admins?.includes(currentUser.uid);
                 addItemButton.style.display = isAdmin ? 'inline-block' : 'none';
             } else {
-                addItemButton.style.display = 'none'; // Hide if no user or group data
+                addItemButton.style.display = 'none';
             }
         }
 
@@ -459,60 +567,74 @@
         logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
 
         onAuthStateChanged(auth, (user) => {
+            // Clean up listeners
+            if (unsubscribeUserListener) unsubscribeUserListener();
+            if (unsubscribeGroupListener) unsubscribeGroupListener();
+            if (unsubscribeShopListener) unsubscribeShopListener();
+            if (unsubscribeRedeemedListener) unsubscribeRedeemedListener();
+            // Reset state
+            currentUser = null; activeGroupId = null; activeGroupData = null; userPoints = 0;
+            shopGridEl.innerHTML = '<p>Loading...</p>';
+            addItemButton.style.display = 'none';
+
             if (user) {
                 currentUser = user;
-                if (unsubscribeUserListener) unsubscribeUserListener();
-                if (unsubscribeGroupListener) unsubscribeGroupListener(); // Clean up group listener too
-
                 const userRef = doc(db, "users", user.uid);
 
                 unsubscribeUserListener = onSnapshot(userRef, (userDocSnap) => {
+                    if (!auth.currentUser) return; // Stale listener check
+
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
                         userPoints = userData.points || 0;
                         userPointsEl.textContent = userPoints.toLocaleString();
                         const newActiveGroupId = userData.activeGroupId;
 
-                        if (newActiveGroupId !== activeGroupId) { // Group changed or loaded first time
+                        if (newActiveGroupId !== activeGroupId) {
                             activeGroupId = newActiveGroupId;
-                            activeGroupData = null; // Reset group data
-                            checkAdminStatusAndToggleButton(); // Hide button until group data loaded
+                            activeGroupData = null;
+                            checkAdminStatusAndToggleButton();
 
-                            if (unsubscribeGroupListener) unsubscribeGroupListener(); // Clean up previous group listener
+                            if (unsubscribeGroupListener) unsubscribeGroupListener();
+                            if (unsubscribeShopListener) unsubscribeShopListener();
+                            if (unsubscribeRedeemedListener) unsubscribeRedeemedListener();
 
                             if (activeGroupId) {
-                                // --- Fetch Active Group Data ---
+                                // Fetch Active Group Data
                                 const groupRef = doc(db, "groups", activeGroupId);
                                 unsubscribeGroupListener = onSnapshot(groupRef, (groupDocSnap) => {
+                                    if (!auth.currentUser) return;
                                     if (groupDocSnap.exists()) {
-                                        activeGroupData = groupDocSnap.data(); // Store group data
-                                        checkAdminStatusAndToggleButton(); // Show/hide button based on admin status
+                                        activeGroupData = groupDocSnap.data();
+                                        checkAdminStatusAndToggleButton();
                                     } else {
                                         console.warn("Active group document not found:", activeGroupId);
                                         activeGroupData = null;
-                                        checkAdminStatusAndToggleButton(); // Hide button
+                                        checkAdminStatusAndToggleButton();
                                     }
-                                    listenForShopItems(); // Load/reload items for the (new) active group
-                                    listenForRedeemedCount(user.uid); // Load/reload redeemed count for the group
+                                    // (Re)start listeners dependent on group
+                                    listenForShopItems();
+                                    listenForRedeemedCount(user.uid);
                                 }, (error) => {
                                      console.error("Error listening to group doc:", error);
                                      activeGroupData = null;
-                                     checkAdminStatusAndToggleButton(); // Hide button on error
-                                     listenForShopItems(); // Show error message in shop grid
-                                     listenForRedeemedCount(user.uid); // Reset count maybe?
+                                     checkAdminStatusAndToggleButton();
+                                     listenForShopItems();
+                                     listenForRedeemedCount(user.uid);
                                 });
                             } else {
                                 // No active group selected
                                 activeGroupData = null;
                                 checkAdminStatusAndToggleButton();
-                                listenForShopItems(); // Will show "select group" message
-                                listenForRedeemedCount(user.uid); // Will reset count
+                                listenForShopItems();
+                                listenForRedeemedCount(user.uid);
                             }
-
                         } else {
-                            // Group ID hasn't changed, but user points might have. Re-filter.
+                            // Group ID same, but points might have changed
                             filterRewards(window.filterRewards.lastFilter);
                             if(window.filterRewards.lastSearch) searchRewards(window.filterRewards.lastSearch);
+                            // Also re-check admin status in case group doc updated
+                            checkAdminStatusAndToggleButton();
                         }
                     } else {
                         // User doc doesn't exist
@@ -524,7 +646,6 @@
                     }
                 }, (error) => { // Error listening to user doc
                     console.error("Error listening to user document:", error);
-                    // Reset UI
                     userPoints = 0; userPointsEl.textContent = '0';
                     activeGroupId = null; activeGroupData = null;
                     checkAdminStatusAndToggleButton();
@@ -532,13 +653,7 @@
                     listenForRedeemedCount(user.uid);
                 });
             } else { // User logged out
-                currentUser = null; activeGroupId = null; activeGroupData = null; userPoints = 0;
                 window.location.href = 'auth.html';
-                if (unsubscribeUserListener) unsubscribeUserListener();
-                if (unsubscribeShopListener) unsubscribeShopListener();
-                if (unsubscribeRedeemedListener) unsubscribeRedeemedListener();
-                if (unsubscribeGroupListener) unsubscribeGroupListener();
-                 addItemButton.style.display = 'none'; // Ensure button is hidden on logout
             }
         });
     </script>
