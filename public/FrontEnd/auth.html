@@ -8,6 +8,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .password-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    .password-wrapper .input {
+      /* Add padding so text doesn't go under the icon */
+      padding-right: 40px; 
+    }
+    .password-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #888;
+      user-select: none; /* Prevents selecting the icon text */
+    }
+  </style>
 </head>
 <body>
   <main class="auth">
@@ -38,7 +58,10 @@
           </div>
           <div class="form-field">
             <label for="login-password">Password</label>
-            <input class="input" type="password" id="login-password" placeholder="••••••••" required />
+            <div class="password-wrapper">
+              <input class="input" type="password" id="login-password" placeholder="••••••••" required />
+              <span class="password-toggle" data-target="login-password">👁️</span>
+            </div>
             <div class="error-message" id="login-password-error"></div>
           </div>
           <div class="form-row">
@@ -89,7 +112,10 @@
           </div>
           <div class="form-field">
             <label for="signup-password">Password</label>
-            <input class="input" type="password" id="signup-password" placeholder="Create a password" required oninput="validatePassword()" />
+            <div class="password-wrapper">
+              <input class="input" type="password" id="signup-password" placeholder="Create a password" required oninput="validatePassword()" />
+              <span class="password-toggle" data-target="signup-password">👁️</span>
+            </div>
             <div class="password-requirements" id="password-requirements">
               <div class="requirement" id="req-length">✓ At least 8 characters</div>
               <div class="requirement" id="req-uppercase">✓ One uppercase letter</div>
@@ -102,7 +128,10 @@
           </div>
           <div class="form-field">
             <label for="signup-confirm">Confirm Password</label>
-            <input class="input" type="password" id="signup-confirm" placeholder="Confirm your password" required />
+            <div class="password-wrapper">
+              <input class="input" type="password" id="signup-confirm" placeholder="Confirm your password" required />
+              <span class="password-toggle" data-target="signup-confirm">👁️</span>
+            </div>
             <div class="error-message" id="signup-confirm-error"></div>
           </div>
           <div class="form-row">
@@ -542,6 +571,31 @@
       console.log("Closing modal:", modalId);
       document.getElementById(modalId).style.display = 'none';
     }
+
+    // --- ADDED THIS FUNCTIONALITY ---
+        function togglePasswordVisibility(event) {
+      const toggle = event.currentTarget;
+      const targetId = toggle.dataset.target;
+      const targetInput = document.getElementById(targetId);
+
+      if (!targetInput) {
+        console.error("Password input not found for toggle:", targetId);
+        return;
+      }
+
+      if (targetInput.type === "password") {
+        targetInput.type = "text";
+        toggle.textContent = "👁️"; // You can change this to a slashed-eye emoji
+      } else {
+        targetInput.type = "password";
+        toggle.textContent = "👁️";
+      }
+    }
+
+    // Attach listeners to all password toggles
+    document.querySelectorAll('.password-toggle').forEach(toggle => {
+      toggle.addEventListener('click', togglePasswordVisibility);
+    });
 
     document.addEventListener('click', function(e) {
       if (e.target.classList.contains('modal')) {
