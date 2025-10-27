@@ -189,7 +189,8 @@
       FacebookAuthProvider,
       signInWithPopup,
       sendPasswordResetEmail,
-      sendEmailVerification
+      sendEmailVerification,
+      updateProfile
     } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
     import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
@@ -288,6 +289,13 @@
       createUserWithEmailAndPassword(auth, email, password)
         .then(async (userCredential) => {
           const user = userCredential.user;
+          try {
+                    await updateProfile(user, {
+                        displayName: name
+                    });
+                } catch (profileError) {
+                    console.error("Error updating user profile displayName:", profileError);
+                }
           await setDoc(doc(db, "users", user.uid), {
             name,
             email,

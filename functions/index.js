@@ -5,6 +5,8 @@ const { setGlobalOptions } = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const logger = require("firebase-functions/logger");
 
+
+
 // ✅ Initialize Admin SDK *once*
 if (!admin.apps.length) {
     admin.initializeApp();
@@ -44,6 +46,186 @@ async function getGroupPointsChart(activeGroupId, userId) {
     }
 }
 
+// --- ADD THIS HELPER FUNCTION ---
+/**
+ * Helper function to fetch time-bound task counts for a user.
+ * @param {string} userId - The user's ID.
+ * @param {FirebaseFirestore.Timestamp | null} startDate - The date to start counting from (null for all time).
+ * @returns {object} An object with task counts: { total, gold, silver, bronze }.
+ */
+async function fetchUserTaskCounts(userId, startDate = null) {
+    let tasksQuery = db.collection("tasks")
+        .where("assignee", "==", userId)
+        .where("status", "==", "completed");
+    
+    if (startDate) {
+        // This query requires a composite index: (assignee, status, completedAt)
+        tasksQuery = tasksQuery.where("completedAt", ">=", startDate);
+    }
+
+    const snapshot = await tasksQuery.get();
+    let counts = { total: snapshot.size, gold: 0, silver: 0, bronze: 0 };
+    snapshot.forEach(doc => {
+        const task = doc.data();
+        if (task.difficulty === 'gold') counts.gold++;
+        else if (task.difficulty === 'silver') counts.silver++;
+        else if (task.difficulty === 'bronze') counts.bronze++;
+    });
+    return counts;
+}
+
+// --- ADD THIS NEW CLOUD FUNCTION ---
+/**
+ * Gets leaderboard data for a group, calculated for a specific time period.
+ */
+exports.getLeaderboard = onCall(async (request) => {
+    if (!request.auth) {
+        throw new HttpsError("unauthenticated", "User must be logged in.");
+    }
+
+    const userId = request.auth.uid;
+    const { groupId, period = 'all' } = request.data;
+    if (!groupId) {
+        throw new HttpsError("invalid-argument", "groupId is required.");
+    }
+    
+    logger.info(`Fetching leaderboard for group ${groupId}, period: ${period}, by user ${userId}`);
+
+    // --- 1. Get Group Member IDs ---
+    const groupDoc = await db.collection("groups").doc(groupId).get();
+    if (!groupDoc.exists) {
+        throw new HttpsError("not-found", "Group not found.");
+    }
+    const memberIds = groupDoc.data().members;
+    if (!memberIds || memberIds.length === 0) {
+        return { leaderboard: [], userRankData: null }; // No members
+    }
+    
+    // --- 2. Define Time Boundaries ---
+    let startDate = null;
+    const now = new Date();
+    if (period === 'week') {
+        const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+        weekStart.setHours(0, 0, 0, 0);
+        startDate = admin.firestore.Timestamp.fromDate(weekStart);
+    } else if (period === 'month') {
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        monthStart.setHours(0, 0, 0, 0);
+        startDate = admin.firestore.Timestamp.fromDate(monthStart);
+    }
+    
+    let userStatsMap = new Map();
+    let leaderboardData = [];
+    let userRankData = null;
+
+    // --- 3. Fetch User Data (Name, Photo, etc.) ---
+    // We always need this, regardless of period
+    const usersToFetch = memberIds.length > 30 ? memberIds.slice(0, 30) : memberIds;
+    if (memberIds.length > 30) {
+        logger.warn(`Group ${groupId} has ${memberIds.length} members, fetching data for first 30.`);
+    }
+    const usersSnapshot = await db.collection('users').where(admin.firestore.FieldPath.documentId(), "in", usersToFetch).get();
+    const userDataMap = new Map();
+    usersSnapshot.forEach(doc => {
+        const data = doc.data();
+        userDataMap.set(doc.id, {
+            name: data.name || 'Unnamed User',
+            email: data.email || '',
+            username: data.username || '',
+            photoURL: data.photoURL || ''
+        });
+    });
+
+    // --- 4. Calculate Leaderboard based on Period ---
+    if (period === 'all') {
+        // --- "All Time" Logic ---
+        // For "All Time", we sort by the 'points' field on the user doc
+        const usersQuery = db.collection("users")
+            .where(admin.firestore.FieldPath.documentId(), "in", usersToFetch)
+            .orderBy("points", "desc");
+        const sortedUsersSnapshot = await usersQuery.get();
+
+        const taskCountPromises = sortedUsersSnapshot.docs.map(doc => 
+            fetchUserTaskCounts(doc.id, null) // Fetch all-time task counts
+        );
+        const allTaskCounts = await Promise.all(taskCountPromises);
+        
+        sortedUsersSnapshot.docs.forEach((doc, index) => {
+            const userData = doc.data();
+            const taskCounts = allTaskCounts[index];
+            leaderboardData.push({
+                userId: doc.id,
+                name: userData.name || 'Unnamed User',
+                email: userData.email || '',
+                username: userData.username || '',
+                photoURL: userData.photoURL || '',
+                points: userData.points || 0,
+                taskCounts: taskCounts
+            });
+        });
+
+    } else {
+        // --- "This Week" / "This Month" Logic ---
+        // Initialize map with all group members
+        memberIds.forEach(id => {
+            userStatsMap.set(id, { points: 0, total: 0, gold: 0, silver: 0, bronze: 0 });
+        });
+
+        // Query *tasks* completed in the period to aggregate points
+        // This query requires an index: (groupId, status, completedAt)
+        const tasksQuery = db.collection("tasks")
+            .where("groupId", "==", groupId)
+            .where("status", "==", "completed")
+            .where("completedAt", ">=", startDate);
+        
+        const tasksSnapshot = await tasksQuery.get();
+
+        tasksSnapshot.forEach(doc => {
+            const task = doc.data();
+            const assigneeId = task.assignee;
+            if (userStatsMap.has(assigneeId)) {
+                const stats = userStatsMap.get(assigneeId);
+                stats.points += (task.points || 0);
+                stats.total += 1;
+                if (task.difficulty === 'gold') stats.gold++;
+                else if (task.difficulty === 'silver') stats.silver++;
+                else if (task.difficulty === 'bronze') stats.bronze++;
+                userStatsMap.set(assigneeId, stats);
+            }
+        });
+
+        // Convert map to array and add user data
+        leaderboardData = Array.from(userStatsMap.entries()).map(([userId, stats]) => {
+            const userData = userDataMap.get(userId) || { name: 'Unknown User', email: '', username: '', photoURL: '' };
+            return {
+                userId: userId,
+                ...userData,
+                points: stats.points,
+                taskCounts: {
+                    total: stats.total,
+                    gold: stats.gold,
+                    silver: stats.silver,
+                    bronze: stats.bronze
+                }
+            };
+        });
+
+        // Sort by calculated points
+        leaderboardData.sort((a, b) => b.points - a.points);
+    }
+
+    // --- 5. Find Current User's Rank and Data ---
+    const userRankIndex = leaderboardData.findIndex(user => user.userId === userId);
+    if (userRankIndex !== -1) {
+        userRankData = {
+            rank: userRankIndex + 1,
+            ...leaderboardData[userRankIndex] // Includes points and taskCounts
+        };
+    }
+    
+    // Return the sorted list and the current user's rank
+    return { leaderboard: leaderboardData, userRankData: userRankData };
+});
 
 /**
  * Calculates all dynamic data for the main dashboard.

@@ -379,14 +379,17 @@
         
                 allTasksData.clear();
                 tasksTitle.textContent = "Tasks (Current Group)";
-                addTaskButton.style.display = 'inline-block';
         
                 if (!activeGroupId) {
                     taskListEl.innerHTML = '<p>Please select an active group on the "Groups" page to see tasks.</p>';
+                    addTaskButton.style.display = 'none'; // <-- ADD THIS
                     updateTaskSummary(true);
                     return;
                 }
         
+                addTaskButton.style.display = 'inline-block';
+
+
                 console.log(`(Re)Starting listener for tasks in group: ${activeGroupId}`);
                 const q = query(
                     collection(db, "tasks"),
