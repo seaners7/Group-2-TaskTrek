@@ -254,8 +254,9 @@
                 const statusFilter = taskStatusSelect.value;
                 if (!currentUser) return;
         
-                document.querySelectorAll('.task-card').forEach(card => {
-                    const status = card.dataset.status;
+                const cards = taskListEl.querySelectorAll('.task-card');
+                cards.forEach(card => {
+                    const status = (card.dataset.status || '').toLowerCase();
                     let show = false;
                     switch (statusFilter) {
                         case 'all': show = true; break;
@@ -264,7 +265,7 @@
                         case 'completed': show = (status === 'completed'); break;
                         default: show = true;
                     }
-                    card.style.display = show ? 'block' : 'none';
+                    card.classList.toggle('task-card--filter-hidden', !show);
                 });
                 updateTaskSummary();
             }
@@ -286,6 +287,9 @@
             function onStatusChange() {
                 applyCurrentFilter();
             }
+            // Expose to window so inline onchange="onStatusChange()" and onchange="onScopeChange(...)" work
+            window.onScopeChange = onScopeChange;
+            window.onStatusChange = onStatusChange;
         
             // --- Kept for any code that still calls filterTasks(scope) ---
             window.filterTasks = (scopeOrLegacy) => {
@@ -539,7 +543,7 @@
                     return;
                 }
                 
-                const visibleCards = document.querySelectorAll('.task-card[style*="display: block"], .task-card:not([style*="display: none"])');
+                const visibleCards = taskListEl.querySelectorAll('.task-card:not(.task-card--filter-hidden)');
                 
                 let inProgressCount = 0;
                 let completedCount = 0;
