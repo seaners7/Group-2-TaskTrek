@@ -281,6 +281,7 @@ button[disabled], .btn[disabled] {
 
 /* Task list */
 .task-list { display: grid; gap: 10px; }
+.task-card.task-card--filter-hidden { display: none !important; }
 .task-card {
   background: var(--bg-elev);
   border: 1px solid var(--outline);
