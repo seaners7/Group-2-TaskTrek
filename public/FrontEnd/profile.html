@@ -122,7 +122,8 @@
                     <div class="form-field"><label for="profileBio">Bio</label><textarea id="profileBio" class="input" rows="3" placeholder="Tell us about yourself"></textarea></div>
                     <div class="form-field">
                         <label for="profilePicture">Profile Picture (Optional)</label>
-                        <input type="file" id="profilePicture" class="input" accept="image/*">
+                        <input type="file" id="profilePicture" class="input" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp">
+                        <small class="muted">Allowed: JPG, PNG, GIF, WebP only. No HTML, SVG, or other file types.</small>
                         <img id="profilePicturePreview" src="#" alt="Profile Picture Preview" style="display: none; max-width: 100px; max-height: 100px; margin-top: 10px; border-radius: 50%; border: 1px solid var(--outline);"/>
                     </div>
                    
@@ -337,20 +338,38 @@
             return unsubscribe; // Return the unsubscribe function
         }
     
-        // --- Profile Picture Preview ---
+        // --- Allowed profile picture types (no .html, .svg, or other dangerous types) ---
+        const ALLOWED_IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+        const ALLOWED_IMAGE_MIMES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+        function isAllowedProfileImage(file) {
+            if (!file || !file.name) return false;
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+            const mime = (file.type || '').toLowerCase();
+            return ALLOWED_IMAGE_EXTENSIONS.includes(ext) && ALLOWED_IMAGE_MIMES.includes(mime);
+        }
+
+        // --- Profile Picture Preview (with validation) ---
         profilePictureInput.addEventListener('change', function(event) {
             const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    profilePicturePreview.src = e.target.result;
-                    profilePicturePreview.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            } else {
-                 profilePicturePreview.style.display = 'none';
-                 profilePicturePreview.src = '#';
+            if (!file) {
+                profilePicturePreview.style.display = 'none';
+                profilePicturePreview.src = '#';
+                return;
             }
+            if (!isAllowedProfileImage(file)) {
+                alert('Invalid file type. Please use only JPG, PNG, GIF, or WebP images. HTML, SVG, and other file types are not allowed.');
+                profilePictureInput.value = '';
+                profilePicturePreview.style.display = 'none';
+                profilePicturePreview.src = '#';
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                profilePicturePreview.src = e.target.result;
+                profilePicturePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
         });
     
         // --- Edit Profile Form Submission ---
@@ -366,6 +385,12 @@
             const newBio = profileBioInput.value.trim();
             const pictureFile = profilePictureInput.files[0];
             let newPhotoURL = user.photoURL; // Start with current Auth URL
+
+            if (pictureFile && !isAllowedProfileImage(pictureFile)) {
+                alert('Invalid file type. Please use only JPG, PNG, GIF, or WebP images. HTML, SVG, and other file types are not allowed.');
+                setLoadingState(saveProfileButton, false);
+                return;
+            }
     
             try {
                 // 1. Upload new picture if selected
