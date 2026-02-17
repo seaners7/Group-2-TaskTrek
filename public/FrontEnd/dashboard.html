@@ -44,6 +44,10 @@
         <div class="content">
             <section class="panel">
                 <h2>Dashboard</h2>
+                <div class="panel__actions" style="margin-bottom: 16px;">
+                    <button type="button" class="btn btn--primary" id="export-excel-btn" title="Download as Excel (CSV)">Export as Excel</button>
+                    <button type="button" class="btn btn--secondary" id="export-word-btn" title="Download as Word document">Export as Word</button>
+                </div>
                 <div class="cards">
                     <div class="stat-card"><span class="stat-label">Total Tasks (Assigned)</span><span class="stat-value" id="stat-total-tasks">0</span><div class="stat-trend" id="stat-total-trend">...</div></div>
                     <div class="stat-card"><span class="stat-label">In Progress</span><span class="stat-value" id="stat-in-progress">0</span><div class="stat-trend" id="stat-due-today">...</div></div>
@@ -117,6 +121,7 @@
         
         let taskChart, pointsChart; // Chart instances
         let currentUserId = null; // Store current user ID
+        let lastDashboardData = null; // For export (stats + chart data)
     
         // Cloud Function Reference
         const functions = getFunctions();
@@ -153,6 +158,7 @@
             try {
                 const result = await getDashboardData({ period: period });
                 const data = result.data;
+                lastDashboardData = data; // Store for export
                 console.log("Stats received from function:", data);
     
                 // Populate Stats Cards
@@ -256,6 +262,106 @@
         });
     
         logoutBtn.addEventListener('click', (e) => { e.preventDefault(); signOut(auth); });
+
+        // --- Export Dashboard Data ---
+        function exportAsExcel() {
+            if (!lastDashboardData) {
+                alert('No dashboard data to export. Wait for the dashboard to load.');
+                return;
+            }
+            const rows = [
+                ['TaskTrek Dashboard Export', ''],
+                ['Exported', new Date().toLocaleString()],
+                [],
+                ['Metric', 'Value'],
+                ['Total Tasks (Assigned)', lastDashboardData.tasksTotal ?? 0],
+                ['In Progress', lastDashboardData.tasksInProgress ?? 0],
+                ['Completed (by You)', lastDashboardData.tasksCompleted ?? 0],
+                ['Your Points', lastDashboardData.userPoints ?? 0],
+                ['Rank', lastDashboardData.userRank ? `#${lastDashboardData.userRank}` : 'N/A'],
+                ['Tasks Due Today', lastDashboardData.tasksDueToday ?? 0],
+                ['Completion Rate (%)', lastDashboardData.completionRate ?? 0],
+                ['Points This Week', lastDashboardData.pointsThisWeek ?? 0],
+                ['Tasks Completed This Week', lastDashboardData.tasksCompletedThisWeek ?? 0],
+                ['Total Tasks Trend', lastDashboardData.totalTasksTrend ?? 'N/A'],
+                [],
+                ['Task Completion Trends (Chart)', ''],
+                ...(lastDashboardData.taskChartData?.labels?.length ? [
+                    ['Period', ...lastDashboardData.taskChartData.labels],
+                    ['Tasks Completed', ...(lastDashboardData.taskChartData.datasets?.[0]?.data ?? [])],
+                    ['Tasks Created', ...(lastDashboardData.taskChartData.datasets?.[1]?.data ?? [])]
+                ] : []),
+                [],
+                ['Group Points Distribution', ''],
+                ...(lastDashboardData.pointsChartData?.labels?.length ? [
+                    ['Member', ...lastDashboardData.pointsChartData.labels],
+                    ['Points', ...(lastDashboardData.pointsChartData.datasets?.[0]?.data ?? [])]
+                ] : [])
+            ];
+            const csv = rows.map(row => row.map(cell => {
+                const s = String(cell ?? '');
+                return /[,"\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+            }).join(',')).join('\r\n');
+            const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `TaskTrek-Dashboard-${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        function exportAsWord() {
+            if (!lastDashboardData) {
+                alert('No dashboard data to export. Wait for the dashboard to load.');
+                return;
+            }
+            const html = `
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head><meta charset="utf-8"><title>TaskTrek Dashboard Export</title></head>
+<body>
+<h1>TaskTrek Dashboard Export</h1>
+<p>Exported: ${new Date().toLocaleString()}</p>
+<table border="1" cellpadding="6" cellspacing="0">
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Total Tasks (Assigned)</td><td>${lastDashboardData.tasksTotal ?? 0}</td></tr>
+<tr><td>In Progress</td><td>${lastDashboardData.tasksInProgress ?? 0}</td></tr>
+<tr><td>Completed (by You)</td><td>${lastDashboardData.tasksCompleted ?? 0}</td></tr>
+<tr><td>Your Points</td><td>${lastDashboardData.userPoints ?? 0}</td></tr>
+<tr><td>Rank</td><td>${lastDashboardData.userRank ? '#' + lastDashboardData.userRank : 'N/A'}</td></tr>
+<tr><td>Tasks Due Today</td><td>${lastDashboardData.tasksDueToday ?? 0}</td></tr>
+<tr><td>Completion Rate (%)</td><td>${lastDashboardData.completionRate ?? 0}</td></tr>
+<tr><td>Points This Week</td><td>${lastDashboardData.pointsThisWeek ?? 0}</td></tr>
+<tr><td>Tasks Completed This Week</td><td>${lastDashboardData.tasksCompletedThisWeek ?? 0}</td></tr>
+<tr><td>Total Tasks Trend</td><td>${lastDashboardData.totalTasksTrend ?? 'N/A'}</td></tr>
+</table>
+${lastDashboardData.taskChartData?.labels?.length ? `
+<h2>Task Completion Trends</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+<tr><th>Period</th>${(lastDashboardData.taskChartData.labels).map(l => `<th>${l}</th>`).join('')}</tr>
+<tr><td>Tasks Completed</td>${(lastDashboardData.taskChartData.datasets?.[0]?.data ?? []).map(d => `<td>${d}</td>`).join('')}</tr>
+<tr><td>Tasks Created</td>${(lastDashboardData.taskChartData.datasets?.[1]?.data ?? []).map(d => `<td>${d}</td>`).join('')}</tr>
+</table>
+` : ''}
+${lastDashboardData.pointsChartData?.labels?.length ? `
+<h2>Group Points Distribution</h2>
+<table border="1" cellpadding="6" cellspacing="0">
+<tr><th>Member</th>${(lastDashboardData.pointsChartData.labels).map(l => `<th>${l}</th>`).join('')}</tr>
+<tr><td>Points</td>${(lastDashboardData.pointsChartData.datasets?.[0]?.data ?? []).map(d => `<td>${d}</td>`).join('')}</tr>
+</table>
+` : ''}
+</body>
+</html>`;
+            const blob = new Blob([html], { type: 'application/msword' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `TaskTrek-Dashboard-${new Date().toISOString().slice(0,10)}.doc`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        document.getElementById('export-excel-btn').addEventListener('click', exportAsExcel);
+        document.getElementById('export-word-btn').addEventListener('click', exportAsWord);
     </script>
 </body>
 </html>
