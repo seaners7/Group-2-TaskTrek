@@ -10,6 +10,7 @@
         <script>!function(){try{var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){}}();</script>
         <link rel="stylesheet" href="styles.css" />
         <style>
+            .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
             /* Optional: Theme icon color adaptation */
             [data-theme="light"] .nav__icon { stroke: var(--text-muted); }
             [data-theme="light"] .nav__item.active .nav__icon { stroke: var(--purple); }
@@ -51,12 +52,17 @@
                 <section class="panel">
                     <div class="panel__header">
                         <h2 id="tasks-title">Tasks</h2> <div class="panel__actions">
-                            <select class="input" id="task-filter-select" style="width: auto;" onchange="filterTasks(this.value)">
-                                <option value="all">All Tasks (Current Group)</option>
+                            <label for="task-scope-select" class="sr-only">Task scope</label>
+                            <select class="input" id="task-scope-select" style="width: auto;" onchange="onScopeChange(this.value)" title="Which tasks to show">
+                                <option value="current-group">Current Group</option>
+                                <option value="my-tasks">My Tasks (All Groups)</option>
+                            </select>
+                            <label for="task-status-select" class="sr-only">Status filter</label>
+                            <select class="input" id="task-status-select" style="width: auto;" onchange="onStatusChange()" title="Filter by status">
+                                <option value="all">All</option>
                                 <option value="available">Available</option>
                                 <option value="in-progress">In Progress</option>
                                 <option value="completed">Completed</option>
-                                <option value="my-tasks">My Tasks (All Groups)</option>
                             </select>
                             <button class="btn btn--primary" id="add-task-button" onclick="openModal('addTaskModal')">Add Task</button>
                         </div>
@@ -170,7 +176,8 @@
             const logoutBtn = document.getElementById('logout-btn');
             const aiSuggestionsListEl = document.getElementById('ai-suggestions');
             const tasksTitle = document.getElementById('tasks-title');
-            const taskFilterSelect = document.getElementById('task-filter-select');
+            const taskScopeSelect = document.getElementById('task-scope-select');
+            const taskStatusSelect = document.getElementById('task-status-select');
             const addTaskButton = document.getElementById('add-task-button');
         
             // Task Detail Modal Elements
@@ -242,53 +249,50 @@
             }
         
             
-            // --- Central Filter Application Function ---
+            // --- Central Filter Application Function (status only; scope controls which data is loaded) ---
             function applyCurrentFilter() {
-                const filter = taskFilterSelect.value;
+                const statusFilter = taskStatusSelect.value;
                 if (!currentUser) return;
         
                 document.querySelectorAll('.task-card').forEach(card => {
                     const status = card.dataset.status;
-                    const assignee = card.dataset.assignee;
                     let show = false;
-        
-                    switch(filter) {
-                        case 'all': 
-                            show = true; 
-                            break;
-                        case 'available': 
-                            show = (status === 'available'); 
-                            break;
-                        case 'in-progress': 
-                            show = (status === 'in-progress'); 
-                            break;
-                        case 'completed': 
-                            show = (status === 'completed'); 
-                            break;
-                        case 'my-tasks': 
-                            show = true; // All tasks shown in this mode *are* my tasks
-                            break;
+                    switch (statusFilter) {
+                        case 'all': show = true; break;
+                        case 'available': show = (status === 'available'); break;
+                        case 'in-progress': show = (status === 'in-progress'); break;
+                        case 'completed': show = (status === 'completed'); break;
+                        default: show = true;
                     }
                     card.style.display = show ? 'block' : 'none';
                 });
-                
-                updateTaskSummary(); // Update summary counts
+                updateTaskSummary();
             }
         
-            // --- Global Filter Function ---
-            window.filterTasks = (filter) => {
+            // --- Scope change: load the right set of tasks ---
+            function onScopeChange(scope) {
                 if (!currentUser) return;
-        
-                if (filter === 'my-tasks') {
+                if (scope === 'my-tasks') {
                     if (unsubscribeTasksListener) {
                         unsubscribeTasksListener();
                         unsubscribeTasksListener = null;
                     }
                     loadMyTasks(currentUser.uid);
                 } else {
-                    // Start the group listener (it checks internally if already running)
-                    listenForTasks(); 
+                    listenForTasks();
                 }
+            }
+            // --- Status change: only filter the current list (no reload) ---
+            function onStatusChange() {
+                applyCurrentFilter();
+            }
+        
+            // --- Kept for any code that still calls filterTasks(scope) ---
+            window.filterTasks = (scopeOrLegacy) => {
+                if (!currentUser) return;
+                const scope = (scopeOrLegacy === 'my-tasks' || scopeOrLegacy === 'current-group') ? scopeOrLegacy : (scopeOrLegacy === 'all' || scopeOrLegacy === 'available' || scopeOrLegacy === 'in-progress' || scopeOrLegacy === 'completed' ? 'current-group' : taskScopeSelect.value);
+                taskScopeSelect.value = scope;
+                onScopeChange(scope);
             };
         
             // --- Date Formatter ---
@@ -375,7 +379,7 @@
             // --- Core Data & Render Logic ---
             function listenForTasks() {
                 if (unsubscribeTasksListener) return;
-                if (taskFilterSelect.value === 'my-tasks') return;
+                if (taskScopeSelect.value === 'my-tasks') return;
         
                 allTasksData.clear();
                 tasksTitle.textContent = "Tasks (Current Group)";
@@ -407,8 +411,7 @@
                         allTasksData.set(doc.id, doc.data());
                         renderTask(doc.id, doc.data());
                     });
-                    
-                    applyCurrentFilter(); // Apply filter *after* rendering
+                    applyCurrentFilter();
                 }, (error) => {
                     console.error("Error listening for tasks (Index needed?):", error.message);
                     taskListEl.innerHTML = "<p>Error loading tasks. Check console for index link.</p>";
@@ -474,12 +477,12 @@
                 const pointsDisplay = data.points ? `${data.points} pts` : '0 pts';
                 const assigneeNameDisplay = data.assigneeName || '—';
         
-                const filter = taskFilterSelect.value;
-                const groupInfoHtml = (filter === 'my-tasks' && data.groupId)
+                const scope = taskScopeSelect.value;
+                const groupInfoHtml = (scope === 'my-tasks' && data.groupId)
                     ? `<span>Group: ${userGroupNameMap.get(data.groupId) || 'Loading...'}</span>`
                     : `<span>Due: ${data.dueDate || 'N/A'}</span>`;
                 
-                if (filter === 'my-tasks' && data.groupId && !userGroupNameMap.has(data.groupId)) {
+                if (scope === 'my-tasks' && data.groupId && !userGroupNameMap.has(data.groupId)) {
                     getDoc(doc(db, "groups", data.groupId)).then(groupDoc => {
                         let gName = 'Unknown';
                         if (groupDoc.exists()) {
@@ -546,8 +549,8 @@
                     if (card.dataset.status === 'completed') completedCount++;
                 });
         
-                const filter = taskFilterSelect.value;
-                if (filter === 'my-tasks') {
+                const scope = taskScopeSelect.value;
+                if (scope === 'my-tasks') {
                      document.getElementById('total-tasks').textContent = visibleCards.length;
                 } else {
                      document.getElementById('total-tasks').textContent = allTasksData.size;
@@ -737,8 +740,8 @@
                     });
                     console.log(`Task ${taskId} claimed by ${currentUser.uid}`);
                     
-                    if (taskFilterSelect.value === 'my-tasks') {
-                        loadMyTasks(currentUser.uid); // Refresh 'my-tasks' view
+                    if (taskScopeSelect.value === 'my-tasks') {
+                        loadMyTasks(currentUser.uid);
                     }
                     // else: onSnapshot will handle update
                     
@@ -783,12 +786,11 @@
                     });
                     console.log(`Task ${taskId} marked as done by ${currentUser.uid}`);
                     
-                    if (taskFilterSelect.value === 'my-tasks') {
+                    if (taskScopeSelect.value === 'my-tasks') {
                         loadMyTasks(currentUser.uid);
                     }
-                    // else: onSnapshot will handle update
                 } catch (err) {
-                    console.error("Error completing task: ", err);
+                     console.error("Error completing task: ", err);
                     alert("Failed to mark task as done.");
                     button.disabled = false;
                 }
@@ -855,13 +857,10 @@
                             adminGroupIds.add(doc.id);
                         });
                         console.log("User is admin of groups:", Array.from(adminGroupIds)); // Log the set
-                        // Re-run the current filter/query to update UI with/without delete buttons
-                        // This will either call loadMyTasks or listenForTasks, which will re-render
-                        filterTasks(taskFilterSelect.value);
+                        onScopeChange(taskScopeSelect.value);
                     }, (error) => {
                         console.error("Error listening for admin groups:", error);
-                        // Still load tasks even if admin check fails
-                        filterTasks(taskFilterSelect.value);
+                        onScopeChange(taskScopeSelect.value);
                     });
                     // --- END ADDED ---
         
@@ -875,38 +874,29 @@
                             if (newActiveGroupId !== activeGroupId) {
                                 console.log("Active group changed to:", newActiveGroupId);
                                 activeGroupId = newActiveGroupId;
-                                // Stop old group listener if it exists
                                 if (unsubscribeTasksListener) {
                                      unsubscribeTasksListener();
                                      unsubscribeTasksListener = null;
                                 }
-                                 // Trigger filterTasks to load correct view
-                                 filterTasks(taskFilterSelect.value);
+                                onScopeChange(taskScopeSelect.value);
                             } else if (activeGroupId === null && (newActiveGroupId === null || newActiveGroupId === undefined)) {
                                  console.log("User has no active group.");
                                  activeGroupId = null;
-                                 // Only trigger filter if not 'my-tasks' (which is already loading)
-                                 if (taskFilterSelect.value !== 'my-tasks') {
-                                    filterTasks(taskFilterSelect.value);
+                                 if (taskScopeSelect.value !== 'my-tasks') {
+                                    onScopeChange(taskScopeSelect.value);
                                  }
-                            } else if (taskFilterSelect.value === 'my-tasks' && unsubscribeTasksListener) {
-                                // This case is tricky: active group didn't change,
-                                // but maybe we *were* on a group filter and need to switch
-                                // The admin listener above handles the initial call to filterTasks,
-                                // so this block might be redundant or only for edge cases.
-                                // Let's rely on the admin listener's call.
                             }
                         } else {
                             console.warn("User document not found in Firestore:", user.uid);
                             myPointsEl.textContent = '0';
                             activeGroupId = null;
-                            filterTasks(taskFilterSelect.value);
+                            onScopeChange(taskScopeSelect.value);
                         }
                     }, (error) => {
                          console.error("Error listening to user document:", error);
                          myPointsEl.textContent = 'Error';
                          activeGroupId = null;
-                         filterTasks(taskFilterSelect.value);
+                         onScopeChange(taskScopeSelect.value);
                     });
         
                 } else {
