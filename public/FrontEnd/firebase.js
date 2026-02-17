@@ -1,6 +1,6 @@
 // src/lib/firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, onAuthStateChanged  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc, increment, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -19,6 +19,54 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+// --- Custom idle session timeout (sign out after this many ms of no activity) ---
+// Change this to set your desired timeout, e.g. 30 * 60 * 1000 = 30 minutes
+const SESSION_IDLE_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
+let idleCheckTimer = null;
+let lastActivityAt = 0;
+let idleActivityHandler = null;
+const IDLE_EVENTS = ['mousedown', 'mousemove', 'keydown', 'scroll', 'touchstart', 'click'];
+
+function resetIdleTimer() {
+  lastActivityAt = Date.now();
+  if (idleCheckTimer) clearTimeout(idleCheckTimer);
+  idleCheckTimer = setTimeout(() => {
+    const elapsed = Date.now() - lastActivityAt;
+    if (elapsed >= SESSION_IDLE_TIMEOUT_MS && auth.currentUser) {
+      signOut(auth);
+    }
+    idleCheckTimer = null;
+  }, SESSION_IDLE_TIMEOUT_MS);
+}
+
+function startIdleTimeout() {
+  if (idleActivityHandler) return;
+  lastActivityAt = Date.now();
+  let scheduled = false;
+  idleActivityHandler = () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => {
+      resetIdleTimer();
+      scheduled = false;
+    });
+  };
+  IDLE_EVENTS.forEach(ev => window.addEventListener(ev, idleActivityHandler));
+  resetIdleTimer();
+}
+
+function stopIdleTimeout() {
+  if (idleCheckTimer) {
+    clearTimeout(idleCheckTimer);
+    idleCheckTimer = null;
+  }
+  if (idleActivityHandler) {
+    IDLE_EVENTS.forEach(ev => window.removeEventListener(ev, idleActivityHandler));
+    idleActivityHandler = null;
+  }
+}
+
 // --- Global User State ---
 let currentUser = null;
 let currentUserData = null; // To store data from 'users' collection
@@ -26,17 +74,17 @@ let currentUserData = null; // To store data from 'users' collection
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     currentUser = user;
+    startIdleTimeout();
     const userDocRef = doc(db, "users", user.uid);
     const docSnap = await getDoc(userDocRef);
     if (docSnap.exists()) {
       currentUserData = docSnap.data();
-      // Dispatch a custom event to notify pages that user data is loaded
       window.dispatchEvent(new CustomEvent('user-loaded', { detail: { user, userData: currentUserData } }));
     }
   } else {
     currentUser = null;
     currentUserData = null;
-    // Redirect to login if user is not logged in and not on an auth page
+    stopIdleTimeout();
     if (!window.location.pathname.includes('auth.html') && !window.location.pathname.includes('index.html')) {
       window.location.href = 'auth.html';
     }
