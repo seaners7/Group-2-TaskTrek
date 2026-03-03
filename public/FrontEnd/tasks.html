@@ -210,6 +210,13 @@
         
             // --- Global Modal Functions (Integrated) ---
             window.openModal = (modalId) => {
+                if (modalId === 'addTaskModal') {
+                    // Only admins of the active group can add tasks
+                    if (!activeGroupId || !adminGroupIds.has(activeGroupId)) {
+                        alert("Only group admins can add tasks.");
+                        return;
+                    }
+                }
                 document.getElementById(modalId).style.display = 'flex';
                 if (modalId === 'addTaskModal') {
                     getAISuggestions();
@@ -390,12 +397,13 @@
         
                 if (!activeGroupId) {
                     taskListEl.innerHTML = '<p>Please select an active group on the "Groups" page to see tasks.</p>';
-                    addTaskButton.style.display = 'none'; // <-- ADD THIS
+                    addTaskButton.style.display = 'none';
                     updateTaskSummary(true);
                     return;
                 }
-        
-                addTaskButton.style.display = 'inline-block';
+
+                // Only admins of the active group can see and use the Add Task button
+                addTaskButton.style.display = adminGroupIds.has(activeGroupId) ? 'inline-block' : 'none';
 
 
                 console.log(`(Re)Starting listener for tasks in group: ${activeGroupId}`);
@@ -814,11 +822,12 @@
                 }
             };
             
-            // --- Add Task Form Listener (No changes) ---
+            // --- Add Task Form Listener (admin-only) ---
             addTaskForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 if (!currentUser) return alert("You must be logged in.");
                 if (!activeGroupId) return alert("You must have an active group selected to add a task.");
+                if (!adminGroupIds.has(activeGroupId)) return alert("Only group admins can add tasks.");
                  const submitButton = addTaskForm.querySelector('button[type="submit"]');
                  submitButton.disabled = true;
                 try {
