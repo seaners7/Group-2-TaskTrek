@@ -336,25 +336,47 @@
         // --- Actions (Exposed Globally) ---
         window.switchGroup = async (groupId) => {
             if (!currentUser || !groupId) return;
+            if (navigator && navigator.onLine === false) {
+                return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+            }
             try {
                 await updateDoc(doc(db, "users", currentUser.uid), { activeGroupId: groupId });
-            } catch (err) { console.error("Error switching group:", err); }
+            } catch (err) {
+                console.error("Error switching group:", err);
+                if ((navigator && navigator.onLine === false) || err?.code === 'unavailable') {
+                    alert("Network Error: Connection failed while switching groups. Please try again once you're back online.");
+                } else {
+                    alert("Failed to switch group. Please try again.");
+                }
+            }
         };
 
         async function handleJoinGroup(code) {
              if (!code || code.length !== 6 || !currentUser) return alert('Please enter a valid 6-digit invite code.');
+             if (navigator && navigator.onLine === false) {
+                 return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+             }
              code = code.toUpperCase();
              const q = query(collection(db, "groups"), where("inviteCode", "==", code));
-             const snapshot = await getDocs(q);
-             if (snapshot.empty) return alert("Invalid invite code found.");
-             
-             const groupDoc = snapshot.docs[0];
-             if (groupDoc.data().members?.includes(currentUser.uid)) {
-                 return alert(`You are already a member of ${groupDoc.data().name}.`);
+             try {
+                 const snapshot = await getDocs(q);
+                 if (snapshot.empty) return alert("Invalid invite code found.");
+                 
+                 const groupDoc = snapshot.docs[0];
+                 if (groupDoc.data().members?.includes(currentUser.uid)) {
+                     return alert(`You are already a member of ${groupDoc.data().name}.`);
+                 }
+                 const groupRef = groupDoc.ref;
+                 await updateGroupDoc(groupRef, { members: arrayUnion(currentUser.uid) });
+                 alert(`Successfully joined ${groupDoc.data().name}!`);
+             } catch (err) {
+                 console.error("Error joining group:", err);
+                 if ((navigator && navigator.onLine === false) || err?.code === 'unavailable') {
+                     alert("Network Error: Connection failed while joining this group. Please try again once you're back online.");
+                 } else {
+                     alert("Failed to join group. Please try again.");
+                 }
              }
-             const groupRef = groupDoc.ref;
-             await updateGroupDoc(groupRef, { members: arrayUnion(currentUser.uid) });
-             alert(`Successfully joined ${groupDoc.data().name}!`);
         }
 
         window.joinGroup = () => {
@@ -372,6 +394,9 @@
 
         window.joinPublicGroup = async (groupId) => {
             if (!currentUser || !groupId) return alert('Cannot join group.');
+            if (navigator && navigator.onLine === false) {
+                return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+            }
             const groupRef = doc(db, "groups", groupId);
             try {
                  const groupDoc = await getDoc(groupRef);
@@ -384,7 +409,11 @@
                 alert(`Successfully joined ${groupDoc.data().name}!`);
             } catch (err) {
                 console.error("Error joining public group:", err);
-                alert("Failed to join group.");
+                if ((navigator && navigator.onLine === false) || err?.code === 'unavailable') {
+                    alert("Network Error: Connection failed while joining this group. Please try again once you're back online.");
+                } else {
+                    alert("Failed to join group.");
+                }
             }
         };
 
@@ -422,6 +451,9 @@
             const groupId = groupToDeleteId.value;
             const groupName = groupToDeleteName.textContent;
             if (!groupId || !currentUser) return;
+            if (navigator && navigator.onLine === false) {
+                return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+            }
 
             setLoadingState(confirmDeleteButton, true);
 
@@ -441,7 +473,11 @@
 
             } catch (error) {
                 console.error("Error calling deleteGroup function:", error);
-                alert(`Error: ${error.message}`);
+                if ((navigator && navigator.onLine === false) || error?.code === 'unavailable') {
+                    alert("Network Error: Connection failed while deleting this group. Please try again once you're back online.");
+                } else {
+                    alert(`Error: ${error.message}`);
+                }
             } finally {
                 setLoadingState(confirmDeleteButton, false);
                 closeModal('deleteGroupModal');
@@ -455,6 +491,9 @@
         createGroupForm.addEventListener('submit', async (e) => {
              e.preventDefault();
              if (!currentUser) return;
+             if (navigator && navigator.onLine === false) {
+                 return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+             }
              const groupName = createGroupForm.newGroupName.value.trim();
              groupNameErrorEl.textContent = '';
              if (groupName.length < 3 || groupName.length > 50) {
@@ -472,7 +511,14 @@
                  await window.switchGroup(newGroupRef.id);
                  alert(`Group "${groupName}" created! Invite code: ${newGroupData.inviteCode}`);
                  closeModal('createGroupModal');
-             } catch (err) { console.error("Error creating group:", err); alert("Failed to create group."); }
+             } catch (err) {
+                 console.error("Error creating group:", err);
+                 if ((navigator && navigator.onLine === false) || err?.code === 'unavailable') {
+                     alert("Network Error: Connection failed while creating this group. Please try again once you're back online.");
+                 } else {
+                     alert("Failed to create group.");
+                 }
+             }
         });
 
         // --- Logout & Initialize ---
