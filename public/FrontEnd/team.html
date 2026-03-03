@@ -362,6 +362,9 @@
         window.confirmRemoveMember = async () => {
             const memberIdToRemove = memberToRemoveIdInput.value;
             if (!memberIdToRemove || !activeGroupId || !currentUser) return;
+            if (navigator && navigator.onLine === false) {
+                return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+            }
             // Double check user is still admin (in case roles changed)
             if (!activeGroupData?.admins?.includes(currentUser.uid)) {
                  alert("You no longer have permission to remove members.");
@@ -386,7 +389,11 @@
                 // The onSnapshot listener for the group should automatically refresh the list
             } catch (error) {
                 console.error("Error removing member:", error);
-                alert("Failed to remove member.");
+                if ((navigator && navigator.onLine === false) || error?.code === 'unavailable') {
+                    alert("Network Error: Connection failed while removing this member. Please try again once you're back online.");
+                } else {
+                    alert("Failed to remove member.");
+                }
             } finally {
                 closeModal('removeMemberModal');
             }
@@ -395,6 +402,9 @@
         // Toggle Admin Status - Uses Cloud Function
         window.toggleAdmin = async (targetUserId, makeAdmin) => {
              if (!activeGroupId || !currentUser) return;
+             if (navigator && navigator.onLine === false) {
+                 return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+             }
              // Optimistic UI update (optional - remove if causing issues)
              const memberLi = teamListEl.querySelector(`.team-member [onclick*="'${targetUserId}'"]`)?.closest('.team-member');
              if (memberLi) {
@@ -412,7 +422,11 @@
                  // Group listener will refresh the UI with correct state
             } catch (error) {
                 console.error("Error toggling admin status:", error);
-                alert(`Failed to update role: ${error.message || 'Check console'}`);
+                if ((navigator && navigator.onLine === false) || error?.code === 'unavailable') {
+                    alert("Network Error: Connection failed while updating this role. Please try again once you're back online.");
+                } else {
+                    alert(`Failed to update role: ${error.message || 'Check console'}`);
+                }
                 // Revert optimistic UI update on error (if implemented)
                 if (memberLi) {
                    // Force a reload to get correct state if optimistic update was done
@@ -446,6 +460,9 @@
                  alert("You do not have permission to invite members.");
                  return;
              }
+             if (navigator && navigator.onLine === false) {
+                 return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+             }
 
             const emailToInvite = inviteMemberForm.memberEmail.value.trim();
             if (!emailToInvite) return;
@@ -463,7 +480,11 @@
                 // The group listener will update the member list
             } catch (error) {
                 console.error("Error inviting member:", error);
-                alert(`Failed to invite member: ${error.message || 'Check console'}`);
+                if ((navigator && navigator.onLine === false) || error?.code === 'unavailable') {
+                    alert("Network Error: Connection failed while sending this invite. Please try again once you're back online.");
+                } else {
+                    alert(`Failed to invite member: ${error.message || 'Check console'}`);
+                }
             } finally {
                  submitButton.disabled = false; submitButton.textContent = 'Invite Member';
             }
