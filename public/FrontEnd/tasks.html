@@ -715,6 +715,9 @@
             window.claimTask = async (event, button) => {
                 event?.stopPropagation();
                 if (!currentUser) return alert("You must be logged in.");
+                if (navigator && navigator.onLine === false) {
+                    return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+                }
                 
                 const card = button.closest('.task-card');
                 const taskId = card ? card.dataset.id : taskDetailAction.dataset.taskId;
@@ -751,7 +754,11 @@
                     
                 } catch (err) {
                      console.error("Error claiming task: ", err);
-                     alert("Failed to claim task.");
+                     if (navigator && navigator.onLine === false || err?.code === 'unavailable') {
+                         alert("Network Error: Connection failed while claiming this task. Please try again once you're back online.");
+                     } else {
+                         alert("Failed to claim task. Please try again.");
+                     }
                      button.disabled = false;
                 }
             };
@@ -759,6 +766,9 @@
             window.markAsDone = async (event, button) => {
                 event?.stopPropagation();
                 if (!currentUser) return alert("You must be logged in.");
+                if (navigator && navigator.onLine === false) {
+                    return alert("Network Error: You appear to be offline. Please check your connection and try again.");
+                }
         
                 const card = button.closest('.task-card');
                 const taskId = card ? card.dataset.id : taskDetailAction.dataset.taskId;
@@ -795,8 +805,12 @@
                     }
                 } catch (err) {
                      console.error("Error completing task: ", err);
-                    alert("Failed to mark task as done.");
-                    button.disabled = false;
+                     if (navigator && navigator.onLine === false || err?.code === 'unavailable') {
+                        alert("Network Error: Connection failed while updating this task. Please try again once you're back online.");
+                     } else {
+                        alert("Failed to mark task as done. Please try again.");
+                     }
+                     button.disabled = false;
                 }
             };
             
