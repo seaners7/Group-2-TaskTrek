@@ -389,12 +389,11 @@
         
             // --- Core Data & Render Logic ---
             function listenForTasks() {
-                if (unsubscribeTasksListener) return;
                 if (taskScopeSelect.value === 'my-tasks') return;
-        
-                allTasksData.clear();
+
+                // Set initial title and handle no active group
                 tasksTitle.textContent = "Tasks (Current Group)";
-        
+
                 if (!activeGroupId) {
                     taskListEl.innerHTML = '<p>Please select an active group on the "Groups" page to see tasks.</p>';
                     addTaskButton.style.display = 'none';
@@ -403,7 +402,21 @@
                 }
 
                 // Only admins of the active group can see and use the Add Task button
+                // This must be updated even if unsubscribeTasksListener is already set!
                 addTaskButton.style.display = adminGroupIds.has(activeGroupId) ? 'inline-block' : 'none';
+
+                if (unsubscribeTasksListener) {
+                    // Re-render existing tasks to update Delete buttons if admin status changed
+                    if (allTasksData.size > 0) {
+                        console.log("Refreshing task list to update admin actions...");
+                        taskListEl.innerHTML = '';
+                        allTasksData.forEach((data, id) => renderTask(id, data));
+                        applyCurrentFilter();
+                    }
+                    return;
+                }
+        
+                allTasksData.clear();
 
 
                 console.log(`(Re)Starting listener for tasks in group: ${activeGroupId}`);
